@@ -1,12 +1,12 @@
 package io.goorm.jpa.dto;
 
-import io.goorm.jpa.entity.Product;
 import io.goorm.jpa.enums.ProductStatus;
 
 import java.time.LocalDateTime;
 
 /**
  * 상품 응답 DTO
+ * MapStruct를 통해 Product 엔티티로부터 자동 매핑됨
  */
 public record ProductResponse(
         Long productId,
@@ -20,18 +20,4 @@ public record ProductResponse(
         Long createdBy,
         Long updatedBy
 ) {
-    public static ProductResponse from(Product product) {
-        return new ProductResponse(
-                product.getProductId(),
-                product.getProductName(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getStockQuantity(),
-                product.getStatus(),
-                product.getCreatedAt(),
-                product.getUpdatedAt(),
-                product.getCreatedBy(),
-                product.getUpdatedBy()
-        );
-    }
 }

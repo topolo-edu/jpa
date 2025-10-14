@@ -5,6 +5,7 @@ import io.goorm.jpa.dto.ProductResponse;
 import io.goorm.jpa.dto.ProductUpdateRequest;
 import io.goorm.jpa.entity.Product;
 import io.goorm.jpa.exception.ProductNotFoundException;
+import io.goorm.jpa.mapper.ProductMapper;
 import io.goorm.jpa.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
 
     /**
      * 상품 생성 (Create)
@@ -33,7 +35,7 @@ public class ProductService {
         );
 
         Product savedProduct = productRepository.save(product);
-        return ProductResponse.from(savedProduct);
+        return productMapper.toResponse(savedProduct);
     }
 
     /**
@@ -52,7 +54,7 @@ public class ProductService {
                 request.stockQuantity()
         );
 
-        return ProductResponse.from(product);
+        return productMapper.toResponse(product);
     }
 
     /**
