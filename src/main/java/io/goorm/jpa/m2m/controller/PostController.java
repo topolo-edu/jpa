@@ -1,7 +1,7 @@
 package io.goorm.jpa.m2m.controller;
 
+import io.goorm.jpa.m2m.dto.PostTagResponse;
 import io.goorm.jpa.m2m.entity.Post;
-import io.goorm.jpa.m2m.entity.PostTag;
 import io.goorm.jpa.m2m.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -24,10 +24,10 @@ public class PostController {
     }
 
     /**
-     * 2. 특정 게시글의 태그 목록 조회
+     * 2. 특정 게시글의 태그 목록 조회 (DTO 반환)
      */
     @GetMapping("/{postId}/tags")
-    public List<PostTag> getPostTags(@PathVariable Long postId) {
+    public List<PostTagResponse> getPostTags(@PathVariable Long postId) {
         return postService.getPostTags(postId);
     }
 

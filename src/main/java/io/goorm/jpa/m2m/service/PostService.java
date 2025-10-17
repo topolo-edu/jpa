@@ -1,5 +1,6 @@
 package io.goorm.jpa.m2m.service;
 
+import io.goorm.jpa.m2m.dto.PostTagResponse;
 import io.goorm.jpa.m2m.entity.Post;
 import io.goorm.jpa.m2m.entity.PostTag;
 import io.goorm.jpa.m2m.entity.Tag;
@@ -76,9 +77,14 @@ public class PostService {
     }
 
     /**
-     * 특정 게시글의 모든 태그 조회
+     * 특정 게시글의 모든 태그 조회 (DTO로 변환)
      */
-    public List<PostTag> getPostTags(Long postId) {
-        return postTagRepository.findByPostId(postId);
+    public List<PostTagResponse> getPostTags(Long postId) {
+        List<PostTag> postTags = postTagRepository.findByPostId(postId);
+
+        // Entity → DTO 변환
+        return postTags.stream()
+                .map(PostTagResponse::from)
+                .toList();
     }
 }
