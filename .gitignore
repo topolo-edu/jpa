@@ -36,3 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 /docs/
+/jpa-app.tar
+/jpa-app-docker.tar
