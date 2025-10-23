@@ -49,27 +49,44 @@ public class Enrollment extends BaseEntity {
 
     /**
      * 승인
-     * - Step 2: Course의 편의 메서드 사용으로 변경
+     * - 상태를 APPROVED로 변경
+     * - currentStudents 증가
      */
     public void approve() {
+        if (this.status == EnrollmentStatus.APPROVED) {
+            throw new IllegalStateException("이미 승인된 수강신청입니다.");
+        }
         this.status = EnrollmentStatus.APPROVED;
-        // currentStudents는 Course.addEnrollment()에서 자동으로 증가됨
+        this.course.increaseCurrentStudents();
     }
 
     /**
      * 거절
+     * - 상태를 REJECTED로 변경
+     * - currentStudents는 변경하지 않음
      */
     public void reject() {
+        if (this.status == EnrollmentStatus.REJECTED) {
+            throw new IllegalStateException("이미 거절된 수강신청입니다.");
+        }
         this.status = EnrollmentStatus.REJECTED;
     }
 
     /**
-     * 취소 (대기 상태만 가능)
+     * 취소
+     * - 대기 상태: soft delete만 수행
+     * - 승인 상태: soft delete + currentStudents 감소
      */
     public void cancel() {
-        if (this.status != EnrollmentStatus.PENDING) {
-            throw new IllegalStateException("대기 상태만 취소 가능합니다.");
+        if (this.status == EnrollmentStatus.REJECTED) {
+            throw new IllegalStateException("거절된 수강신청은 취소할 수 없습니다.");
         }
+
+        // 승인된 상태였다면 currentStudents 감소
+        if (this.status == EnrollmentStatus.APPROVED) {
+            this.course.decreaseCurrentStudents();
+        }
+
         this.delete();
     }
 

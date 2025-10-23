@@ -235,21 +235,21 @@
         <span class="text-blue-400">if</span> <span class="text-white">(action == BatchEnrollmentRequest.BatchAction.APPROVE) {</span>
             <span class="text-white">enrollment.approve();</span>
                 <span class="text-blue-400">return</span> <span class="text-white">EnrollmentProcessResult.builder()</span>
-                    <span class="text-white">.enrollmentId(enrollment.getId())</span>
+                    <span class="text-white">.enrollmentId(enrollment.getEnrollmentNo())</span>
                     <span class="text-white">.success(</span><span class="text-orange-400">true</span><span class="text-white">)</span>
-                    <span class="text-white">.message(BATCH_APPROVE_SUCCESS_MESSAGE)</span>
+                    <span class="text-white">.message(</span><span class="text-orange-400">"승인 완료"</span><span class="text-white">)</span>
                     <span class="text-white">.build();</span>
         <span class="text-white">} else {</span>
-            <span class="text-white">enrollment.reject(reason);</span>
+            <span class="text-white">enrollment.reject();</span>
             <span class="text-blue-400">return</span> <span class="text-white">EnrollmentProcessResult.builder()</span>
-                <span class="text-white">.enrollmentId(enrollment.getId())</span>
+                <span class="text-white">.enrollmentId(enrollment.getEnrollmentNo())</span>
                 <span class="text-white">.success(</span><span class="text-orange-400">true</span><span class="text-white">)</span>
-                <span class="text-white">.message(BATCH_REJECT_SUCCESS_MESSAGE)</span>
+                <span class="text-white">.message(</span><span class="text-orange-400">"거절 완료"</span><span class="text-white">)</span>
                 <span class="text-white">.build();</span>
         <span class="text-white">}</span>
     <span class="text-blue-400">} catch</span> <span class="text-white">(Exception e) {</span>
         <span class="text-blue-400">return</span> <span class="text-white">EnrollmentProcessResult.builder()</span>
-            <span class="text-white">.enrollmentId(enrollment.getId())</span>
+            <span class="text-white">.enrollmentId(enrollment.getEnrollmentNo())</span>
             <span class="text-white">.success(</span><span class="text-orange-400">false</span><span class="text-white">)</span>
             <span class="text-white">.error(e.getMessage())</span>
             <span class="text-white">.build();</span>

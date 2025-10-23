@@ -77,4 +77,18 @@ public class Project2Controller {
         model.addAttribute("pageTitle", "로깅 전략");
         return "project/step2/logging-strategy";
     }
+
+    @GetMapping("/antipatterns")
+    public String antipatterns(Model model) {
+        log.info("Step 2 antipatterns page accessed");
+        model.addAttribute("pageTitle", "안티패턴 개선");
+        return "project/step2/antipatterns";
+    }
+
+    @GetMapping("/practical-assignments")
+    public String practicalAssignments(Model model) {
+        log.info("Step 2 practical assignments page accessed");
+        model.addAttribute("pageTitle", "실습 과제 (UI 구현)");
+        return "project/step2/practical-assignments";
+    }
 }

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/step2-layout}">
+<head>
+    <title>Step 2 실습 과제</title>
+    <style>
+        .assignment-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            border-left: 6px solid;
+        }
+        .assignment-card.easy {
+            border-left-color: #10b981;
+        }
+        .assignment-card.medium {
+            border-left-color: #f59e0b;
+        }
+        .assignment-card.hard {
+            border-left-color: #ef4444;
+        }
+        .code-hint {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        .api-endpoint {
+            background: #eff6ff;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: monospace;
+        }
+        .checklist {
+            background: #f0fdf4;
+            border: 2px solid #22c55e;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .hint-box {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .difficulty-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .difficulty-badge.easy {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .difficulty-badge.medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .difficulty-badge.hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-bold mb-2">
+                        <i class="fas fa-tasks mr-3"></i>
+                        Step 2 실습 과제
+                    </h1>
+                    <p class="text-xl text-blue-100">
+                        API는 준비되어 있습니다. UI를 구현해보세요!
+                    </p>
+                </div>
+                <a href="/project/step2/overview" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition">
+                    <i class="fas fa-arrow-left mr-2"></i>목록으로
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+
+        <!-- 과제 개요 -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg shadow-lg p-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                    <i class="fas fa-info-circle text-blue-600 mr-3"></i>
+                    과제 개요
+                </h2>
+                <p class="text-gray-700 text-lg mb-4">
+                    Step 2에서는 <strong>배치 처리, 강의 통계, 커리큘럼/수강생 조회</strong> 등의
+                    <strong class="text-blue-600">API만 구현</strong>되어 있습니다.
+                </p>
+                <p class="text-gray-700 text-lg mb-4">
+                    이 API들을 활용하여 <strong class="text-purple-600">실제 사용 가능한 UI</strong>를 구현해보세요!
+                </p>
+
+                <div class="grid md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-green-600">5개</div>
+                        <div class="text-sm text-gray-600">구현 과제</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-blue-600">API 제공</div>
+                        <div class="text-sm text-gray-600">백엔드 완성</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-purple-600">UI 구현</div>
+                        <div class="text-sm text-gray-600">프론트엔드 실습</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 과제 1: 배치 처리 UI -->
+        <section class="mb-12">
+            <div class="assignment-card easy">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <span class="text-3xl mr-3">📋</span>
+                        과제 1. 수강신청 배치 처리 UI
+                    </h2>
+                    <span class="difficulty-badge easy">난이도: 하</span>
+                </div>
+
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                    <i class="fas fa-bullseye text-green-600 mr-2"></i>
+                    목표
+                </h3>
+                <p class="text-gray-700 mb-4">
+                    관리자가 여러 수강신청을 한 번에 승인/거절할 수 있는 UI를 구현합니다.
+                </p>
+
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                    <i class="fas fa-code text-blue-600 mr-2"></i>
+                    준비된 API
+                </h3>
+                <div class="api-endpoint">
+                    <div class="mb-2">
+                        <strong class="text-green-600">POST</strong> <code>/api/enrollments/batch</code>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <strong>Request Body:</strong>
+                        <pre class="mt-2 text-xs">{
+  "enrollmentIds": [1, 2, 3, 4, 5],
+  "action": "APPROVE",  // 또는 "REJECT"
+  "reason": "일괄 승인"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="api-endpoint">
+                    <div class="mb-2">
+                        <strong class="text-green-600">POST</strong> <code>/api/enrollments/batch/course/{courseNo}</code>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <strong>Query Parameters:</strong> action=APPROVE&reason=정원확인완료
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <h3 class="text-lg font-bold text-green-800 mb-3">
+                        <i class="fas fa-check-square mr-2"></i>
+                        구현 체크리스트
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>1단계:</strong> /enrollment/manage 페이지에 체크박스 추가
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>2단계:</strong> "일괄 승인" / "일괄 거절" 버튼 추가
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>3단계:</strong> 체크된 항목의 ID 수집 후 API 호출
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>4단계:</strong> 처리 결과 모달/알림으로 표시 (성공/실패 개수)
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>5단계:</strong> 실패한 항목과 사유 표시
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="hint-box">
+                    <h3 class="text-lg font-bold text-yellow-800 mb-3">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        구현 힌트
+                    </h3>
+
+                    <p class="text-sm text-gray-700 mb-2"><strong>HTML (체크박스 추가):</strong></p>
+                    <div class="code-hint">
+<span class="text-gray-400">&lt;!-- 테이블 헤더에 전체 선택 체크박스 --&gt;</span>
+<span class="text-white">&lt;th&gt;</span>
+    <span class="text-white">&lt;input type="checkbox" id="selectAll"&gt;</span>
+<span class="text-white">&lt;/th&gt;</span>
+
+<span class="text-gray-400">&lt;!-- 각 행에 개별 체크박스 --&gt;</span>
+<span class="text-white">&lt;td&gt;</span>
+    <span class="text-white">&lt;input type="checkbox" class="enrollment-checkbox" </span>
+           <span class="text-yellow-400">th:value="${enrollment.enrollmentNo}"</span><span class="text-white">&gt;</span>
+<span class="text-white">&lt;/td&gt;</span>
+                    </div>
+
+                    <p class="text-sm text-gray-700 mb-2 mt-4"><strong>JavaScript (배치 처리):</strong></p>
+                    <div class="code-hint">
+<span class="text-blue-400">function</span> <span class="text-green-400">batchApprove</span><span class="text-white">() {</span>
+    <span class="text-gray-400">// 1. 체크된 항목의 ID 수집</span>
+    <span class="text-blue-400">const</span> <span class="text-white">checkedIds = Array.from(</span>
+        <span class="text-white">document.querySelectorAll(</span><span class="text-orange-400">'.enrollment-checkbox:checked'</span><span class="text-white">)</span>
+    <span class="text-white">).map(cb => parseInt(cb.value));</span>
+
+    <span class="text-blue-400">if</span> <span class="text-white">(checkedIds.length === </span><span class="text-orange-400">0</span><span class="text-white">) {</span>
+        <span class="text-white">alert(</span><span class="text-orange-400">'선택된 항목이 없습니다'</span><span class="text-white">);</span>
+        <span class="text-blue-400">return</span><span class="text-white">;</span>
+    <span class="text-white">}</span>
+
+    <span class="text-gray-400">// 2. API 호출</span>
+    <span class="text-white">fetch(</span><span class="text-orange-400">'/api/enrollments/batch'</span><span class="text-white">, {</span>
+        <span class="text-white">method: </span><span class="text-orange-400">'POST'</span><span class="text-white">,</span>
+        <span class="text-white">headers: { </span><span class="text-orange-400">'Content-Type'</span><span class="text-white">: </span><span class="text-orange-400">'application/json'</span> <span class="text-white">},</span>
+        <span class="text-white">body: JSON.stringify({</span>
+            <span class="text-white">enrollmentIds: checkedIds,</span>
+            <span class="text-white">action: </span><span class="text-orange-400">'APPROVE'</span><span class="text-white">,</span>
+            <span class="text-white">reason: </span><span class="text-orange-400">'일괄 승인'</span>
+        <span class="text-white">})</span>
+    <span class="text-white">})</span>
+    <span class="text-white">.then(response => response.json())</span>
+    <span class="text-white">.then(data => {</span>
+        <span class="text-gray-400">// 3. 결과 표시</span>
+        <span class="text-white">showResultModal(data.data);</span>
+    <span class="text-white">});</span>
+<span class="text-white">}</span>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
+                    <p class="text-sm text-blue-800">
+                        <strong>💡 추가 도전:</strong>
+                        강의 상세 페이지에서 "이 강의의 대기 중인 신청 전체 승인" 버튼 추가해보세요!
+                        <code>/api/enrollments/batch/course/{courseNo}</code> API를 사용합니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 과제 2: 강의 커리큘럼 팝업 -->
+        <section class="mb-12">
+            <div class="assignment-card easy">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <span class="text-3xl mr-3">📚</span>
+                        과제 2. 강의 커리큘럼 팝업
+                    </h2>
+                    <span class="difficulty-badge easy">난이도: 하</span>
+                </div>
+
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                    <i class="fas fa-bullseye text-green-600 mr-2"></i>
+                    목표
+                </h3>
+                <p class="text-gray-700 mb-4">
+                    강의 상세 페이지에서 "커리큘럼 보기" 버튼을 클릭하면 커리큘럼 목록을 팝업으로 표시합니다.
+                </p>
+
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                    <i class="fas fa-code text-blue-600 mr-2"></i>
+                    준비된 API
+                </h3>
+                <div class="api-endpoint">
+                    <div class="mb-2">
+                        <strong class="text-blue-600">GET</strong> <code>/api/courses/{courseNo}/curriculums</code>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <strong>Response:</strong>
+                        <pre class="mt-2 text-xs">{
+  "success": true,
+  "data": [
+    {
+      "curriculumNo": 1,
+      "weekNumber": 1,
+      "title": "JPA 소개",
+      "description": "JPA 기본 개념",
+      "materials": "교재 1장",
+      "duration": 120
+    }
+  ]
+}</pre>
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <h3 class="text-lg font-bold text-green-800 mb-3">
+                        <i class="fas fa-check-square mr-2"></i>
+                        구현 체크리스트
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>1단계:</strong> 강의 상세 페이지에 "커리큘럼 보기" 버튼 추가
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>2단계:</strong> 버튼 클릭 시 API 호출하여 데이터 가져오기
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>3단계:</strong> 모달/팝업 UI 구현
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>4단계:</strong> 주차별로 정렬하여 표시
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>5단계:</strong> 소요시간(duration)을 "시간 분" 형식으로 표시
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="hint-box">
+                    <h3 class="text-lg font-bold text-yellow-800 mb-3">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        구현 힌트
+                    </h3>
+
+                    <p class="text-sm text-gray-700 mb-2"><strong>모달 HTML 템플릿:</strong></p>
+                    <div class="code-hint">
+<span class="text-gray-400">&lt;!-- 모달 HTML --&gt;</span>
+<span class="text-white">&lt;div id="curriculumModal" class="modal"&gt;</span>
+    <span class="text-white">&lt;div class="modal-content"&gt;</span>
+        <span class="text-white">&lt;span class="close"&gt;&times;&lt;/span&gt;</span>
+        <span class="text-white">&lt;h2&gt;커리큘럼&lt;/h2&gt;</span>
+        <span class="text-white">&lt;div id="curriculumList"&gt;</span>
+            <span class="text-gray-400">&lt;!-- 동적으로 생성 --&gt;</span>
+        <span class="text-white">&lt;/div&gt;</span>
+    <span class="text-white">&lt;/div&gt;</span>
+<span class="text-white">&lt;/div&gt;</span>
+                    </div>
+
+                    <p class="text-sm text-gray-700 mb-2 mt-4"><strong>JavaScript:</strong></p>
+                    <div class="code-hint">
+<span class="text-blue-400">function</span> <span class="text-green-400">showCurriculums</span><span class="text-white">(courseNo) {</span>
+    <span class="text-white">fetch(</span><span class="text-orange-400">`/api/courses/${courseNo}/curriculums`</span><span class="text-white">)</span>
+        <span class="text-white">.then(response => response.json())</span>
+        <span class="text-white">.then(data => {</span>
+            <span class="text-blue-400">const</span> <span class="text-white">curriculums = data.data;</span>
+            <span class="text-blue-400">const</span> <span class="text-white">html = curriculums.map(c => </span><span class="text-orange-400">`</span>
+                <span class="text-orange-400">&lt;div class="curriculum-item"&gt;</span>
+                    <span class="text-orange-400">&lt;h3&gt;${c.weekNumber}주차: ${c.title}&lt;/h3&gt;</span>
+                    <span class="text-orange-400">&lt;p&gt;${c.description}&lt;/p&gt;</span>
+                    <span class="text-orange-400">&lt;small&gt;소요시간: ${formatDuration(c.duration)}&lt;/small&gt;</span>
+                <span class="text-orange-400">&lt;/div&gt;</span>
+            <span class="text-orange-400">`</span><span class="text-white">).join(</span><span class="text-orange-400">''</span><span class="text-white">);</span>
+
+            <span class="text-white">document.getElementById(</span><span class="text-orange-400">'curriculumList'</span><span class="text-white">).innerHTML = html;</span>
+            <span class="text-white">document.getElementById(</span><span class="text-orange-400">'curriculumModal'</span><span class="text-white">).style.display = </span><span class="text-orange-400">'block'</span><span class="text-white">;</span>
+        <span class="text-white">});</span>
+<span class="text-white">}</span>
+
+<span class="text-blue-400">function</span> <span class="text-green-400">formatDuration</span><span class="text-white">(minutes) {</span>
+    <span class="text-blue-400">const</span> <span class="text-white">hours = Math.floor(minutes / </span><span class="text-orange-400">60</span><span class="text-white">);</span>
+    <span class="text-blue-400">const</span> <span class="text-white">mins = minutes % </span><span class="text-orange-400">60</span><span class="text-white">;</span>
+    <span class="text-blue-400">return</span> <span class="text-white">hours > </span><span class="text-orange-400">0</span> <span class="text-white">? </span><span class="text-orange-400">`${hours}시간 ${mins}분`</span> <span class="text-white">: </span><span class="text-orange-400">`${mins}분`</span><span class="text-white">;</span>
+<span class="text-white">}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 과제 3: 수강생 목록 팝업 -->
+        <section class="mb-12">
+            <div class="assignment-card medium">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <span class="text-3xl mr-3">👥</span>
+                        과제 3. 수강생 목록 팝업
+                    </h2>
+                    <span class="difficulty-badge medium">난이도: 중</span>
+                </div>
+
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                    <i class="fas fa-bullseye text-orange-600 mr-2"></i>
+                    목표
+                </h3>
+                <p class="text-gray-700 mb-4">
+                    강의 상세 페이지에서 "수강생 보기" 버튼을 클릭하면 승인된 수강생 목록을 표시합니다.
+                    <strong>추가로 각 수강생의 프로필 정보도 표시</strong>합니다.
+                </p>
+
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                    <i class="fas fa-code text-blue-600 mr-2"></i>
+                    준비된 API
+                </h3>
+                <div class="api-endpoint">
+                    <div class="mb-2">
+                        <strong class="text-blue-600">GET</strong> <code>/api/courses/{courseNo}/students</code>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <strong>Response:</strong>
+                        <pre class="mt-2 text-xs">{
+  "success": true,
+  "data": [
+    {
+      "userNo": 1,
+      "username": "student1",
+      "fullName": "홍길동",
+      "email": "hong@example.com",
+      "role": "STUDENT",
+      "profileImageUrl": "/images/profile/default.png"
+    }
+  ]
+}</pre>
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <h3 class="text-lg font-bold text-green-800 mb-3">
+                        <i class="fas fa-check-square mr-2"></i>
+                        구현 체크리스트
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>1단계:</strong> 강의 상세 페이지에 "수강생 보기 (N명)" 버튼 추가
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>2단계:</strong> API 호출하여 수강생 목록 가져오기
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>3단계:</strong> 프로필 이미지, 이름, 이메일을 카드 형식으로 표시
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>4단계:</strong> 수강생이 없으면 "아직 수강생이 없습니다" 표시
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>5단계:</strong> 반응형 그리드 레이아웃 구현 (2~4열)
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="hint-box">
+                    <h3 class="text-lg font-bold text-yellow-800 mb-3">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        구현 힌트
+                    </h3>
+
+                    <div class="code-hint">
+<span class="text-blue-400">function</span> <span class="text-green-400">showStudents</span><span class="text-white">(courseNo) {</span>
+    <span class="text-white">fetch(</span><span class="text-orange-400">`/api/courses/${courseNo}/students`</span><span class="text-white">)</span>
+        <span class="text-white">.then(response => response.json())</span>
+        <span class="text-white">.then(data => {</span>
+            <span class="text-blue-400">const</span> <span class="text-white">students = data.data;</span>
+
+            <span class="text-blue-400">if</span> <span class="text-white">(students.length === </span><span class="text-orange-400">0</span><span class="text-white">) {</span>
+                <span class="text-white">showEmptyState();</span>
+                <span class="text-blue-400">return</span><span class="text-white">;</span>
+            <span class="text-white">}</span>
+
+            <span class="text-blue-400">const</span> <span class="text-white">html = students.map(s => </span><span class="text-orange-400">`</span>
+                <span class="text-orange-400">&lt;div class="student-card"&gt;</span>
+                    <span class="text-orange-400">&lt;img src="${s.profileImageUrl}" alt="${s.fullName}"&gt;</span>
+                    <span class="text-orange-400">&lt;h4&gt;${s.fullName}&lt;/h4&gt;</span>
+                    <span class="text-orange-400">&lt;p&gt;${s.email}&lt;/p&gt;</span>
+                <span class="text-orange-400">&lt;/div&gt;</span>
+            <span class="text-orange-400">`</span><span class="text-white">).join(</span><span class="text-orange-400">''</span><span class="text-white">);</span>
+
+            <span class="text-white">showModal(html);</span>
+        <span class="text-white">});</span>
+<span class="text-white">}</span>
+                    </div>
+
+                    <p class="text-sm text-gray-700 mb-2 mt-4"><strong>CSS 힌트 (Grid Layout):</strong></p>
+                    <div class="code-hint">
+<span class="text-blue-400">.students-grid</span> <span class="text-white">{</span>
+    <span class="text-yellow-400">display</span><span class="text-white">: grid;</span>
+    <span class="text-yellow-400">grid-template-columns</span><span class="text-white">: repeat(</span><span class="text-blue-400">auto-fill</span><span class="text-white">, minmax(</span><span class="text-orange-400">200px</span><span class="text-white">, </span><span class="text-orange-400">1fr</span><span class="text-white">));</span>
+    <span class="text-yellow-400">gap</span><span class="text-white">: </span><span class="text-orange-400">1rem</span><span class="text-white">;</span>
+<span class="text-white">}</span>
+
+<span class="text-blue-400">.student-card</span> <span class="text-white">{</span>
+    <span class="text-yellow-400">text-align</span><span class="text-white">: center;</span>
+    <span class="text-yellow-400">padding</span><span class="text-white">: </span><span class="text-orange-400">1rem</span><span class="text-white">;</span>
+    <span class="text-yellow-400">border</span><span class="text-white">: </span><span class="text-orange-400">1px solid #ddd</span><span class="text-white">;</span>
+    <span class="text-yellow-400">border-radius</span><span class="text-white">: </span><span class="text-orange-400">8px</span><span class="text-white">;</span>
+<span class="text-white">}</span>
+
+<span class="text-blue-400">.student-card img</span> <span class="text-white">{</span>
+    <span class="text-yellow-400">width</span><span class="text-white">: </span><span class="text-orange-400">80px</span><span class="text-white">;</span>
+    <span class="text-yellow-400">height</span><span class="text-white">: </span><span class="text-orange-400">80px</span><span class="text-white">;</span>
+    <span class="text-yellow-400">border-radius</span><span class="text-white">: </span><span class="text-orange-400">50%</span><span class="text-white">;</span>
+    <span class="text-yellow-400">object-fit</span><span class="text-white">: cover;</span>
+<span class="text-white">}</span>
+                    </div>
+                </div>
+
+                <div class="bg-orange-50 border-l-4 border-orange-500 p-4 mt-4">
+                    <p class="text-sm text-orange-800">
+                        <strong>🎨 디자인 팁:</strong>
+                        승인된 수강생만 표시되므로, "승인 완료 ✓" 뱃지를 추가하면 좋습니다.
+                        대기/거절 상태는 표시되지 않으니 주의하세요!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 과제 4: 강의 통계 대시보드 -->
+        <section class="mb-12">
+            <div class="assignment-card hard">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <span class="text-3xl mr-3">📊</span>
+                        과제 4. 강의 통계 대시보드 (선택)
+                    </h2>
+                    <span class="difficulty-badge hard">난이도: 상</span>
+                </div>
+
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                    <i class="fas fa-bullseye text-red-600 mr-2"></i>
+                    목표
+                </h3>
+                <p class="text-gray-700 mb-4">
+                    관리자 대시보드에서 강의 통계를 시각화합니다.
+                    <strong>Chart.js 또는 다른 차트 라이브러리</strong>를 사용해보세요!
+                </p>
+
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                    <i class="fas fa-code text-blue-600 mr-2"></i>
+                    준비된 API
+                </h3>
+                <div class="api-endpoint mb-2">
+                    <div class="mb-2">
+                        <strong class="text-blue-600">GET</strong> <code>/api/dashboard/course-statistics</code>
+                    </div>
+                    <div class="text-sm text-gray-600">전체 강의 통계</div>
+                </div>
+
+                <div class="api-endpoint mb-2">
+                    <div class="mb-2">
+                        <strong class="text-blue-600">GET</strong> <code>/api/dashboard/course-statistics/details</code>
+                    </div>
+                    <div class="text-sm text-gray-600">강의별 상세 통계</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <div class="mb-2">
+                        <strong class="text-blue-600">GET</strong> <code>/api/dashboard/course-statistics/instructor</code>
+                    </div>
+                    <div class="text-sm text-gray-600">강사별 통계</div>
+                </div>
+
+                <div class="checklist">
+                    <h3 class="text-lg font-bold text-green-800 mb-3">
+                        <i class="fas fa-check-square mr-2"></i>
+                        구현 체크리스트
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>1단계:</strong> Chart.js 라이브러리 추가
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>2단계:</strong> 전체 통계 카드 표시 (총 강의 수, 총 수강생 등)
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>3단계:</strong> 강의별 수강률을 바 차트로 표시
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>4단계:</strong> 강사별 강의 수를 원 차트로 표시
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>5단계:</strong> 월별 개설 추이를 라인 차트로 표시
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="hint-box">
+                    <h3 class="text-lg font-bold text-yellow-800 mb-3">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        구현 힌트
+                    </h3>
+
+                    <p class="text-sm text-gray-700 mb-2"><strong>Chart.js 설치:</strong></p>
+                    <div class="code-hint">
+<span class="text-gray-400">&lt;!-- CDN으로 추가 --&gt;</span>
+<span class="text-white">&lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;</span>
+                    </div>
+
+                    <p class="text-sm text-gray-700 mb-2 mt-4"><strong>바 차트 예제:</strong></p>
+                    <div class="code-hint">
+<span class="text-white">fetch(</span><span class="text-orange-400">'/api/dashboard/course-statistics/details'</span><span class="text-white">)</span>
+    <span class="text-white">.then(response => response.json())</span>
+    <span class="text-white">.then(data => {</span>
+        <span class="text-blue-400">const</span> <span class="text-white">ctx = document.getElementById(</span><span class="text-orange-400">'courseChart'</span><span class="text-white">).getContext(</span><span class="text-orange-400">'2d'</span><span class="text-white">);</span>
+
+        <span class="text-blue-400">new</span> <span class="text-white">Chart(ctx, {</span>
+            <span class="text-white">type: </span><span class="text-orange-400">'bar'</span><span class="text-white">,</span>
+            <span class="text-white">data: {</span>
+                <span class="text-white">labels: data.data.map(c => c.courseName),</span>
+                <span class="text-white">datasets: [{</span>
+                    <span class="text-white">label: </span><span class="text-orange-400">'수강률 (%)'</span><span class="text-white">,</span>
+                    <span class="text-white">data: data.data.map(c => c.enrollmentRatio),</span>
+                    <span class="text-white">backgroundColor: </span><span class="text-orange-400">'rgba(59, 130, 246, 0.5)'</span>
+                <span class="text-white">}]</span>
+            <span class="text-white">}</span>
+        <span class="text-white">});</span>
+    <span class="text-white">});</span>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 mt-4">
+                    <p class="text-sm text-red-800">
+                        <strong>⚠️ 난이도 높음:</strong>
+                        이 과제는 Chart.js 사용법을 알아야 합니다.
+                        시간이 부족하면 간단한 테이블 형식으로 먼저 구현 후, 나중에 차트로 업그레이드하세요!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 과제 5: @EntityGraph 추가 적용 -->
+        <section class="mb-12">
+            <div class="assignment-card medium">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <span class="text-3xl mr-3">⚡</span>
+                        과제 5. @EntityGraph 추가 적용 (선택)
+                    </h2>
+                    <span class="difficulty-badge medium">난이도: 중</span>
+                </div>
+
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                    <i class="fas fa-bullseye text-orange-600 mr-2"></i>
+                    목표
+                </h3>
+                <p class="text-gray-700 mb-4">
+                    아직 JPQL Fetch Join을 사용하는 Repository 메서드를 <strong>@EntityGraph로 개선</strong>합니다.
+                </p>
+
+                <div class="checklist">
+                    <h3 class="text-lg font-bold text-green-800 mb-3">
+                        <i class="fas fa-check-square mr-2"></i>
+                        적용 대상
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>CourseRepository.findByInstructor()</strong> - instructor 포함
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>EnrollmentRepository.findByCourseAndStatusForUpdate()</strong> - course, student 포함
+                        </li>
+                        <li>
+                            <input type="checkbox" class="mr-2">
+                            <strong>CourseRepository.searchAvailableCourses()</strong> - instructor 포함
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="hint-box">
+                    <h3 class="text-lg font-bold text-yellow-800 mb-3">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        구현 힌트
+                    </h3>
+
+                    <p class="text-sm text-gray-700 mb-2"><strong>BEFORE (JPQL Fetch Join):</strong></p>
+                    <div class="code-hint">
+<span class="text-yellow-400">@Query</span><span class="text-white">(</span><span class="text-orange-400">"""</span>
+    <span class="text-orange-400">SELECT c FROM Course c</span>
+    <span class="text-orange-400">JOIN FETCH c.instructor</span>
+    <span class="text-orange-400">WHERE c.instructor = :instructor</span>
+    <span class="text-orange-400">"""</span><span class="text-white">)</span>
+<span class="text-white">Page&lt;Course&gt; findByInstructor(</span><span class="text-yellow-400">@Param</span><span class="text-white">(</span><span class="text-orange-400">"instructor"</span><span class="text-white">) User instructor, Pageable pageable);</span>
+                    </div>
+
+                    <p class="text-sm text-gray-700 mb-2 mt-4"><strong>AFTER (@EntityGraph):</strong></p>
+                    <div class="code-hint">
+<span class="text-yellow-400">@EntityGraph</span><span class="text-white">(attributePaths = {</span><span class="text-orange-400">"instructor"</span><span class="text-white">})</span>
+<span class="text-yellow-400">@Query</span><span class="text-white">(</span><span class="text-orange-400">"""</span>
+    <span class="text-orange-400">SELECT c FROM Course c</span>
+    <span class="text-orange-400">WHERE c.instructor = :instructor</span>
+    <span class="text-orange-400">"""</span><span class="text-white">)</span>
+<span class="text-white">Page&lt;Course&gt; findByInstructor(</span><span class="text-yellow-400">@Param</span><span class="text-white">(</span><span class="text-orange-400">"instructor"</span><span class="text-white">) User instructor, Pageable pageable);</span>
+                    </div>
+
+                    <p class="text-sm text-green-700 mt-3">
+                        ✅ <strong>장점:</strong> 코드가 더 간결하고, Fetch Join을 명시할 필요 없음!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 제출 방법 -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg shadow-lg p-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-paper-plane text-purple-600 mr-3"></i>
+                    제출 및 평가
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">제출 방법</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>
+                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                구현한 HTML 파일 경로 기록
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                작동 스크린샷 캡처
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                구현 중 어려웠던 점 정리
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                개선 아이디어 제안
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">평가 기준</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>
+                                <i class="fas fa-star text-yellow-500 mr-2"></i>
+                                <strong>기능 완성도:</strong> 요구사항 충족 여부
+                            </li>
+                            <li>
+                                <i class="fas fa-star text-yellow-500 mr-2"></i>
+                                <strong>UI/UX:</strong> 사용자 경험 고려
+                            </li>
+                            <li>
+                                <i class="fas fa-star text-yellow-500 mr-2"></i>
+                                <strong>에러 처리:</strong> 예외 상황 대응
+                            </li>
+                            <li>
+                                <i class="fas fa-star text-yellow-500 mr-2"></i>
+                                <strong>코드 품질:</strong> 가독성과 유지보수성
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-white rounded-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-trophy text-yellow-500 mr-2"></i>
+                        보너스 점수
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>✨ 반응형 디자인 구현 (+10점)</li>
+                        <li>✨ 애니메이션 효과 추가 (+10점)</li>
+                        <li>✨ 로딩 스피너 구현 (+10점)</li>
+                        <li>✨ 에러 상황별 친절한 메시지 (+10점)</li>
+                        <li>✨ 접근성 (Accessibility) 고려 (+20점)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 참고 자료 -->
+        <section>
+            <div class="bg-blue-50 rounded-lg shadow-lg p-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-book text-blue-600 mr-3"></i>
+                    참고 자료
+                </h2>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-lg p-4">
+                        <h3 class="font-bold text-gray-800 mb-2">JavaScript Fetch API</h3>
+                        <p class="text-sm text-gray-600 mb-2">API 호출 방법</p>
+                        <a href="https://developer.mozilla.org/ko/docs/Web/API/Fetch_API"
+                           class="text-blue-600 hover:underline text-sm" target="_blank">
+                            MDN 문서 →
+                        </a>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-4">
+                        <h3 class="font-bold text-gray-800 mb-2">Chart.js</h3>
+                        <p class="text-sm text-gray-600 mb-2">차트 라이브러리</p>
+                        <a href="https://www.chartjs.org/docs/latest/"
+                           class="text-blue-600 hover:underline text-sm" target="_blank">
+                            공식 문서 →
+                        </a>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-4">
+                        <h3 class="font-bold text-gray-800 mb-2">Bootstrap Modal</h3>
+                        <p class="text-sm text-gray-600 mb-2">모달 팝업</p>
+                        <a href="https://getbootstrap.com/docs/5.3/components/modal/"
+                           class="text-blue-600 hover:underline text-sm" target="_blank">
+                            Bootstrap 문서 →
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                    <p class="text-sm text-yellow-800">
+                        <strong>💡 팁:</strong>
+                        과제를 진행하면서 막히는 부분이 있다면,
+                        기존에 구현된 <code>/course/list</code>, <code>/enrollment/manage</code> 페이지를 참고하세요!
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

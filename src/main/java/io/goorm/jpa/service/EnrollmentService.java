@@ -55,19 +55,26 @@ public class EnrollmentService {
     @Transactional
     public EnrollmentResponse enroll(EnrollmentCreateRequest request) {
         log.info("수강신청 시작: courseNo={}", request.courseNo());
-        
+
         User currentUser = getCurrentUser();
         log.info("현재 사용자: userNo={}, username={}", currentUser.getUserNo(), currentUser.getUsername());
 
         // Step 2: 비관적 락으로 강의 조회 (동시성 제어)
-        Course course = courseRepository.findAvailableByIdForEnrollment(request.courseNo());
-        
+        Course course = courseRepository.findByIdForEnrollment(request.courseNo());
+
         if (course == null) {
-            log.error("강의를 찾을 수 없거나 정원 초과: courseNo={}", request.courseNo());
+            log.error("강의를 찾을 수 없음: courseNo={}", request.courseNo());
             throw new BusinessException(ErrorCode.COURSE_NOT_FOUND);
         }
 
-        log.info("강의 정보: courseNo={}, name={}, currentStudents={}, maxStudents={}", 
+        // 정원 확인 (명확한 에러 메시지)
+        if (!course.isAvailable()) {
+            log.error("강의 정원 초과: courseNo={}, currentStudents={}, maxStudents={}",
+                    course.getCourseNo(), course.getCurrentStudents(), course.getMaxStudents());
+            throw new BusinessException(ErrorCode.COURSE_FULL);
+        }
+
+        log.info("강의 정보: courseNo={}, name={}, currentStudents={}, maxStudents={}",
                 course.getCourseNo(), course.getName(), course.getCurrentStudents(), course.getMaxStudents());
 
         // Step 2: 비관적 락으로 중복 수강신청 확인
@@ -84,7 +91,7 @@ public class EnrollmentService {
 
         // Step 2: Course의 편의 메서드로 양방향 관계 설정
         course.addEnrollment(enrollment);
-        
+
         Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
         log.info("Enrollment created: enrollmentNo={}, student={}, course={}",
                 savedEnrollment.getEnrollmentNo(), currentUser.getUsername(), course.getName());
@@ -202,13 +209,15 @@ public class EnrollmentService {
 
     /**
      * 수강신청 일괄 승인/거절
+     * - 각 수강신청을 독립적인 트랜잭션으로 처리
+     * - 일부 실패해도 나머지는 정상 처리
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public BatchEnrollmentResponse batchProcessEnrollments(BatchEnrollmentRequest request) {
         log.info("배치 처리 시작: action={}, count={}", request.getAction(), request.getEnrollmentCount());
-        
+
         User currentUser = getCurrentUser();
-        
+
         // 관리자 또는 강사 권한 확인
         if (!currentUser.isAdmin() && !currentUser.isInstructor()) {
             throw new BusinessException(ErrorCode.USER_FORBIDDEN);
@@ -219,53 +228,68 @@ public class EnrollmentService {
             throw new BusinessException(ErrorCode.ENROLLMENT_NOT_FOUND);
         }
 
-        // 비관적 락으로 수강신청 일괄 조회
+        // 수강신청 ID 존재 여부 확인 (readOnly 트랜잭션에서)
         List<Enrollment> enrollments = enrollmentRepository.findByIdsForBatchUpdate(request.getEnrollmentIds());
-        
+
         if (enrollments.isEmpty()) {
             log.warn("처리 가능한 수강신청이 없음: requested={}, found=0", request.getEnrollmentCount());
             throw new BusinessException(ErrorCode.ENROLLMENT_BATCH_NO_ITEMS);
         }
 
-        // 개별 처리 결과 수집
-        List<BatchEnrollmentResponse.EnrollmentProcessResult> results = new ArrayList<>();
-        
-        for (Enrollment enrollment : enrollments) {
-            try {
-                processEnrollment(enrollment, request.getAction(), request.getReason());
-                
-                results.add(BatchEnrollmentResponse.EnrollmentProcessResult.builder()
-                    .enrollmentId(enrollment.getEnrollmentNo())
-                    .success(true)
-                    .message(request.isApprove() ? BATCH_APPROVE_SUCCESS_MESSAGE : BATCH_REJECT_SUCCESS_MESSAGE)
-                    .build());
-                    
-                log.info("수강신청 처리 완료: enrollmentNo={}, action={}", 
-                    enrollment.getEnrollmentNo(), request.getAction());
-                    
-            } catch (Exception e) {
-                results.add(BatchEnrollmentResponse.EnrollmentProcessResult.builder()
-                    .enrollmentId(enrollment.getEnrollmentNo())
-                    .success(false)
-                    .error(e.getMessage())
-                    .build());
-                    
-                log.error("수강신청 처리 실패: enrollmentNo={}, error={}", 
-                    enrollment.getEnrollmentNo(), e.getMessage());
-            }
-        }
+        // 개별 처리 결과 수집 (각각 독립적인 트랜잭션)
+        List<BatchEnrollmentResponse.EnrollmentProcessResult> results = enrollments.stream()
+                .map(enrollment -> processEnrollmentInNewTransaction(
+                        enrollment.getEnrollmentNo(),
+                        request.getAction(),
+                        request.getReason()))
+                .collect(Collectors.toList());
 
         // 응답 생성
         BatchEnrollmentResponse response = BatchEnrollmentResponse.success(
-            request.getAction(), 
-            request.getEnrollmentCount(), 
-            results
+                request.getAction(),
+                request.getEnrollmentCount(),
+                results
         );
 
-        log.info("배치 처리 완료: total={}, success={}, failure={}", 
-            response.getTotalCount(), response.getSuccessCount(), response.getFailureCount());
+        log.info("배치 처리 완료: total={}, success={}, failure={}",
+                response.getTotalCount(), response.getSuccessCount(), response.getFailureCount());
 
         return response;
+    }
+
+    /**
+     * 개별 수강신청을 새로운 트랜잭션에서 처리
+     * - Propagation.REQUIRES_NEW: 독립적인 트랜잭션 생성
+     * - 하나 실패해도 다른 트랜잭션에 영향 없음
+     */
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+    public BatchEnrollmentResponse.EnrollmentProcessResult processEnrollmentInNewTransaction(
+            Long enrollmentNo, BatchEnrollmentRequest.BatchAction action, String reason) {
+        try {
+            // 비관적 락으로 수강신청 조회
+            Enrollment enrollment = enrollmentRepository.findByIdForUpdate(enrollmentNo)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.ENROLLMENT_NOT_FOUND));
+
+            processEnrollment(enrollment, action, reason);
+
+            log.info("수강신청 처리 완료: enrollmentNo={}, action={}", enrollmentNo, action);
+
+            return BatchEnrollmentResponse.EnrollmentProcessResult.builder()
+                    .enrollmentId(enrollmentNo)
+                    .success(true)
+                    .message(action == BatchEnrollmentRequest.BatchAction.APPROVE ?
+                            BATCH_APPROVE_SUCCESS_MESSAGE : BATCH_REJECT_SUCCESS_MESSAGE)
+                    .build();
+
+        } catch (Exception e) {
+            log.error("수강신청 처리 실패: enrollmentNo={}, error={}", enrollmentNo, e.getMessage());
+
+            return BatchEnrollmentResponse.EnrollmentProcessResult.builder()
+                    .enrollmentId(enrollmentNo)
+                    .success(false)
+                    .error(e.getMessage())
+                    .build();
+        }
     }
 
     /**

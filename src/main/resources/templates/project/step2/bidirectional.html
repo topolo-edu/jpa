@@ -125,13 +125,19 @@
                     <div class="code-block">
 <span class="text-yellow-400">@Entity</span>
 <span class="text-blue-400">public class</span> <span class="text-green-400">Curriculum</span> <span class="text-white">{</span>
-    
-    <span class="text-gray-400">// 기존 필드들...</span>
-    
+
+    <span class="text-gray-400">// 기본 필드들</span>
+    <span class="text-blue-400">private</span> <span class="text-white">Integer weekNumber;</span>      <span class="text-gray-400">// 주차</span>
+    <span class="text-blue-400">private</span> <span class="text-white">String title;</span>             <span class="text-gray-400">// 제목</span>
+    <span class="text-blue-400">private</span> <span class="text-white">String description;</span>       <span class="text-gray-400">// 설명</span>
+    <span class="text-blue-400">private</span> <span class="text-white">String materials;</span>         <span class="text-gray-400">// 준비물</span>
+    <span class="text-blue-400">private</span> <span class="text-white">Integer duration;</span>         <span class="text-gray-400">// 소요 시간 (분)</span>
+
+    <span class="text-gray-400">// Course와의 양방향 관계</span>
     <span class="text-yellow-400">@ManyToOne</span><span class="text-white">(fetch = FetchType.LAZY)</span>
     <span class="text-yellow-400">@JoinColumn</span><span class="text-white">(name = </span><span class="text-orange-400">"course_no"</span><span class="text-white">, nullable = </span><span class="text-orange-400">false</span><span class="text-white">)</span>
     <span class="text-blue-400">private</span> <span class="text-white">Course course;</span>
-    
+
     <span class="text-gray-400">// 양방향 관계를 위한 setter</span>
     <span class="text-blue-400">public void</span> <span class="text-green-400">setCourse</span><span class="text-white">(Course course) {</span>
         <span class="text-white">this.course = course;</span>

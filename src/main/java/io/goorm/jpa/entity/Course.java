@@ -135,22 +135,22 @@ public class Course extends BaseEntity {
     
     /**
      * 수강신청 추가 (편의 메서드)
+     * - 양방향 관계 설정만 담당
+     * - currentStudents는 승인 시점에 증가
      */
     public void addEnrollment(Enrollment enrollment) {
         enrollments.add(enrollment);
         enrollment.setCourse(this);
-        this.currentStudents++;
     }
     
     /**
      * 수강신청 제거 (편의 메서드)
+     * - 양방향 관계 해제만 담당
+     * - currentStudents는 상태에 따라 별도 감소 필요
      */
     public void removeEnrollment(Enrollment enrollment) {
         enrollments.remove(enrollment);
         enrollment.setCourse(null);
-        if (this.currentStudents > 0) {
-            this.currentStudents--;
-        }
     }
     
     /**
