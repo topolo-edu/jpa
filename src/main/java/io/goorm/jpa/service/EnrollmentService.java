@@ -11,9 +11,9 @@ import io.goorm.jpa.enums.EnrollmentStatus;
 import io.goorm.jpa.exception.BusinessException;
 import io.goorm.jpa.exception.ErrorCode;
 import io.goorm.jpa.repository.CourseRepository;
-import io.goorm.jpa.repository.EnrollmentQueryRepository;
 import io.goorm.jpa.repository.EnrollmentRepository;
 import io.goorm.jpa.repository.UserRepository;
+import io.goorm.jpa.repository.querydsl.EnrollmentQueryRepository;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -83,14 +83,11 @@ public class EnrollmentService {
             throw new BusinessException(ErrorCode.ENROLLMENT_ALREADY_EXISTS);
         }
 
-        // Step 2: 양방향 관계 + 편의 메서드 사용
+        // Enrollment 생성 (단방향 관계)
         Enrollment enrollment = Enrollment.builder()
                 .student(currentUser)
                 .course(course)
                 .build();
-
-        // Step 2: Course의 편의 메서드로 양방향 관계 설정
-        course.addEnrollment(enrollment);
 
         Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
         log.info("Enrollment created: enrollmentNo={}, student={}, course={}",
@@ -125,8 +122,6 @@ public class EnrollmentService {
             throw new BusinessException(ErrorCode.ENROLLMENT_CANNOT_CANCEL);
         }
 
-        // Step 2: Course의 편의 메서드로 양방향 관계 해제
-        enrollment.getCourse().removeEnrollment(enrollment);
         enrollment.cancel();
         log.info("Enrollment cancelled: enrollmentNo={}", enrollmentNo);
     }

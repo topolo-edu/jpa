@@ -1,4 +1,4 @@
-package io.goorm.jpa.repository;
+package io.goorm.jpa.repository.querydsl;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -9,7 +9,6 @@ import io.goorm.jpa.dto.enrollment.AdminEnrollmentSearchCondition;
 import io.goorm.jpa.entity.Enrollment;
 import io.goorm.jpa.entity.User;
 import io.goorm.jpa.enums.EnrollmentStatus;
-import io.goorm.jpa.repository.querydsl.CommonQueryConditions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

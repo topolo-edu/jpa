@@ -11,7 +11,7 @@
         <!-- Page Title -->
         <div class="text-center mb-12">
             <h1 class="text-5xl font-bold text-gray-900 mb-4">Step 2 변경사항</h1>
-            <p class="text-xl text-gray-600">양방향 관계 + Cascade + 편의 메소드</p>
+            <p class="text-xl text-gray-600">양방향 관계 (Aggregate 내부) + 동시성 제어 + 배치 처리</p>
             <p class="text-sm text-gray-500 mt-4">수정/추가된 엔드포인트</p>
         </div>
 
@@ -62,7 +62,7 @@
             <h2 class="text-3xl font-bold text-gray-900 mb-6">✨ 신규 엔드포인트</h2>
 
             <div class="mb-6">
-                <p class="text-gray-700">Step 2에서 양방향 관계를 통해 새롭게 추가된 엔드포인트입니다.</p>
+                <p class="text-gray-700">Step 2에서 새롭게 추가된 엔드포인트입니다.</p>
             </div>
 
             <!-- Batch Processing -->
@@ -85,13 +85,19 @@
                                 <td class="px-4 py-3 text-sm"><span class="px-2 py-1 bg-green-100 text-green-800 rounded font-mono text-xs">POST</span></td>
                                 <td class="px-4 py-3 text-sm font-mono text-gray-900">/api/enrollments/batch</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">여러 수강신청 일괄 승인/거절</td>
-                                <td class="px-4 py-3 text-xs"><span class="px-2 py-1 bg-red-100 text-red-800 rounded">비관적 락</span></td>
+                                <td class="px-4 py-3 text-xs">
+                                    <span class="px-2 py-1 bg-red-100 text-red-800 rounded">비관적 락</span>
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded ml-1">독립 트랜잭션</span>
+                                </td>
                             </tr>
                             <tr class="hover:bg-gray-50 bg-green-50">
                                 <td class="px-4 py-3 text-sm"><span class="px-2 py-1 bg-green-100 text-green-800 rounded font-mono text-xs">POST</span></td>
                                 <td class="px-4 py-3 text-sm font-mono text-gray-900">/api/enrollments/batch/course/{courseNo}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">강의별 수강신청 일괄 처리</td>
-                                <td class="px-4 py-3 text-xs"><span class="px-2 py-1 bg-red-100 text-red-800 rounded">비관적 락</span></td>
+                                <td class="px-4 py-3 text-xs">
+                                    <span class="px-2 py-1 bg-red-100 text-red-800 rounded">비관적 락</span>
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded ml-1">독립 트랜잭션</span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -118,34 +124,7 @@
                                 <td class="px-4 py-3 text-sm"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded font-mono text-xs">GET</span></td>
                                 <td class="px-4 py-3 text-sm font-mono text-gray-900">/api/courses/{courseNo}/curriculums</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">강의별 커리큘럼 목록 조회</td>
-                                <td class="px-4 py-3 text-xs"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded">@OneToMany</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Course Students -->
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                    <span class="text-2xl mr-2">👥</span> 수강생 목록 (Course ↔ Enrollment 양방향)
-                </h3>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full border border-gray-200">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Method</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Endpoint</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">기능</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">적용 기술</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            <tr class="hover:bg-gray-50 bg-green-50">
-                                <td class="px-4 py-3 text-sm"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded font-mono text-xs">GET</span></td>
-                                <td class="px-4 py-3 text-sm font-mono text-gray-900">/api/courses/{courseNo}/students</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">수강생 목록 조회 (승인된 학생)</td>
-                                <td class="px-4 py-3 text-xs"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded">@OneToMany</span></td>
+                                <td class="px-4 py-3 text-xs"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded">@OneToMany + Cascade</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -159,77 +138,73 @@
 
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">1. 양방향 관계 추가</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">1. 양방향 관계 (Aggregate 내부)</h3>
                     <ul class="space-y-2 text-sm text-gray-700">
                         <li class="flex items-start">
-                            <span class="text-blue-600 mr-2">•</span>
-                            <span><code class="bg-white px-2 py-1 rounded text-xs">Course ↔ Curriculum</code>: @OneToMany 양방향</span>
+                            <span class="text-blue-600 mr-2">✅</span>
+                            <span><code class="bg-white px-2 py-1 rounded text-xs">Course ↔ Curriculum</code>: 양방향 + Cascade + orphanRemoval</span>
                         </li>
                         <li class="flex items-start">
-                            <span class="text-blue-600 mr-2">•</span>
-                            <span><code class="bg-white px-2 py-1 rounded text-xs">Course ↔ Enrollment</code>: @OneToMany 양방향</span>
+                            <span class="text-orange-600 mr-2">⚡</span>
+                            <span><code class="bg-white px-2 py-1 rounded text-xs">Enrollment → User/Course</code>: 단방향 (Repository로 역방향 조회)</span>
                         </li>
                         <li class="flex items-start">
-                            <span class="text-blue-600 mr-2">•</span>
-                            <span><code class="bg-white px-2 py-1 rounded text-xs">User ↔ Enrollment</code>: @OneToMany 양방향</span>
+                            <span class="text-gray-600 mr-2">•</span>
+                            <span>Aggregate 패턴 기반 설계 원칙 적용</span>
                         </li>
                     </ul>
                 </div>
 
                 <div class="bg-green-50 border-2 border-green-200 rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">2. 편의 메소드</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">2. 편의 메서드 (Course ↔ Curriculum)</h3>
                     <ul class="space-y-2 text-sm text-gray-700">
                         <li class="flex items-start">
                             <span class="text-green-600 mr-2">•</span>
-                            <span><code class="bg-white px-2 py-1 rounded text-xs">course.addCurriculum(curriculum)</code></span>
+                            <span><code class="bg-white px-2 py-1 rounded text-xs">course.addCurriculum()</code></span>
                         </li>
                         <li class="flex items-start">
                             <span class="text-green-600 mr-2">•</span>
-                            <span><code class="bg-white px-2 py-1 rounded text-xs">course.addEnrollment(enrollment)</code></span>
+                            <span><code class="bg-white px-2 py-1 rounded text-xs">course.removeCurriculum()</code></span>
                         </li>
                         <li class="flex items-start">
                             <span class="text-green-600 mr-2">•</span>
-                            <span><code class="bg-white px-2 py-1 rounded text-xs">user.addEnrollment(enrollment)</code></span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-green-600 mr-2">•</span>
-                            <span>양쪽 참조를 자동으로 설정하여 일관성 유지</span>
+                            <span>양방향 관계 동기화 자동 처리</span>
                         </li>
                     </ul>
                 </div>
 
                 <div class="bg-purple-50 border-2 border-purple-200 rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">3. Cascade 적용</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">3. Cascade (Aggregate 내부만)</h3>
                     <ul class="space-y-2 text-sm text-gray-700">
                         <li class="flex items-start">
                             <span class="text-purple-600 mr-2">•</span>
-                            <span><code class="bg-white px-2 py-1 rounded text-xs">CascadeType.ALL</code>: 모든 연산 자동 전파</span>
+                            <span><code class="bg-white px-2 py-1 rounded text-xs">CascadeType.ALL</code>: Course → Curriculum만 적용</span>
                         </li>
                         <li class="flex items-start">
                             <span class="text-purple-600 mr-2">•</span>
-                            <span>Course 삭제 시 Curriculum, Enrollment 자동 삭제</span>
+                            <span>Course 삭제 시 Curriculum 자동 삭제</span>
                         </li>
                         <li class="flex items-start">
-                            <span class="text-purple-600 mr-2">•</span>
-                            <span>User 삭제 시 Enrollment 자동 삭제</span>
+                            <span class="text-red-600 mr-2">⚠️</span>
+                            <span>Enrollment는 독립 생명주기 (Cascade 없음)</span>
                         </li>
                     </ul>
                 </div>
 
                 <div class="bg-orange-50 border-2 border-orange-200 rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">4. 고아 객체 제거</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">4. 동시성 제어 + 배치 처리</h3>
                     <ul class="space-y-2 text-sm text-gray-700">
                         <li class="flex items-start">
                             <span class="text-orange-600 mr-2">•</span>
-                            <span><code class="bg-white px-2 py-1 rounded text-xs">orphanRemoval = true</code></span>
+                            <span>비관적 락 (Pessimistic Lock) 적용</span>
                         </li>
                         <li class="flex items-start">
                             <span class="text-orange-600 mr-2">•</span>
-                            <span>컬렉션에서 제거된 엔티티 자동 삭제</span>
+                            <span>독립 트랜잭션 (REQUIRES_NEW) 배치 처리</span>
                         </li>
                         <li class="flex items-start">
                             <span class="text-orange-600 mr-2">•</span>
-                            <span>예: <code class="bg-white px-2 py-1 rounded text-xs">course.removeCurriculum(curriculum)</code> → DB에서 삭제</span>
+                            <span>부분 성공/실패 지원</span>
                         </li>
                     </ul>
                 </div>
@@ -245,8 +220,8 @@
                     <div class="text-sm text-gray-600">신규 배치 API</div>
                 </div>
                 <div class="bg-white rounded-lg p-6 text-center border-2 border-blue-200">
-                    <div class="text-4xl font-bold text-blue-600 mb-2">3</div>
-                    <div class="text-sm text-gray-600">양방향 관계</div>
+                    <div class="text-4xl font-bold text-blue-600 mb-2">1</div>
+                    <div class="text-sm text-gray-600">양방향 관계 (Aggregate)</div>
                 </div>
                 <div class="bg-white rounded-lg p-6 text-center border-2 border-purple-200">
                     <div class="text-4xl font-bold text-purple-600 mb-2">@EntityGraph</div>

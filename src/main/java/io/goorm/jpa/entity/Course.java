@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Entity
 @Getter
-@ToString(exclude = {"instructor", "curriculums", "enrollments"})
+@ToString(exclude = {"instructor", "curriculums"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "course")
@@ -44,12 +44,9 @@ public class Course extends BaseEntity {
     private User instructor;
 
     // ===== Step 2: 양방향 관계 추가 =====
-    
+
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Curriculum> curriculums = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Enrollment> enrollments = new ArrayList<>();
 
     @Builder
     public Course(String name, String description, Integer maxStudents, User instructor) {
@@ -129,49 +126,5 @@ public class Course extends BaseEntity {
      */
     public boolean hasCurriculums() {
         return !curriculums.isEmpty();
-    }
-    
-    // ===== Enrollment 관련 편의 메서드 =====
-    
-    /**
-     * 수강신청 추가 (편의 메서드)
-     * - 양방향 관계 설정만 담당
-     * - currentStudents는 승인 시점에 증가
-     */
-    public void addEnrollment(Enrollment enrollment) {
-        enrollments.add(enrollment);
-        enrollment.setCourse(this);
-    }
-    
-    /**
-     * 수강신청 제거 (편의 메서드)
-     * - 양방향 관계 해제만 담당
-     * - currentStudents는 상태에 따라 별도 감소 필요
-     */
-    public void removeEnrollment(Enrollment enrollment) {
-        enrollments.remove(enrollment);
-        enrollment.setCourse(null);
-    }
-    
-    /**
-     * 수강생 목록 조회
-     */
-    public List<Enrollment> getEnrollments() {
-        return new ArrayList<>(enrollments);
-    }
-    
-    /**
-     * 수강생 수 조회 (실제 등록된 수강생 수)
-     */
-    public int getActualStudentCount() {
-        return enrollments.size();
-    }
-    
-    /**
-     * 특정 학생의 수강신청 여부 확인
-     */
-    public boolean isEnrolledBy(User student) {
-        return enrollments.stream()
-                .anyMatch(enrollment -> enrollment.getStudent().equals(student));
     }
 }

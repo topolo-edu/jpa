@@ -12,7 +12,7 @@ import java.util.List;
 @Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(exclude = {"enrollments"})
+@ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class User extends BaseEntity {
 
@@ -46,11 +46,6 @@ public class User extends BaseEntity {
 
     @Column(length = 500)
     private String bio;
-
-    // ===== Step 2: 양방향 관계 추가 =====
-    
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Enrollment> enrollments = new ArrayList<>();
 
     @Builder
     public User(String username, String password, String email, String fullName, UserRole role, String phone, String address, String bio) {
@@ -98,54 +93,5 @@ public class User extends BaseEntity {
 
     public boolean isStudent() {
         return this.role == UserRole.STUDENT;
-    }
-
-    // ===== Step 2: Enrollment 관련 편의 메서드 =====
-    
-    /**
-     * 수강신청 추가 (편의 메서드)
-     */
-    public void addEnrollment(Enrollment enrollment) {
-        enrollments.add(enrollment);
-        enrollment.setStudent(this);
-    }
-    
-    /**
-     * 수강신청 제거 (편의 메서드)
-     */
-    public void removeEnrollment(Enrollment enrollment) {
-        enrollments.remove(enrollment);
-        enrollment.setStudent(null);
-    }
-    
-    /**
-     * 수강신청 목록 조회
-     */
-    public List<Enrollment> getEnrollments() {
-        return new ArrayList<>(enrollments);
-    }
-    
-    /**
-     * 수강신청 개수 조회
-     */
-    public int getEnrollmentCount() {
-        return enrollments.size();
-    }
-    
-    /**
-     * 특정 강의 수강신청 여부 확인
-     */
-    public boolean isEnrolledIn(Course course) {
-        return enrollments.stream()
-                .anyMatch(enrollment -> enrollment.getCourse().equals(course));
-    }
-    
-    /**
-     * 승인된 수강신청만 조회
-     */
-    public List<Enrollment> getApprovedEnrollments() {
-        return enrollments.stream()
-                .filter(Enrollment::isApproved)
-                .toList();
     }
 }

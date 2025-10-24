@@ -94,13 +94,17 @@
             <!-- BEFORE -->
             <div class="mb-8">
                 <h3 class="text-2xl font-bold text-red-600 mb-4">
-                    ❌ BEFORE (문제가 있는 코드)
+                    ❌ BEFORE (문제가 있던 코드 - 안티패턴 예시)
                 </h3>
 
-                <h4 class="text-xl font-semibold text-gray-700 mb-3">Course.java</h4>
+                <h4 class="text-xl font-semibold text-gray-700 mb-3">
+                    Course.java
+                    <span class="text-sm text-gray-500">(현재는 Enrollment 양방향 제거로 이 메서드도 삭제됨)</span>
+                </h4>
                 <div class="code-block before-block">
 <span class="text-yellow-400">/**
  * 수강신청 추가 (편의 메서드)
+ * 안티패턴 예시: Course ↔ Enrollment 양방향이었을 때
  */</span>
 <span class="text-blue-400">public void</span> <span class="text-green-400">addEnrollment</span><span class="text-white">(Enrollment enrollment) {</span>
     <span class="text-white">enrollments.add(enrollment);</span>
@@ -141,19 +145,14 @@
                     ✅ AFTER (개선된 코드)
                 </h3>
 
-                <h4 class="text-xl font-semibold text-gray-700 mb-3">Course.java</h4>
-                <div class="code-block after-block">
-<span class="text-yellow-400">/**
- * 수강신청 추가 (편의 메서드)
- * - 양방향 관계 설정만 담당
- * - currentStudents는 승인 시점에 증가
- */</span>
-<span class="text-blue-400">public void</span> <span class="text-green-400">addEnrollment</span><span class="text-white">(Enrollment enrollment) {</span>
-    <span class="text-white">enrollments.add(enrollment);</span>
-    <span class="text-white">enrollment.setCourse(</span><span class="text-orange-400">this</span><span class="text-white">);</span>
-    <span class="text-gray-400">// currentStudents 증가 제거</span>  <span class="text-green-400">// ✅ 개선: 양방향 관계만 설정</span>
-<span class="text-white">}</span>
-                </div>
+                <h4 class="text-xl font-semibold text-gray-700 mb-3">
+                    Enrollment.java
+                    <span class="text-sm text-gray-500">(현재 코드: Course/User ↔ Enrollment 양방향 제거, 편의 메서드도 삭제)</span>
+                </h4>
+                <p class="text-gray-600 mb-3 text-sm">
+                    Course ↔ Enrollment 양방향은 Aggregate 외부 관계이므로 단방향으로 변경.
+                    역방향 조회는 Repository 메서드 사용. 편의 메서드 불필요.
+                </p>
 
                 <h4 class="text-xl font-semibold text-gray-700 mb-3 mt-6">Enrollment.java</h4>
                 <div class="code-block after-block">
