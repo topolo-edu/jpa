@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/step2-layout}">
+<head>
+    <title>OAuth 2.0 소셜 로그인</title>
+    <style>
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .highlight {
+            background: #fef3c7;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .flow-step {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg">
+            <div class="container mx-auto px-6 py-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold mb-2">
+                            <i class="fas fa-shield-alt mr-3"></i>
+                            OAuth 2.0 소셜 로그인
+                        </h1>
+                        <p class="text-xl text-blue-100">
+                            "Google로 로그인" 버튼 만들기
+                        </p>
+                    </div>
+                    <a href="/project/step2/overview" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition">
+                        <i class="fas fa-arrow-left mr-2"></i>목록으로
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 py-12">
+
+            <!-- OAuth 2.0 개요 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-question-circle text-blue-600 mr-3"></i>
+                    OAuth 2.0이란?
+                </h2>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-6">
+                    <h3 class="text-xl font-bold text-blue-800 mb-3">쉽게 이해하기</h3>
+                    <p class="text-blue-900 text-lg mb-3">
+                        <strong>"Google로 로그인"</strong> 버튼을 본 적 있나요?
+                    </p>
+                    <p class="text-blue-700">
+                        우리 사이트에 회원가입하지 않고, <strong>Google 계정으로 로그인</strong>할 수 있게 해주는 기술이 바로 <strong>OAuth 2.0</strong>입니다.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">비유로 이해하기</h3>
+                    <div class="space-y-4 text-gray-700">
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3 flex-shrink-0">1</div>
+                            <p>
+                                <strong>기존 방식:</strong> 우리 사이트에 이메일/비밀번호 등록 → 우리가 비밀번호 관리
+                            </p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-green-100 text-green-700 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3 flex-shrink-0">2</div>
+                            <p>
+                                <strong>OAuth 방식:</strong> "Google로 로그인" 클릭 → Google이 인증 → 우리는 결과만 받음
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                    <h3 class="text-lg font-bold text-green-800 mb-3">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        왜 사용하나요?
+                    </h3>
+                    <ul class="space-y-2 text-green-700">
+                        <li><i class="fas fa-check mr-2"></i><strong>사용자 편의:</strong> 비밀번호 기억 안 해도 됨</li>
+                        <li><i class="fas fa-check mr-2"></i><strong>회원가입 장벽 낮춤:</strong> 클릭 한 번에 로그인</li>
+                        <li><i class="fas fa-check mr-2"></i><strong>보안:</strong> 우리가 비밀번호 관리 안 해도 됨</li>
+                        <li><i class="fas fa-check mr-2"></i><strong>신뢰:</strong> Google/GitHub이 이미 검증한 사용자</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- OAuth 2.0 Flow -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-sitemap text-purple-600 mr-3"></i>
+                    OAuth 2.0 동작 과정
+                </h2>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">간단하게 정리하면</h3>
+                    <div class="space-y-3 text-gray-700">
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">1</div>
+                            <p><strong>사용자:</strong> "Google로 로그인" 버튼 클릭</p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-green-100 text-green-700 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">2</div>
+                            <p><strong>우리 서버:</strong> 사용자를 Google 로그인 페이지로 이동</p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-purple-100 text-purple-700 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">3</div>
+                            <p><strong>사용자:</strong> Google에 로그인하고 "앱 접근 허용" 클릭</p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-orange-100 text-orange-700 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">4</div>
+                            <p><strong>Google:</strong> 인증 코드를 우리 서버로 전달</p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-red-100 text-red-700 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">5</div>
+                            <p><strong>우리 서버:</strong> 인증 코드로 사용자 정보 요청</p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-indigo-100 text-indigo-700 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">6</div>
+                            <p><strong>Google:</strong> 사용자 정보 (이메일, 이름 등) 전달</p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-pink-100 text-pink-700 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">7</div>
+                            <p><strong>우리 서버:</strong> DB에 사용자 저장/조회 후 로그인 완료</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+                    <h3 class="text-lg font-bold text-blue-800 mb-3">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        핵심 포인트
+                    </h3>
+                    <p class="text-blue-700 mb-3">
+                        <strong>사용자의 비밀번호를 우리가 받지 않는다!</strong>
+                    </p>
+                    <p class="text-blue-600 text-sm">
+                        Google이 인증을 대신 해주고, "이 사람 맞아요"라는 확인만 받는 방식입니다.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 현재 프로젝트에 적용하기 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-puzzle-piece text-green-600 mr-3"></i>
+                    현재 프로젝트에 OAuth 추가하기
+                </h2>
+
+                <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg mb-6">
+                    <h3 class="text-xl font-bold text-green-800 mb-3">우리 프로젝트의 현재 상태</h3>
+                    <p class="text-green-700 mb-2">
+                        <strong>Form 로그인 (세션 기반)</strong> - 이메일/비밀번호로 로그인
+                    </p>
+                    <p class="text-green-600 text-sm">
+                        → 여기에 <strong>"Google로 로그인"</strong> 기능을 추가하는 것
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">로그인 방식 비교</h3>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-gray-700">항목</th>
+                                    <th class="px-4 py-3 text-left text-gray-700">현재 (Form 로그인)</th>
+                                    <th class="px-4 py-3 text-left text-gray-700">추가 후 (+ OAuth)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr>
+                                    <td class="px-4 py-3 font-semibold">이메일 로그인</td>
+                                    <td class="px-4 py-3">✅ 사용 중</td>
+                                    <td class="px-4 py-3">✅ 그대로 유지</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-semibold">Google 로그인</td>
+                                    <td class="px-4 py-3">❌ 없음</td>
+                                    <td class="px-4 py-3">✅ 추가</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-semibold">GitHub 로그인</td>
+                                    <td class="px-4 py-3">❌ 없음</td>
+                                    <td class="px-4 py-3">✅ 추가 가능</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-semibold">세션 관리</td>
+                                    <td class="px-4 py-3">Spring Session</td>
+                                    <td class="px-4 py-3">Spring Session (동일)</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-semibold">인증 필터</td>
+                                    <td class="px-4 py-3">UsernamePasswordAuthenticationFilter</td>
+                                    <td class="px-4 py-3">+ OAuth2LoginAuthenticationFilter</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                    <h3 class="text-lg font-bold text-blue-800 mb-3">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        핵심 아이디어
+                    </h3>
+                    <ul class="space-y-2 text-blue-700">
+                        <li><i class="fas fa-arrow-right mr-2"></i>OAuth는 <strong>"로그인 방법 하나 더 추가"</strong>일 뿐</li>
+                        <li><i class="fas fa-arrow-right mr-2"></i>로그인 성공 후 <strong>세션 생성</strong> (기존과 동일)</li>
+                        <li><i class="fas fa-arrow-right mr-2"></i>이후 모든 요청은 <strong>세션 쿠키로 인증</strong></li>
+                        <li><i class="fas fa-arrow-right mr-2"></i>기존 Form 로그인 코드 <strong>변경 없음</strong></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 구현 가이드 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-code text-purple-600 mr-3"></i>
+                    Spring Boot OAuth 2.0 구현 가이드
+                </h2>
+
+                <!-- Step 1: Google OAuth 앱 등록 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">Step 1</span>
+                        Google Cloud Console에서 OAuth 앱 등록
+                    </h3>
+
+                    <ol class="space-y-3 text-gray-700">
+                        <li><strong>1.</strong> <a href="https://console.cloud.google.com" target="_blank" class="text-blue-600 underline">Google Cloud Console</a> 접속</li>
+                        <li><strong>2.</strong> 프로젝트 생성 또는 선택</li>
+                        <li><strong>3.</strong> "API 및 서비스" → "사용자 인증 정보" 이동</li>
+                        <li><strong>4.</strong> "사용자 인증 정보 만들기" → "OAuth 클라이언트 ID" 선택</li>
+                        <li><strong>5.</strong> 애플리케이션 유형: <code>웹 애플리케이션</code></li>
+                        <li><strong>6.</strong> 승인된 리디렉션 URI 추가:
+                            <ul class="ml-6 mt-2 space-y-1 text-sm">
+                                <li>• 로컬 개발: <code>http://localhost:8080/login/oauth2/code/google</code></li>
+                                <li>• 실제 배포: <code>https://yourdomain.com/login/oauth2/code/google</code></li>
+                            </ul>
+                        </li>
+                        <li><strong>7.</strong> Client ID와 Client Secret 복사</li>
+                    </ol>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg mt-4">
+                        <p class="text-yellow-700 text-sm">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            <strong>중요:</strong> 로컬 개발과 배포 환경은 별도의 OAuth 클라이언트를 만들거나,
+                            하나의 클라이언트에 여러 리디렉션 URI를 등록할 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 2: 의존성 추가 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">Step 2</span>
+                        의존성 추가
+                    </h3>
+                    <div class="code-block text-sm">// build.gradle
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    // 기존 Security 의존성은 그대로 유지
+}</div>
+                    <p class="text-gray-600 mt-4 text-sm">
+                        <strong>이게 전부!</strong> 한 줄만 추가하면 됩니다.
+                    </p>
+                </div>
+
+                <!-- Step 3: application.yml 설정 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">Step 3</span>
+                        application.yml 설정
+                    </h3>
+                    <div class="code-block text-sm">spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: YOUR_GOOGLE_CLIENT_ID
+            client-secret: YOUR_GOOGLE_CLIENT_SECRET
+            scope:
+              - profile
+              - email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
+          # GitHub 추가 예시
+          github:
+            client-id: YOUR_GITHUB_CLIENT_ID
+            client-secret: YOUR_GITHUB_CLIENT_SECRET
+            scope:
+              - user:email
+              - read:user</div>
+                </div>
+
+                <!-- Step 4: User 엔티티 수정 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">Step 4</span>
+                        User 엔티티에 OAuth 필드 추가
+                    </h3>
+                    <div class="code-block text-sm">@Entity
+@Table(name = "users")
+public class User extends BaseEntity {
+    // 기존 필드들...
+
+    // OAuth 관련 필드 추가
+    @Column(name = "provider")
+    private String provider;  // "google", "github", "local"
+
+    @Column(name = "provider_id")
+    private String providerId;  // OAuth provider의 사용자 ID
+
+    // password는 OAuth 사용자의 경우 null 가능
+    @Column(name = "password")
+    private String password;  // nullable for OAuth users
+}</div>
+                </div>
+
+                <!-- Step 5: OAuth2UserService 구현 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">Step 5</span>
+                        CustomOAuth2UserService 구현
+                    </h3>
+                    <div class="code-block text-sm">@Service
+@RequiredArgsConstructor
+public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+
+    private final UserRepository userRepository;
+
+    @Override
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) {
+        OAuth2User oauth2User = super.loadUser(userRequest);
+
+        // Provider 정보
+        String provider = userRequest.getClientRegistration().getRegistrationId();
+        String providerId = oauth2User.getAttribute("sub"); // Google의 경우 "sub"
+        String email = oauth2User.getAttribute("email");
+        String name = oauth2User.getAttribute("name");
+
+        // DB에서 사용자 찾기 또는 생성
+        User user = userRepository.findByProviderAndProviderId(provider, providerId)
+            .orElseGet(() -> {
+                User newUser = User.builder()
+                    .email(email)
+                    .name(name)
+                    .provider(provider)
+                    .providerId(providerId)
+                    .role(Role.STUDENT)
+                    .build();
+                return userRepository.save(newUser);
+            });
+
+        // OAuth2User 반환 (User 정보 포함)
+        return new CustomOAuth2User(user, oauth2User.getAttributes());
+    }
+}</div>
+                </div>
+
+                <!-- Step 6: SecurityConfig 수정 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">Step 6</span>
+                        SecurityConfig에 OAuth 설정 추가
+                    </h3>
+                    <div class="code-block text-sm">@Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
+public class SecurityConfig {
+
+    private final CustomOAuth2UserService oauth2UserService;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            // 기존 Form 로그인 설정 (그대로 유지)
+            .formLogin(form -> form
+                .loginPage("/auth/login")
+                .defaultSuccessUrl("/", true)
+                .permitAll()
+            )
+            // OAuth2 로그인 추가
+            .oauth2Login(oauth2 -> oauth2
+                .loginPage("/auth/login")  // Form 로그인과 동일한 페이지
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(oauth2UserService)
+                )
+                .defaultSuccessUrl("/", true)  // 로그인 성공 후 홈으로
+            );
+
+        return http.build();
+    }
+}</div>
+                    <p class="text-gray-600 mt-4 text-sm">
+                        <strong>핵심:</strong> 기존 Form 로그인 설정은 그대로 두고, <code>.oauth2Login()</code>만 추가
+                    </p>
+                </div>
+
+                <!-- Step 7: 로그인 페이지에 버튼 추가 -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">Step 7</span>
+                        로그인 페이지에 OAuth 버튼 추가
+                    </h3>
+                    <div class="code-block text-sm">&lt;!-- /auth/login 페이지 (Thymeleaf) --&gt;
+&lt;form th:action="@{/login}" method="post"&gt;
+  &lt;!-- 기존 이메일/비밀번호 입력 --&gt;
+  &lt;input type="email" name="username" placeholder="이메일"&gt;
+  &lt;input type="password" name="password" placeholder="비밀번호"&gt;
+  &lt;button type="submit"&gt;로그인&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;!-- 소셜 로그인 버튼 추가 --&gt;
+&lt;div class="social-login"&gt;
+  &lt;p&gt;또는&lt;/p&gt;
+  &lt;a href="/oauth2/authorization/google" class="google-btn"&gt;
+    &lt;i class="fab fa-google"&gt;&lt;/i&gt; Google로 로그인
+  &lt;/a&gt;
+  &lt;a href="/oauth2/authorization/github" class="github-btn"&gt;
+    &lt;i class="fab fa-github"&gt;&lt;/i&gt; GitHub로 로그인
+  &lt;/a&gt;
+&lt;/div&gt;</div>
+                    <p class="text-gray-600 mt-4 text-sm">
+                        <strong>핵심:</strong> <code>/oauth2/authorization/{provider}</code>는 Spring Security가 자동으로 제공하는 엔드포인트
+                    </p>
+                </div>
+            </section>
+
+            <!-- 테스트 방법 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-vial text-green-600 mr-3"></i>
+                    테스트 방법
+                </h2>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">로컬 테스트</h3>
+                    <ol class="space-y-3 text-gray-700">
+                        <li><strong>1.</strong> 서버 실행: <code>./gradlew bootRun</code></li>
+                        <li><strong>2.</strong> 브라우저에서 <code>http://localhost:8080/auth/login</code> 접속</li>
+                        <li><strong>3.</strong> "Google로 로그인" 버튼 클릭</li>
+                        <li><strong>4.</strong> Google 계정으로 로그인 및 권한 허용</li>
+                        <li><strong>5.</strong> 자동으로 홈 페이지(<code>/</code>)로 리다이렉트</li>
+                        <li><strong>6.</strong> 로그인 상태 확인 (세션 생성됨)</li>
+                    </ol>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+                    <h3 class="text-lg font-bold text-blue-800 mb-3">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        동작 확인
+                    </h3>
+                    <p class="text-blue-700 mb-2">
+                        로그인 후 다음 정보를 확인할 수 있습니다:
+                    </p>
+                    <ul class="space-y-2 text-blue-600 text-sm">
+                        <li>✅ DB에 사용자 저장 확인 (provider = "google")</li>
+                        <li>✅ 세션 쿠키 생성 확인 (브라우저 개발자 도구)</li>
+                        <li>✅ 로그인 후 페이지 접근 가능 확인</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 장단점 및 주의사항 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-balance-scale text-orange-600 mr-3"></i>
+                    OAuth 도입 장단점
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-green-800 mb-4">
+                            <i class="fas fa-thumbs-up mr-2"></i>장점
+                        </h3>
+                        <ul class="space-y-3 text-green-700">
+                            <li><i class="fas fa-check mr-2"></i>사용자 편의성 (비밀번호 기억 불필요)</li>
+                            <li><i class="fas fa-check mr-2"></i>회원가입 장벽 낮춤</li>
+                            <li><i class="fas fa-check mr-2"></i>이메일 인증 생략 가능</li>
+                            <li><i class="fas fa-check mr-2"></i>신뢰할 수 있는 제3자 인증</li>
+                            <li><i class="fas fa-check mr-2"></i>비밀번호 관리 부담 감소</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-red-800 mb-4">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>주의사항
+                        </h3>
+                        <ul class="space-y-3 text-red-700">
+                            <li><i class="fas fa-times mr-2"></i>외부 서비스 의존성 증가</li>
+                            <li><i class="fas fa-times mr-2"></i>Provider 장애 시 로그인 불가</li>
+                            <li><i class="fas fa-times mr-2"></i>사용자 계정 통합 복잡도</li>
+                            <li><i class="fas fa-times mr-2"></i>개인정보 제3자 제공 동의 필요</li>
+                            <li><i class="fas fa-times mr-2"></i>이메일 중복 처리 필요</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg">
+                    <h3 class="text-lg font-bold text-yellow-800 mb-3">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        이메일 중복 처리 전략
+                    </h3>
+                    <p class="text-yellow-700 mb-3">
+                        같은 이메일로 로컬 가입 + Google 로그인 시 충돌 가능
+                    </p>
+                    <div class="code-block text-sm">// 전략 1: 계정 통합 (권장)
+if (existingUser != null && existingUser.getProvider().equals("local")) {
+    // 기존 로컬 계정에 OAuth 연동
+    existingUser.setProvider("google");
+    existingUser.setProviderId(providerId);
+}
+
+// 전략 2: 별도 계정 유지
+// provider + email을 복합키로 사용</div>
+                </div>
+            </section>
+
+            <!-- 결론 -->
+            <section class="mb-12">
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg shadow-lg p-8">
+                    <h2 class="text-3xl font-bold mb-6">
+                        <i class="fas fa-lightbulb mr-3"></i>
+                        정리
+                    </h2>
+                    <div class="space-y-4 text-lg">
+                        <p><strong>OAuth란?</strong> "Google로 로그인" 같은 소셜 로그인 기능</p>
+                        <p><strong>우리 프로젝트:</strong> 기존 Form 로그인 유지 + OAuth 추가 (선택지 늘리기)</p>
+                        <p><strong>구현 시간:</strong> 약 1시간 (Google 앱 등록 + 의존성 + 설정 + 버튼 추가)</p>
+                        <p><strong>변경 사항:</strong> User 엔티티에 필드 2개 추가, SecurityConfig 한 줄 추가, 버튼 추가</p>
+                        <hr class="border-white border-opacity-30 my-4">
+                        <p class="text-blue-100 text-base">
+                            💡 <strong>실무 팁:</strong> 대부분의 서비스는 Google, Kakao, Naver 중 2~3개 제공<br>
+                            첫 구현은 Google 추천 (설정이 가장 간단)
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</body>
+</html>

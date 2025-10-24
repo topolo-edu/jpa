@@ -14,6 +14,7 @@
             font-size: 0.9rem;
             line-height: 1.6;
             overflow-x: auto;
+            white-space: pre-wrap;
         }
         .highlight {
             background: #fef3c7;
@@ -43,9 +44,10 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="gradient-bg text-white shadow-lg">
+<body>
+    <div layout:fragment="content">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg">
         <div class="container mx-auto px-6 py-8">
             <div class="flex items-center justify-between">
                 <div>

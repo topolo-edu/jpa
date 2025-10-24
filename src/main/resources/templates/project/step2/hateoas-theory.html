@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/step2-layout}">
+<head>
+    <title>HATEOAS 이론과 실습 가이드</title>
+    <style>
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .highlight {
+            background: #fef3c7;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .maturity-level {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg">
+            <div class="container mx-auto px-6 py-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold mb-2">
+                            <i class="fas fa-link mr-3"></i>
+                            HATEOAS 이론과 실습 가이드
+                        </h1>
+                        <p class="text-xl text-blue-100">
+                            RESTful API 성숙도 모델 Level 3 - Hypermedia Controls
+                        </p>
+                    </div>
+                    <a href="/project/step2/overview" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition">
+                        <i class="fas fa-arrow-left mr-2"></i>목록으로
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 py-12">
+
+            <!-- HATEOAS란? -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-question-circle text-blue-600 mr-3"></i>
+                    HATEOAS란?
+                </h2>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-6">
+                    <h3 class="text-xl font-bold text-blue-800 mb-3">정의</h3>
+                    <p class="text-blue-900 mb-3">
+                        <strong>HATEOAS</strong> (Hypermedia As The Engine Of Application State)
+                    </p>
+                    <p class="text-blue-700">
+                        REST API 응답에 <strong>다음에 할 수 있는 행동(링크)</strong>을 함께 제공하여,
+                        클라이언트가 서버의 상태 변화를 하이퍼미디어 링크로 탐색할 수 있게 하는 원칙
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">핵심 개념</h3>
+                    <ul class="space-y-3 text-gray-700">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i><strong>자기 발견(Self-Descriptive):</strong> API 응답만 보고 다음 행동을 알 수 있음</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i><strong>느슨한 결합(Loose Coupling):</strong> 클라이언트가 URL을 하드코딩하지 않음</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i><strong>진화 가능성(Evolvability):</strong> API 구조 변경 시 클라이언트 수정 최소화</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Richardson 성숙도 모델 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-layer-group text-purple-600 mr-3"></i>
+                    Richardson RESTful 성숙도 모델
+                </h2>
+
+                <div class="space-y-4">
+                    <!-- Level 0 -->
+                    <div class="maturity-level border-l-4 border-gray-400">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-bold text-gray-800">Level 0: The Swamp of POX</h3>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">기초</span>
+                        </div>
+                        <p class="text-gray-600 mb-3">단일 엔드포인트, HTTP POST만 사용 (RPC 스타일)</p>
+                        <div class="code-block text-sm">POST /api
+{
+  "method": "getCourse",
+  "params": { "id": 1 }
+}</div>
+                    </div>
+
+                    <!-- Level 1 -->
+                    <div class="maturity-level border-l-4 border-blue-400">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-bold text-gray-800">Level 1: Resources</h3>
+                            <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">리소스 분리</span>
+                        </div>
+                        <p class="text-gray-600 mb-3">리소스별로 엔드포인트 분리</p>
+                        <div class="code-block text-sm">POST /api/courses/1
+GET /api/courses/1</div>
+                    </div>
+
+                    <!-- Level 2 -->
+                    <div class="maturity-level border-l-4 border-green-400">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-bold text-gray-800">Level 2: HTTP Verbs</h3>
+                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">현재 우리 수준</span>
+                        </div>
+                        <p class="text-gray-600 mb-3">HTTP 메서드와 상태 코드 활용</p>
+                        <div class="code-block text-sm">GET    /api/courses/1        → 200 OK
+POST   /api/courses          → 201 Created
+PUT    /api/courses/1        → 200 OK
+DELETE /api/courses/1        → 204 No Content</div>
+                    </div>
+
+                    <!-- Level 3 -->
+                    <div class="maturity-level border-l-4 border-purple-500">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-bold text-gray-800">Level 3: HATEOAS</h3>
+                            <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-bold">목표</span>
+                        </div>
+                        <p class="text-gray-600 mb-3">하이퍼미디어 링크로 다음 행동 제공</p>
+                        <div class="code-block text-sm">GET /api/courses/1
+
+{
+  "courseNo": 1,
+  "name": "JPA 마스터",
+  "_links": {
+    "self": { "href": "/api/courses/1" },
+    "curriculums": { "href": "/api/courses/1/curriculums" },
+    "students": { "href": "/api/courses/1/students" },
+    "enroll": { "href": "/api/enrollments", "method": "POST" }
+  }
+}</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HATEOAS의 장단점 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-balance-scale text-orange-600 mr-3"></i>
+                    HATEOAS의 장단점
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- 장점 -->
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-green-800 mb-4">
+                            <i class="fas fa-thumbs-up mr-2"></i>장점
+                        </h3>
+                        <ul class="space-y-3 text-green-700">
+                            <li><i class="fas fa-check mr-2"></i>클라이언트가 URL 하드코딩 불필요</li>
+                            <li><i class="fas fa-check mr-2"></i>API 구조 변경 시 유연함</li>
+                            <li><i class="fas fa-check mr-2"></i>서버가 가능한 행동을 명시</li>
+                            <li><i class="fas fa-check mr-2"></i>API 탐색 가능성 향상</li>
+                            <li><i class="fas fa-check mr-2"></i>상태에 따른 동적 링크 제공</li>
+                        </ul>
+                    </div>
+
+                    <!-- 단점 -->
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-red-800 mb-4">
+                            <i class="fas fa-thumbs-down mr-2"></i>단점
+                        </h3>
+                        <ul class="space-y-3 text-red-700">
+                            <li><i class="fas fa-times mr-2"></i>응답 크기 증가 (링크 정보)</li>
+                            <li><i class="fas fa-times mr-2"></i>클라이언트 구현 복잡도 증가</li>
+                            <li><i class="fas fa-times mr-2"></i>실무에서 잘 사용하지 않음</li>
+                            <li><i class="fas fa-times mr-2"></i>학습 곡선 존재</li>
+                            <li><i class="fas fa-times mr-2"></i>표준화 부족</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Before/After 비교 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-code-compare text-blue-600 mr-3"></i>
+                    현재 API vs HATEOAS 적용 API
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Before -->
+                    <div>
+                        <h3 class="text-xl font-bold text-red-700 mb-4">
+                            <i class="fas fa-times-circle mr-2"></i>Before: 현재 API (Level 2)
+                        </h3>
+                        <div class="code-block text-sm">{
+  "courseNo": 1,
+  "name": "JPA 마스터",
+  "description": "JPA 핵심 개념",
+  "instructor": {
+    "userNo": 10,
+    "name": "김영수"
+  },
+  "maxStudents": 30,
+  "status": "ACTIVE"
+}</div>
+                        <div class="bg-red-50 border border-red-200 rounded p-4 mt-4">
+                            <p class="text-red-700 text-sm">
+                                <strong>문제:</strong> 클라이언트는 다음 행동을 위해 URL을 하드코딩해야 함<br>
+                                → <code>/api/courses/1/curriculums</code><br>
+                                → <code>/api/courses/1/students</code>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- After -->
+                    <div>
+                        <h3 class="text-xl font-bold text-green-700 mb-4">
+                            <i class="fas fa-check-circle mr-2"></i>After: HATEOAS 적용 (Level 3)
+                        </h3>
+                        <div class="code-block text-sm">{
+  "courseNo": 1,
+  "name": "JPA 마스터",
+  "description": "JPA 핵심 개념",
+  "instructor": {
+    "userNo": 10,
+    "name": "김영수"
+  },
+  "maxStudents": 30,
+  "status": "ACTIVE",
+  "_links": {
+    "self": {
+      "href": "/api/courses/1"
+    },
+    "curriculums": {
+      "href": "/api/courses/1/curriculums"
+    },
+    "students": {
+      "href": "/api/courses/1/students"
+    },
+    "update": {
+      "href": "/api/courses/1",
+      "method": "PUT"
+    },
+    "delete": {
+      "href": "/api/courses/1",
+      "method": "DELETE"
+    },
+    "enroll": {
+      "href": "/api/enrollments",
+      "method": "POST"
+    }
+  }
+}</div>
+                        <div class="bg-green-50 border border-green-200 rounded p-4 mt-4">
+                            <p class="text-green-700 text-sm">
+                                <strong>개선:</strong> 클라이언트는 링크를 따라가기만 하면 됨<br>
+                                → URL 변경 시에도 클라이언트 수정 불필요
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 구현 가이드 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-hammer text-purple-600 mr-3"></i>
+                    Spring HATEOAS 구현 가이드
+                </h2>
+
+                <!-- 1. 의존성 추가 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">Step 1</span>
+                        의존성 추가
+                    </h3>
+                    <div class="code-block text-sm">// build.gradle
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+}</div>
+                </div>
+
+                <!-- 2. DTO 수정 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">Step 2</span>
+                        DTO에 링크 추가
+                    </h3>
+                    <p class="text-gray-600 mb-4">RepresentationModel 상속 또는 EntityModel 사용</p>
+
+                    <h4 class="font-bold text-gray-700 mb-2">방법 1: RepresentationModel 상속</h4>
+                    <div class="code-block text-sm mb-4">import org.springframework.hateoas.RepresentationModel;
+
+public class CourseResponse extends RepresentationModel&lt;CourseResponse&gt; {
+    private Long courseNo;
+    private String name;
+    private String description;
+    private InstructorDto instructor;
+    private Integer maxStudents;
+    private String status;
+
+    // getters/setters
+}</div>
+
+                    <h4 class="font-bold text-gray-700 mb-2">방법 2: EntityModel 사용 (더 간단)</h4>
+                    <div class="code-block text-sm">import org.springframework.hateoas.EntityModel;
+
+// 기존 DTO 그대로 사용
+public record CourseDto(
+    Long courseNo,
+    String name,
+    String description,
+    InstructorDto instructor,
+    Integer maxStudents,
+    String status
+) {}</div>
+                </div>
+
+                <!-- 3. Controller 수정 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">Step 3</span>
+                        Controller에서 링크 추가
+                    </h3>
+
+                    <h4 class="font-bold text-gray-700 mb-2">현재 코드</h4>
+                    <div class="code-block text-sm mb-4">@GetMapping("/{courseNo}")
+public ResponseEntity&lt;CourseDto&gt; getCourse(@PathVariable Long courseNo) {
+    CourseDto course = courseService.getCourse(courseNo);
+    return ResponseEntity.ok(course);
+}</div>
+
+                    <h4 class="font-bold text-gray-700 mb-2">HATEOAS 적용 (EntityModel 사용)</h4>
+                    <div class="code-block text-sm">import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+@GetMapping("/{courseNo}")
+public ResponseEntity&lt;EntityModel&lt;CourseDto&gt;&gt; getCourse(@PathVariable Long courseNo) {
+    CourseDto course = courseService.getCourse(courseNo);
+
+    // EntityModel로 감싸고 링크 추가
+    EntityModel&lt;CourseDto&gt; resource = EntityModel.of(course);
+
+    // self 링크
+    resource.add(linkTo(methodOn(CourseController.class)
+        .getCourse(courseNo))
+        .withSelfRel());
+
+    // 커리큘럼 링크
+    resource.add(linkTo(methodOn(CourseController.class)
+        .getCurriculums(courseNo))
+        .withRel("curriculums"));
+
+    // 수강생 링크
+    resource.add(linkTo(methodOn(CourseController.class)
+        .getStudents(courseNo))
+        .withRel("students"));
+
+    // 수정 링크
+    resource.add(linkTo(methodOn(CourseController.class)
+        .updateCourse(courseNo, null))
+        .withRel("update"));
+
+    // 삭제 링크
+    resource.add(linkTo(methodOn(CourseController.class)
+        .deleteCourse(courseNo))
+        .withRel("delete"));
+
+    return ResponseEntity.ok(resource);
+}</div>
+                </div>
+
+                <!-- 4. 조건부 링크 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">Step 4</span>
+                        상태에 따른 조건부 링크
+                    </h3>
+                    <p class="text-gray-600 mb-4">현재 강의 상태에 따라 가능한 행동만 링크 제공</p>
+                    <div class="code-block text-sm">// ACTIVE 상태일 때만 수강신청 링크 제공
+if (course.getStatus().equals("ACTIVE")) {
+    resource.add(linkTo(methodOn(EnrollmentController.class)
+        .enroll(null))
+        .withRel("enroll"));
+}
+
+// PENDING 상태일 때만 활성화 링크 제공
+if (course.getStatus().equals("PENDING")) {
+    resource.add(linkTo(methodOn(CourseController.class)
+        .activate(courseNo))
+        .withRel("activate"));
+}
+
+// 정원이 남았을 때만 수강신청 링크
+if (course.getCurrentStudents() &lt; course.getMaxStudents()) {
+    resource.add(linkTo(methodOn(EnrollmentController.class)
+        .enroll(null))
+        .withRel("enroll"));
+}</div>
+                </div>
+
+                <!-- 5. 컬렉션 응답 -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">Step 5</span>
+                        목록 응답에 HATEOAS 적용
+                    </h3>
+                    <div class="code-block text-sm">import org.springframework.hateoas.CollectionModel;
+
+@GetMapping
+public ResponseEntity&lt;CollectionModel&lt;EntityModel&lt;CourseDto&gt;&gt;&gt; getCourses() {
+    List&lt;CourseDto&gt; courses = courseService.getAllCourses();
+
+    // 각 Course에 링크 추가
+    List&lt;EntityModel&lt;CourseDto&gt;&gt; resources = courses.stream()
+        .map(course -&gt; {
+            EntityModel&lt;CourseDto&gt; resource = EntityModel.of(course);
+            resource.add(linkTo(methodOn(CourseController.class)
+                .getCourse(course.getCourseNo()))
+                .withSelfRel());
+            return resource;
+        })
+        .toList();
+
+    // 전체 목록 링크
+    CollectionModel&lt;EntityModel&lt;CourseDto&gt;&gt; result =
+        CollectionModel.of(resources);
+
+    result.add(linkTo(methodOn(CourseController.class)
+        .getCourses())
+        .withSelfRel());
+
+    // 생성 링크
+    result.add(linkTo(methodOn(CourseController.class)
+        .createCourse(null))
+        .withRel("create"));
+
+    return ResponseEntity.ok(result);
+}</div>
+                </div>
+            </section>
+
+            <!-- 테스트 방법 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-vial text-green-600 mr-3"></i>
+                    테스트 방법
+                </h2>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Postman / cURL 테스트</h3>
+                    <div class="code-block text-sm">curl -X GET http://localhost:8080/api/courses/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"</div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">예상 응답</h3>
+                    <div class="code-block text-sm">{
+  "courseNo": 1,
+  "name": "JPA 마스터",
+  "description": "JPA 핵심 개념 완전 정복",
+  "instructor": {
+    "userNo": 10,
+    "name": "김영수"
+  },
+  "maxStudents": 30,
+  "status": "ACTIVE",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/api/courses/1"
+    },
+    "curriculums": {
+      "href": "http://localhost:8080/api/courses/1/curriculums"
+    },
+    "students": {
+      "href": "http://localhost:8080/api/courses/1/students"
+    },
+    "update": {
+      "href": "http://localhost:8080/api/courses/1"
+    },
+    "delete": {
+      "href": "http://localhost:8080/api/courses/1"
+    },
+    "enroll": {
+      "href": "http://localhost:8080/api/enrollments"
+    }
+  }
+}</div>
+                </div>
+            </section>
+
+            <!-- 실무 활용도 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-briefcase text-orange-600 mr-3"></i>
+                    실무에서의 HATEOAS
+                </h2>
+
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg mb-6">
+                    <h3 class="text-lg font-bold text-yellow-800 mb-3">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        현실적인 평가
+                    </h3>
+                    <ul class="space-y-2 text-yellow-700">
+                        <li><i class="fas fa-minus mr-2"></i>대부분의 실무 프로젝트는 Level 2에서 멈춤</li>
+                        <li><i class="fas fa-minus mr-2"></i>프론트엔드 팀과의 협업에서 링크 기반 탐색보다 명확한 엔드포인트 선호</li>
+                        <li><i class="fas fa-minus mr-2"></i>GraphQL, gRPC 등 다른 대안 존재</li>
+                        <li><i class="fas fa-minus mr-2"></i>공수 대비 실익이 크지 않음</li>
+                    </ul>
+                </div>
+
+                <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                    <h3 class="text-lg font-bold text-green-800 mb-3">
+                        <i class="fas fa-check mr-2"></i>
+                        HATEOAS가 유용한 경우
+                    </h3>
+                    <ul class="space-y-2 text-green-700">
+                        <li><i class="fas fa-check mr-2"></i><strong>Public API 제공:</strong> 외부 개발자가 API를 쉽게 탐색</li>
+                        <li><i class="fas fa-check mr-2"></i><strong>API 문서 자동화:</strong> 링크로 가능한 행동 표현</li>
+                        <li><i class="fas fa-check mr-2"></i><strong>워크플로우 가이드:</strong> 상태 전환 로직을 서버가 제어</li>
+                        <li><i class="fas fa-check mr-2"></i><strong>학습 목적:</strong> RESTful API 원칙 이해</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 결론 -->
+            <section class="mb-12">
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg shadow-lg p-8">
+                    <h2 class="text-3xl font-bold mb-6">
+                        <i class="fas fa-lightbulb mr-3"></i>
+                        결론 및 권장 사항
+                    </h2>
+                    <div class="space-y-4 text-lg">
+                        <p><strong>✅ 학습 가치:</strong> RESTful API 성숙도 모델을 이해하고 Level 3를 경험해볼 가치는 있음</p>
+                        <p><strong>⚠️ 실무 적용:</strong> 팀 상황과 요구사항에 따라 선택적으로 적용 (Level 2로도 충분한 경우가 많음)</p>
+                        <p><strong>🎯 권장:</strong> 우리 프로젝트에서는 이론 학습 후, 1~2개 엔드포인트에만 적용해보고 판단</p>
+                        <hr class="border-white border-opacity-30 my-4">
+                        <p class="text-blue-100">
+                            <strong>다음 단계:</strong> CourseController의 getCourse() 하나만 HATEOAS 적용해보고,
+                            응답 크기와 개발 복잡도를 체감한 뒤 프로젝트 전체 적용 여부 결정
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</body>
+</html>

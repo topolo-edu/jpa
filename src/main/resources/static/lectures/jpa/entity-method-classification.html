@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>엔티티 메서드 분류 가이드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <div id="header"></div>
+
+    <div class="max-w-6xl mx-auto px-4 py-8">
+
+        <!-- 개요 -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">엔티티 메서드 분류 가이드</h1>
+            <p class="text-lg text-gray-600">편의 메서드 / 비즈니스 메서드 / 헬퍼 메서드 구분과 운영 원칙</p>
+        </div>
+
+        <!-- 핵심 원칙 -->
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8">
+            <h2 class="text-2xl font-bold text-blue-800 mb-4">📌 핵심 원칙</h2>
+            <ul class="space-y-2 text-blue-900">
+                <li><strong>편의 메서드:</strong> 양방향 관계 동기화만 담당 (관계 설정 전용)</li>
+                <li><strong>비즈니스 메서드:</strong> 도메인 규칙, 상태 변경, 검증 로직</li>
+                <li><strong>헬퍼/쿼리 메서드:</strong> 탐색·필터링 (양방향 제거 시 Repository로 이동)</li>
+            </ul>
+        </div>
+
+        <!-- 1. 편의 메서드 -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">1️⃣ 편의 메서드 (Convenience Method)</h2>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">목적</h3>
+                <p class="text-gray-600">양방향 관계의 <strong>양쪽 엔티티를 동기화</strong>하는 것이 유일한 목적</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">특징</h3>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 ml-4">
+                    <li>관계 설정 시 양쪽 컬렉션/참조를 모두 업데이트</li>
+                    <li>연관관계 주인이 아닌 쪽에서 호출 권장</li>
+                    <li>비즈니스 로직 없음 (순수 관계 동기화만)</li>
+                    <li><strong>양방향 관계가 없으면 존재 의미 없음</strong></li>
+                </ul>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">코드 예시</h3>
+                <pre class="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto"><code class="language-java">@Entity
+public class Course {
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List&lt;Curriculum&gt; curriculums = new ArrayList&lt;&gt;();
+
+    // ✅ 편의 메서드: 양방향 동기화만
+    public void addCurriculum(Curriculum curriculum) {
+        this.curriculums.add(curriculum);
+        curriculum.setCourse(this);  // 양방향 동기화
+    }
+
+    public void removeCurriculum(Curriculum curriculum) {
+        this.curriculums.remove(curriculum);
+        curriculum.setCourse(null);  // 양방향 동기화
+    }
+}</code></pre>
+            </div>
+
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <h4 class="font-semibold text-yellow-800 mb-2">⚠️ 주의사항</h4>
+                <p class="text-yellow-700">양방향 관계를 제거하고 단방향으로 전환하면 편의 메서드는 삭제해야 합니다.</p>
+            </div>
+        </div>
+
+        <!-- 2. 비즈니스 메서드 -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">2️⃣ 비즈니스 메서드 (Business Method)</h2>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">목적</h3>
+                <p class="text-gray-600"><strong>도메인 규칙</strong>과 <strong>상태 변경 로직</strong>을 캡슐화</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">특징</h3>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 ml-4">
+                    <li>도메인 지식(비즈니스 규칙)을 표현</li>
+                    <li>상태 변경, 검증, 계산 로직 포함</li>
+                    <li>불변식(Invariant) 보장</li>
+                    <li>이름이 도메인 용어로 의미 명확 (activate, close, approve 등)</li>
+                </ul>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">코드 예시</h3>
+                <pre class="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto"><code class="language-java">@Entity
+public class Course {
+    private Status status;
+    private LocalDateTime activatedAt;
+
+    // ✅ 비즈니스 메서드: 도메인 규칙 + 상태 변경
+    public void activate() {
+        if (this.status == Status.ACTIVE) {
+            throw new IllegalStateException("이미 활성화된 강좌입니다");
+        }
+        this.status = Status.ACTIVE;
+        this.activatedAt = LocalDateTime.now();
+    }
+
+    public void close() {
+        if (this.status == Status.CLOSED) {
+            throw new IllegalStateException("이미 종료된 강좌입니다");
+        }
+        this.status = Status.CLOSED;
+    }
+}
+
+@Entity
+public class Enrollment {
+    private EnrollmentStatus status;
+
+    public void approve() {
+        if (this.status == EnrollmentStatus.APPROVED) {
+            throw new IllegalStateException("이미 승인된 수강신청입니다");
+        }
+        this.status = EnrollmentStatus.APPROVED;
+        this.approvedAt = LocalDateTime.now();
+    }
+
+    public void reject(String reason) {
+        if (this.status == EnrollmentStatus.REJECTED) {
+            throw new IllegalStateException("이미 거부된 수강신청입니다");
+        }
+        this.status = EnrollmentStatus.REJECTED;
+        this.rejectionReason = reason;
+    }
+}</code></pre>
+            </div>
+
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h4 class="font-semibold text-green-800 mb-2">✅ 장점</h4>
+                <ul class="text-green-700 space-y-1">
+                    <li>• 도메인 로직이 엔티티에 응집</li>
+                    <li>• 상태 변경 규칙이 한 곳에 집중</li>
+                    <li>• 외부에서 setter로 임의 변경 불가</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 3. 헬퍼/쿼리 메서드 -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">3️⃣ 탐색/조회 메서드 (Helper / Query / Finder Method)</h2>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">목적</h3>
+                <p class="text-gray-600">엔티티가 보유한 컬렉션을 <strong>필터링·탐색</strong>하여 필요한 데이터만 반환</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">특징</h3>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 ml-4">
+                    <li>읽기 전용 (상태 변경 없음)</li>
+                    <li>이미 로딩된 컬렉션만 필터링 (LAZY 강제 초기화 금지)</li>
+                    <li>양방향 관계 보유 시에만 의미 있음</li>
+                    <li>단방향 전환 시 Repository로 이동 필수</li>
+                </ul>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">양방향 관계 보유 시</h3>
+                <pre class="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto"><code class="language-java">@Entity
+public class User {
+    @OneToMany(mappedBy = "student")
+    private List&lt;Enrollment&gt; enrollments = new ArrayList&lt;&gt;();
+
+    // ✅ 헬퍼 메서드: 메모리 필터링만 (DB 접근 없음)
+    public List&lt;Enrollment&gt; getApprovedEnrollments() {
+        return enrollments.stream()
+            .filter(e -&gt; e.getStatus() == EnrollmentStatus.APPROVED)
+            .toList();
+    }
+
+    public int getApprovedCount() {
+        return (int) enrollments.stream()
+            .filter(e -&gt; e.getStatus() == EnrollmentStatus.APPROVED)
+            .count();
+    }
+}</code></pre>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">양방향 제거 (단방향 전환) 시</h3>
+                <pre class="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto"><code class="language-java">// ❌ User 엔티티에 enrollments 컬렉션 없음 → 헬퍼 메서드 삭제
+@Entity
+public class User {
+    // enrollments 컬렉션 없음
+}
+
+// ✅ Repository로 이동
+public interface EnrollmentRepository extends JpaRepository&lt;Enrollment, Long&gt; {
+    List&lt;Enrollment&gt; findByStudentAndStatus(User student, EnrollmentStatus status);
+
+    @Query("SELECT e FROM Enrollment e WHERE e.student = :student AND e.status = :status")
+    List&lt;Enrollment&gt; findByStudentIdAndStatus(@Param("student") User student,
+                                                @Param("status") EnrollmentStatus status);
+}
+
+// Service에서 사용
+@Service
+public class EnrollmentService {
+    public List&lt;Enrollment&gt; getApprovedEnrollments(User user) {
+        return enrollmentRepository.findByStudentAndStatus(user, EnrollmentStatus.APPROVED);
+    }
+}</code></pre>
+            </div>
+
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                <h4 class="font-semibold text-red-800 mb-2">🚫 금지 사항</h4>
+                <ul class="text-red-700 space-y-2">
+                    <li>• 헬퍼 메서드 내에서 LAZY 컬렉션 강제 초기화 금지</li>
+                    <li>• DB 쿼리 실행하는 로직 포함 금지</li>
+                    <li>• 양방향 제거 후에도 엔티티에 남겨두기 금지</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CQRS 관점 -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">🎯 설계 원칙: CQRS 관점 (권장)</h2>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                    <h3 class="text-xl font-bold text-blue-800 mb-3">Command (명령)</h3>
+                    <p class="text-blue-700 mb-3"><strong>상태 변경 = 엔티티/도메인 서비스</strong></p>
+                    <ul class="text-blue-600 space-y-1 text-sm">
+                        <li>• 비즈니스 메서드</li>
+                        <li>• 편의 메서드</li>
+                        <li>• 트랜잭션 내에서 실행</li>
+                    </ul>
+                </div>
+
+                <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                    <h3 class="text-xl font-bold text-green-800 mb-3">Query (조회)</h3>
+                    <p class="text-green-700 mb-3"><strong>탐색/리스트 = Repository/쿼리 계층</strong></p>
+                    <ul class="text-green-600 space-y-1 text-sm">
+                        <li>• Repository Query Methods</li>
+                        <li>• QueryDSL</li>
+                        <li>• DTO/Projection</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">구현 예시</h3>
+                <pre class="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto"><code class="language-java">// ✅ Command: 엔티티 비즈니스 메서드
+@Entity
+public class Course {
+    public void activate() {
+        if (this.status == Status.ACTIVE) return;
+        this.status = Status.ACTIVE;
+        this.activatedAt = LocalDateTime.now();
+    }
+}
+
+// ✅ Query: Repository
+public interface EnrollmentRepository extends JpaRepository&lt;Enrollment, Long&gt;, EnrollmentQuery {
+    List&lt;Enrollment&gt; findByStudentAndStatus(User student, EnrollmentStatus status);
+}
+
+// ✅ Query: QueryDSL
+public class EnrollmentQueryImpl implements EnrollmentQuery {
+    @Override
+    public List&lt;EnrollmentSimpleDto&gt; findApprovedByStudent(Long studentId) {
+        QEnrollment e = QEnrollment.enrollment;
+        return queryFactory
+            .select(Projections.constructor(EnrollmentSimpleDto.class,
+                    e.enrollmentNo,
+                    e.course.name))
+            .from(e)
+            .where(
+                e.student.userNo.eq(studentId),
+                e.status.eq(EnrollmentStatus.APPROVED),
+                e.deleted.eq(false)
+            )
+            .fetch();
+    }
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- 체크리스트 -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">✅ 운영 체크리스트</h2>
+
+            <div class="space-y-6">
+                <div class="border-l-4 border-purple-500 pl-4">
+                    <h3 class="text-lg font-bold text-purple-800 mb-2">양방향 관계를 유지할 때</h3>
+                    <ul class="list-disc list-inside text-gray-600 space-y-1 ml-4">
+                        <li>편의 메서드로 양쪽 동기화 필수</li>
+                        <li>헬퍼 메서드는 메모리 필터링만 (DB 접근 금지)</li>
+                        <li>비즈니스 로직은 비즈니스 메서드에만</li>
+                    </ul>
+                </div>
+
+                <div class="border-l-4 border-orange-500 pl-4">
+                    <h3 class="text-lg font-bold text-orange-800 mb-2">양방향을 단방향으로 전환할 때</h3>
+                    <ul class="list-disc list-inside text-gray-600 space-y-1 ml-4">
+                        <li>편의 메서드 전체 삭제</li>
+                        <li>헬퍼 메서드 → Repository Query Methods로 이동</li>
+                        <li>비즈니스 메서드는 그대로 유지</li>
+                    </ul>
+                </div>
+
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="text-lg font-bold text-blue-800 mb-2">CQRS 원칙 적용 시</h3>
+                    <ul class="list-disc list-inside text-gray-600 space-y-1 ml-4">
+                        <li>상태 변경(Command) → 엔티티 비즈니스 메서드</li>
+                        <li>조회(Query) → Repository + QueryDSL + DTO</li>
+                        <li>헬퍼 메서드는 최소화하고 Repository 우선</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 요약 -->
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg shadow-lg p-8">
+            <h2 class="text-3xl font-bold mb-6">📝 결론</h2>
+            <div class="space-y-4 text-lg">
+                <p><strong>편의 메서드:</strong> 양방향 동기화만 (관계 제거 시 삭제)</p>
+                <p><strong>비즈니스 메서드:</strong> 도메인 규칙과 상태 변경 (항상 유지)</p>
+                <p><strong>헬퍼 메서드:</strong> 메모리 필터링 (단방향 전환 시 Repository로 이동)</p>
+                <hr class="border-white border-opacity-30 my-4">
+                <p class="text-blue-100">
+                    <strong>권장:</strong> CQRS 관점에서 Command(명령)는 엔티티에, Query(조회)는 Repository에 배치하여
+                    책임을 명확히 분리합니다.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div id="footer"></div>
+
+    <!-- Layout Script -->
+    <script src="/lectures/jpa/layout/layout.js"></script>
+</body>
+</html>

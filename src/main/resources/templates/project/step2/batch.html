@@ -14,6 +14,7 @@
             font-size: 0.9rem;
             line-height: 1.6;
             overflow-x: auto;
+            white-space: pre-wrap;
         }
         .highlight {
             background: #fef3c7;
@@ -50,29 +51,10 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="gradient-bg text-white shadow-lg">
-        <div class="container mx-auto px-6 py-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-4xl font-bold mb-2">
-                        <i class="fas fa-tasks mr-3"></i>
-                        배치 처리와 성능 최적화
-                    </h1>
-                    <p class="text-xl text-blue-100">
-                        일괄 처리, @EntityGraph, N+1 문제 해결
-                    </p>
-                </div>
-                <a href="/project/step2/overview" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition">
-                    <i class="fas fa-arrow-left mr-2"></i>목록으로
-                </a>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="container mx-auto px-6 py-12">
+<body>
+    <div layout:fragment="content">
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 py-12">
         <!-- 개요 -->
         <section class="mb-12">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">

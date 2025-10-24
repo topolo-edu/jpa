@@ -91,4 +91,32 @@ public class Project2Controller {
         model.addAttribute("pageTitle", "실습 과제 (UI 구현)");
         return "project/step2/practical-assignments";
     }
+
+    @GetMapping("/hateoas-theory")
+    public String hateoasTheory(Model model) {
+        log.info("Step 2 HATEOAS theory page accessed");
+        model.addAttribute("pageTitle", "HATEOAS 이론과 실습");
+        return "project/step2/hateoas-theory";
+    }
+
+    @GetMapping("/hateoas-simple")
+    public String hateoasSimple(Model model) {
+        log.info("Step 2 HATEOAS simple page accessed");
+        model.addAttribute("pageTitle", "HATEOAS 개요");
+        return "project/step2/hateoas-simple";
+    }
+
+    @GetMapping("/graphql-theory")
+    public String graphqlTheory(Model model) {
+        log.info("Step 2 GraphQL theory page accessed");
+        model.addAttribute("pageTitle", "GraphQL 이론과 실습");
+        return "project/step2/graphql-theory";
+    }
+
+    @GetMapping("/oauth-theory")
+    public String oauthTheory(Model model) {
+        log.info("Step 2 OAuth theory page accessed");
+        model.addAttribute("pageTitle", "OAuth 2.0 소셜 로그인");
+        return "project/step2/oauth-theory";
+    }
 }

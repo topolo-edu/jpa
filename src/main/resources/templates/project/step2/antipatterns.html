@@ -15,6 +15,7 @@
             line-height: 1.6;
             overflow-x: auto;
             margin-bottom: 1rem;
+            white-space: pre-wrap;
         }
         .before-block {
             border-left: 4px solid #ef4444;
@@ -48,9 +49,10 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="gradient-bg text-white shadow-lg">
+<body>
+    <div layout:fragment="content">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg">
         <div class="container mx-auto px-6 py-8">
             <div class="flex items-center justify-between">
                 <div>
@@ -542,5 +544,6 @@
             </div>
         </section>
     </main>
+    </div>
 </body>
 </html>

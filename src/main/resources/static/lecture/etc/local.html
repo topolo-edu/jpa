@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>일반 배포</title>
+    <title>로컬 배포</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
@@ -39,8 +39,8 @@
     <!-- Header -->
     <header class="bg-slate-800 text-white py-8">
         <div class="max-w-6xl mx-auto px-6">
-            <h1 class="text-4xl font-bold mb-4">일반 배포</h1>
-            <p class="text-slate-300 text-lg">Docker를 활용한 일반 환경 배포 가이드</p>
+            <h1 class="text-4xl font-bold mb-4">로컬 배포</h1>
+            <p class="text-slate-300 text-lg">Docker를 활용한 로컬 환경 배포 가이드</p>
         </div>
     </header>
 
@@ -48,9 +48,9 @@
     <nav class="bg-white shadow-sm border-b border-slate-200">
         <div class="max-w-6xl mx-auto px-6 py-4">
             <div class="flex space-x-8">
-                <a href="index.html" class="text-slate-600 hover:text-slate-800 font-medium">개요</a>
-                <a href="general.html" class="text-slate-700 hover:text-slate-900 font-medium border-b-2 border-slate-800">일반 배포</a>
-                <a href="aws.html" class="text-slate-600 hover:text-slate-800 font-medium">AWS 배포</a>
+                <a href="../../lectures/deploy/index.html" class="text-slate-600 hover:text-slate-800 font-medium">개요</a>
+                <a href="local.html" class="text-slate-700 hover:text-slate-900 font-medium border-b-2 border-slate-800">로컬 배포</a>
+                <a href="../../lectures/deploy/aws.html" class="text-slate-600 hover:text-slate-800 font-medium">AWS 배포</a>
             </div>
         </div>
     </nav>
@@ -60,7 +60,7 @@
         
         <!-- 배포 방식 개요 -->
         <section class="mb-12">
-            <h2 class="text-2xl font-bold text-slate-800 mb-6">일반 배포 방식</h2>
+            <h2 class="text-2xl font-bold text-slate-800 mb-6">로컬 배포 방식</h2>
             
             <div class="grid md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
@@ -135,7 +135,7 @@
                             <h3 class="text-xl font-semibold text-slate-800 mb-2">서버 준비</h3>
                             <p class="text-slate-600 mb-4">Docker 기반 MariaDB + Ubuntu 서버 환경 구축</p>
                             <div class="flex space-x-4">
-                                <a href="local/step0-server-setup.html" class="inline-block bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-700 transition-colors">
+                                <a href="../../lectures/deploy/local/step0-server-setup.html" class="inline-block bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-700 transition-colors">
                                     상세 가이드 →
                                 </a>
                             </div>
@@ -151,7 +151,7 @@
                             <h3 class="text-xl font-semibold text-slate-800 mb-2">JAR 배포</h3>
                             <p class="text-slate-600 mb-4">IntelliJ → FileZilla → SSH → 웹브라우저 확인</p>
                             <div class="flex space-x-4">
-                                <a href="local/step0-jar-deploy.html" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                                <a href="../../lectures/deploy/local/step0-jar-deploy.html" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
                                     상세 가이드 →
                                 </a>
                             </div>
@@ -167,10 +167,10 @@
                             <h3 class="text-xl font-semibold text-slate-800 mb-2">Dockerfile 배포</h3>
                             <p class="text-slate-600 mb-4">컨테이너 이미지 빌드 및 실행</p>
                             <div class="flex space-x-4">
-                                <a href="local/dockerfile-compose-theory.html" class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+                                <a href="../../lectures/deploy/local/dockerfile-compose-theory.html" class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
                                     이론 학습 →
                                 </a>
-                                <a href="local/step1-dockerfile-deploy.html" class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+                                <a href="../../lectures/deploy/local/step1-dockerfile-deploy.html" class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
                                     실습 진행 →
                                 </a>
                             </div>
@@ -186,10 +186,10 @@
                             <h3 class="text-xl font-semibold text-slate-800 mb-2">Docker Compose</h3>
                             <p class="text-slate-600 mb-4">완전한 컨테이너화: JPA + MinIO (포트 8083)</p>
                             <div class="flex space-x-4">
-                                <a href="local/dockerfile-compose-theory.html" class="inline-block bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+                                <a href="../../lectures/deploy/local/dockerfile-compose-theory.html" class="inline-block bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
                                     이론 학습 →
                                 </a>
-                                <a href="local/step2-compose-deploy.html" class="inline-block bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+                                <a href="../../lectures/deploy/local/step2-compose-deploy.html" class="inline-block bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
                                     실습 진행 →
                                 </a>
                             </div>

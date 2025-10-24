@@ -63,7 +63,7 @@
                         Step 2 (개선)
                     </h3>
                     <ul class="space-y-2 text-green-700">
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>N:1 + 1:N (양방향)</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Aggregate 내부만 양방향 (Course ↔ Curriculum)</li>
                         <li><i class="fas fa-check text-green-500 mr-2"></i>직접 접근 가능</li>
                         <li><i class="fas fa-check text-green-500 mr-2"></i>엔티티에 비즈니스 로직 캡슐화</li>
                         <li><i class="fas fa-check text-green-500 mr-2"></i>Cascade 자동화</li>
@@ -89,10 +89,10 @@
                         <h3 class="text-xl font-bold text-gray-800">양방향 관계</h3>
                     </div>
                     <ul class="text-gray-600 space-y-2">
-                        <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i>Course ↔ Curriculum</li>
-                        <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i>Course ↔ Enrollment</li>
-                        <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i>User ↔ Enrollment</li>
-                        <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i>편의 메서드 구현</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Course ↔ Curriculum (양방향)</li>
+                        <li><i class="fas fa-arrow-right text-gray-400 mr-2"></i>Course → Enrollment (단방향)</li>
+                        <li><i class="fas fa-arrow-right text-gray-400 mr-2"></i>User → Enrollment (단방향)</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>편의 메서드 (Aggregate 내부만)</li>
                     </ul>
                 </div>
 
@@ -168,76 +168,40 @@
             </div>
         </section>
 
-        <!-- 학습 메뉴 -->
+        <!-- 추가 학습 자료 -->
         <section class="mb-12">
             <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">
-                <i class="fas fa-book text-blue-600 mr-3"></i>
-                학습 메뉴
+                <i class="fas fa-book-open text-purple-600 mr-3"></i>
+                추가 학습 자료
             </h2>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- 양방향 관계 -->
-                <a href="/project/step2/bidirectional" class="block bg-white rounded-lg shadow-lg p-6 card-hover text-center">
-                    <i class="fas fa-exchange-alt text-5xl text-blue-600 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">양방향 관계와 편의 메서드</h3>
-                    <p class="text-gray-600">Course ↔ Curriculum, Course ↔ Enrollment 관계 구현</p>
-                </a>
 
-                <!-- 비관적 락 -->
-                <a href="/project/step2/locking" class="block bg-white rounded-lg shadow-lg p-6 card-hover text-center">
-                    <i class="fas fa-lock text-5xl text-red-600 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">비관적 락과 동시성 제어</h3>
-                    <p class="text-gray-600">@Lock, 동시성 제어, 트랜잭션 관리</p>
-                </a>
-
-                <!-- QueryDSL -->
-                <a href="/project/step2/querydsl" class="block bg-white rounded-lg shadow-lg p-6 card-hover text-center">
-                    <i class="fas fa-chart-bar text-5xl text-green-600 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">QueryDSL 고급 기능</h3>
-                    <p class="text-gray-600">통계 쿼리, 공통 조건 모듈, 동적 검색</p>
-                </a>
-
-                <!-- 배치 처리 -->
-                <a href="/project/step2/batch" class="block bg-white rounded-lg shadow-lg p-6 card-hover text-center">
-                    <i class="fas fa-tasks text-5xl text-purple-600 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">배치 처리와 성능 최적화</h3>
-                    <p class="text-gray-600">일괄 처리, @EntityGraph, N+1 문제 해결</p>
-                </a>
-
-                <!-- 트러블슈팅 -->
-                <a href="/project/step2/troubleshooting" class="block bg-white rounded-lg shadow-lg p-6 card-hover text-center">
-                    <i class="fas fa-bug text-5xl text-yellow-600 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">LazyInitializationException</h3>
-                    <p class="text-gray-600">엔티티 반환 오류, 해결 방법, DTO 변환</p>
-                </a>
-
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- 로깅 전략 -->
                 <a href="/project/step2/logging-strategy" class="block bg-white rounded-lg shadow-lg p-6 card-hover text-center">
-                    <i class="fas fa-chart-line text-5xl text-purple-600 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">로깅 전략</h3>
-                    <p class="text-gray-600">Dev/Prod 로깅 모범 사례</p>
+                    <i class="fas fa-chart-line text-4xl text-purple-600 mb-3"></i>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">📄 로깅 전략</h3>
+                    <p class="text-sm text-gray-600">Dev/Prod 로깅 모범 사례</p>
                 </a>
 
                 <!-- 안티패턴 개선 -->
-                <a href="/project/step2/antipatterns" class="block bg-white rounded-lg shadow-lg p-6 card-hover text-center">
-                    <i class="fas fa-exclamation-triangle text-5xl text-red-600 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">안티패턴 개선 (필독!)</h3>
-                    <p class="text-gray-600">Before/After로 보는 코드 개선 사례</p>
+                <a href="/project/step2/antipatterns" class="block bg-white rounded-lg shadow-lg p-6 card-hover text-center border-2 border-red-400">
+                    <i class="fas fa-exclamation-triangle text-4xl text-red-600 mb-3"></i>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">⚠️ 안티패턴 개선</h3>
+                    <p class="text-sm text-gray-600">Before/After 코드 개선 (필독!)</p>
                 </a>
 
                 <!-- 실습 과제 (UI 구현) -->
                 <a href="/project/step2/practical-assignments" class="block bg-white rounded-lg shadow-lg p-6 card-hover text-center border-2 border-purple-400">
-                    <div class="text-xs text-purple-600 font-bold mb-2">✨ NEW!</div>
-                    <i class="fas fa-code text-5xl text-purple-600 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">실습 과제 (UI 구현)</h3>
-                    <p class="text-gray-600">배치 처리, 커리큘럼, 수강생 목록 UI 만들기</p>
+                    <i class="fas fa-code text-4xl text-purple-600 mb-3"></i>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">✏️ 실습: UI 구현</h3>
+                    <p class="text-sm text-gray-600">배치 처리, 커리큘럼 UI</p>
                 </a>
 
-                <!-- 실습 과제 (기존) -->
+                <!-- 실습 과제 (@EntityGraph) -->
                 <a href="/project/step2/assignments" class="block bg-white rounded-lg shadow-lg p-6 card-hover text-center">
-                    <i class="fas fa-clipboard-list text-5xl text-indigo-600 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">실습 과제 (기존)</h3>
-                    <p class="text-gray-600">@EntityGraph 추가, API 테스트</p>
+                    <i class="fas fa-clipboard-list text-4xl text-indigo-600 mb-3"></i>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">✏️ 실습: @EntityGraph</h3>
+                    <p class="text-sm text-gray-600">@EntityGraph 추가 과제</p>
                 </a>
             </div>
         </section>
