@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/step2-layout}">
+<head>
+    <title>테스트 & 성능 테스트</title>
+    <style>
+        .priority-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .priority-high {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        .priority-medium {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .priority-low {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        .code-template {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg">
+            <div class="container mx-auto px-6 py-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold mb-2">
+                            <i class="fas fa-flask mr-3"></i>
+                            테스트 & 성능 테스트 가이드
+                        </h1>
+                        <p class="text-xl text-blue-100">
+                            단위 테스트, 통합 테스트, nGrinder 부하 테스트까지
+                        </p>
+                    </div>
+                    <a href="/project/step2/overview" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition">
+                        <i class="fas fa-arrow-left mr-2"></i>목록으로
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 py-12">
+
+            <!-- Why Test? -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-question-circle text-blue-600 mr-3"></i>
+                    왜 테스트를 작성하나요?
+                </h2>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                        <i class="fas fa-bug text-3xl text-green-600 mb-3"></i>
+                        <h3 class="font-bold text-green-800 text-lg mb-2">버그 조기 발견</h3>
+                        <p class="text-green-700 text-sm">
+                            배포 전에 미리 문제 발견<br>
+                            사용자가 발견하기 전에 수정
+                        </p>
+                    </div>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+                        <i class="fas fa-shield-alt text-3xl text-blue-600 mb-3"></i>
+                        <h3 class="font-bold text-blue-800 text-lg mb-2">리팩토링 안전장치</h3>
+                        <p class="text-blue-700 text-sm">
+                            코드 수정 후 테스트 돌려서<br>
+                            기존 기능 망가지지 않았는지 확인
+                        </p>
+                    </div>
+
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-lg">
+                        <i class="fas fa-chart-line text-3xl text-purple-600 mb-3"></i>
+                        <h3 class="font-bold text-purple-800 text-lg mb-2">발표 자료 어필</h3>
+                        <p class="text-purple-700 text-sm">
+                            "단위 테스트 5개, 통합 테스트 3개 작성"<br>
+                            코드 품질 증명 가능
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- What to Test -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-list-check text-purple-600 mr-3"></i>
+                    무엇을 테스트해야 하나요? (우선순위)
+                </h2>
+
+                <div class="space-y-6">
+                    <!-- Priority 1: Business Logic -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-red-500">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-800">
+                                <i class="fas fa-star text-red-500 mr-2"></i>
+                                1순위: 비즈니스 로직 (엔티티 메서드)
+                            </h3>
+                            <span class="priority-badge priority-high">필수 (3개 이상)</span>
+                        </div>
+                        <p class="text-gray-700 mb-4">
+                            Service가 아닌 <strong>Entity에 있는 핵심 로직</strong>을 테스트
+                        </p>
+                        <div class="bg-gray-50 rounded p-4">
+                            <h4 class="font-bold text-gray-800 mb-2">예시:</h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>정원 초과 시 수강신청 실패</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>중복 수강신청 방지</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>승인된 수강신청은 취소 불가</li>
+                                <li><i class="fas fa-check text-green-500 mr-2"></i>강의 삭제 시 커리큘럼 함께 삭제 (Cascade)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Priority 2: API Integration -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-yellow-500">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-800">
+                                <i class="fas fa-star text-yellow-500 mr-2"></i>
+                                2순위: 주요 API (통합 테스트)
+                            </h3>
+                            <span class="priority-badge priority-medium">권장 (2~3개)</span>
+                        </div>
+                        <p class="text-gray-700 mb-4">
+                            모든 API 아니고, <strong>핵심 API만</strong> 테스트
+                        </p>
+                        <div class="bg-gray-50 rounded p-4">
+                            <h4 class="font-bold text-gray-800 mb-2">예시:</h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li><i class="fas fa-check text-blue-500 mr-2"></i>POST /api/enrollments (수강신청 성공/실패)</li>
+                                <li><i class="fas fa-check text-blue-500 mr-2"></i>GET /api/courses/1 (N+1 발생 안 하는지)</li>
+                                <li><i class="fas fa-check text-blue-500 mr-2"></i>PATCH /api/enrollments/1/approve (비관적 락 동작)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Priority 3: Complex Queries -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-800">
+                                <i class="fas fa-star text-blue-500 mr-2"></i>
+                                3순위: 복잡한 쿼리 (Repository)
+                            </h3>
+                            <span class="priority-badge priority-low">선택</span>
+                        </div>
+                        <p class="text-gray-700 mb-4">
+                            QueryDSL로 작성한 복잡한 통계 쿼리만
+                        </p>
+                        <div class="bg-gray-50 rounded p-4">
+                            <h4 class="font-bold text-gray-800 mb-2">예시:</h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li><i class="fas fa-check text-purple-500 mr-2"></i>강의별 수강생 통계 (QueryDSL)</li>
+                                <li><i class="fas fa-check text-purple-500 mr-2"></i>월별 수강신청 집계</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Code Templates -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-code text-green-600 mr-3"></i>
+                    복붙 가능한 코드 템플릿
+                </h2>
+
+                <!-- Unit Test Template -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm mr-2">1순위</span>
+                        단위 테스트 - 비즈니스 로직
+                    </h3>
+                    <div class="code-template"><pre><span style="color: #7dd3fc">@Test</span>
+<span style="color: #7dd3fc">@DisplayName</span>(<span style="color: #86efac">"정원 초과 시 수강신청 실패"</span>)
+<span style="color: #fbbf24">void</span> <span style="color: #ffffff">enrollFail_WhenExceedMaxStudents</span>() {
+    <span style="color: #6b7280">// given (준비)</span>
+    Course course = Course.<span style="color: #fbbf24">builder</span>()
+        .name(<span style="color: #86efac">"JPA 마스터"</span>)
+        .maxStudents(<span style="color: #fbbf24">30</span>)
+        .build();
+
+    <span style="color: #6b7280">// 30명 등록 (정원 채움)</span>
+    <span style="color: #fbbf24">for</span> (<span style="color: #fbbf24">int</span> i = <span style="color: #fbbf24">0</span>; i < <span style="color: #fbbf24">30</span>; i++) {
+        User user = <span style="color: #fbbf24">new</span> User(<span style="color: #86efac">"user"</span> + i);
+        course.enroll(user); <span style="color: #6b7280">// 편의 메서드</span>
+    }
+
+    User lateUser = <span style="color: #fbbf24">new</span> User(<span style="color: #86efac">"늦은사람"</span>);
+
+    <span style="color: #6b7280">// when & then (실행 & 검증)</span>
+    <span style="color: #7dd3fc">assertThatThrownBy</span>(() -> course.enroll(lateUser))
+        .isInstanceOf(IllegalStateException.<span style="color: #fbbf24">class</span>)
+        .hasMessage(<span style="color: #86efac">"정원 초과"</span>);
+}
+
+<span style="color: #7dd3fc">@Test</span>
+<span style="color: #7dd3fc">@DisplayName</span>(<span style="color: #86efac">"중복 수강신청 방지"</span>)
+<span style="color: #fbbf24">void</span> <span style="color: #ffffff">enrollFail_WhenDuplicate</span>() {
+    <span style="color: #6b7280">// given</span>
+    Course course = <span style="color: #fbbf24">new</span> Course(<span style="color: #86efac">"JPA 마스터"</span>);
+    User user = <span style="color: #fbbf24">new</span> User(<span style="color: #86efac">"홍길동"</span>);
+    course.enroll(user); <span style="color: #6b7280">// 1차 신청</span>
+
+    <span style="color: #6b7280">// when & then</span>
+    <span style="color: #7dd3fc">assertThatThrownBy</span>(() -> course.enroll(user))
+        .isInstanceOf(IllegalStateException.<span style="color: #fbbf24">class</span>)
+        .hasMessage(<span style="color: #86efac">"이미 수강신청한 강의입니다"</span>);
+}</pre>
+                    </div>
+                    <div class="mt-3 bg-red-50 border border-red-200 rounded p-3 text-sm text-red-700">
+                        <strong>핵심:</strong> Service 아니고 <code>Course.enroll(user)</code> 같은 엔티티 메서드를 테스트!
+                    </div>
+                </div>
+
+                <!-- Integration Test Template -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm mr-2">2순위</span>
+                        통합 테스트 - API
+                    </h3>
+                    <div class="code-template"><pre><span style="color: #7dd3fc">@SpringBootTest</span>
+<span style="color: #7dd3fc">@AutoConfigureMockMvc</span>
+<span style="color: #7dd3fc">@Transactional</span>
+<span style="color: #fbbf24">class</span> <span style="color: #ffffff">EnrollmentApiTest</span> {
+
+    <span style="color: #7dd3fc">@Autowired</span> <span style="color: #fbbf24">private</span> MockMvc mockMvc;
+    <span style="color: #7dd3fc">@Autowired</span> <span style="color: #fbbf24">private</span> ObjectMapper objectMapper;
+
+    <span style="color: #7dd3fc">@Test</span>
+    <span style="color: #7dd3fc">@DisplayName</span>(<span style="color: #86efac">"수강신청 성공"</span>)
+    <span style="color: #fbbf24">void</span> <span style="color: #ffffff">enroll_Success</span>() <span style="color: #fbbf24">throws</span> Exception {
+        <span style="color: #6b7280">// given</span>
+        EnrollRequest request = <span style="color: #fbbf24">new</span> EnrollRequest(<span style="color: #fbbf24">1L</span>, <span style="color: #fbbf24">1L</span>);
+
+        <span style="color: #6b7280">// when & then</span>
+        mockMvc.perform(post(<span style="color: #86efac">"/api/enrollments"</span>)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath(<span style="color: #86efac">"$.status"</span>).value(<span style="color: #86efac">"PENDING"</span>));
+    }
+
+    <span style="color: #7dd3fc">@Test</span>
+    <span style="color: #7dd3fc">@DisplayName</span>(<span style="color: #86efac">"정원 초과 시 400 에러"</span>)
+    <span style="color: #fbbf24">void</span> <span style="color: #ffffff">enroll_Fail_WhenExceed</span>() <span style="color: #fbbf24">throws</span> Exception {
+        <span style="color: #6b7280">// given: 정원 30명인 강의에 30명 등록 후</span>
+        EnrollRequest request = <span style="color: #fbbf24">new</span> EnrollRequest(<span style="color: #fbbf24">1L</span>, <span style="color: #fbbf24">31L</span>);
+
+        <span style="color: #6b7280">// when & then</span>
+        mockMvc.perform(post(<span style="color: #86efac">"/api/enrollments"</span>)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath(<span style="color: #86efac">"$.message"</span>).value(<span style="color: #86efac">"정원 초과"</span>));
+    }
+}</pre>
+                    </div>
+                </div>
+
+                <!-- N+1 Test Template -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm mr-2">2순위</span>
+                        N+1 문제 해결 검증
+                    </h3>
+                    <div class="code-template"><pre><span style="color: #7dd3fc">@Test</span>
+<span style="color: #7dd3fc">@DisplayName</span>(<span style="color: #86efac">"강의 조회 시 N+1 발생 안 함 (Fetch Join)"</span>)
+<span style="color: #fbbf24">void</span> <span style="color: #ffffff">getCourse_NoNPlusOne</span>() <span style="color: #fbbf24">throws</span> Exception {
+    <span style="color: #6b7280">// given: 강의 1개 + 커리큘럼 5개 존재</span>
+
+    <span style="color: #6b7280">// when</span>
+    mockMvc.perform(get(<span style="color: #86efac">"/api/courses/1"</span>))
+        .andExpect(status().isOk());
+
+    <span style="color: #6b7280">// then: 쿼리 1개만 실행되어야 함 (Fetch Join)</span>
+    <span style="color: #6b7280">// 콘솔에서 "select" 개수 확인</span>
+    <span style="color: #6b7280">// 또는 com.github.gavlyukovskiy:p6spy 로그 확인</span>
+}</pre>
+                    </div>
+                    <div class="mt-3 bg-yellow-50 border border-yellow-200 rounded p-3 text-sm text-yellow-700">
+                        <strong>Tip:</strong> application.yml에 <code>spring.jpa.show-sql: true</code> 설정 후 콘솔에서 쿼리 개수 세기
+                    </div>
+                </div>
+            </section>
+
+            <!-- Common Mistakes -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-exclamation-triangle text-red-600 mr-3"></i>
+                    자주 하는 실수
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
+                        <h3 class="font-bold text-red-800 mb-3">
+                            <i class="fas fa-times-circle mr-2"></i>
+                            ❌ 하지 말아야 할 것
+                        </h3>
+                        <ul class="space-y-2 text-sm text-red-700">
+                            <li>• Service의 모든 메서드 테스트</li>
+                            <li>• Repository CRUD 테스트 (JPA가 알아서 함)</li>
+                            <li>• Getter/Setter 테스트</li>
+                            <li>• 테스트를 위한 테스트 (의미 없는 테스트)</li>
+                            <li>• 80% 커버리지 목표 (7일 프로젝트엔 비현실적)</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                        <h3 class="font-bold text-green-800 mb-3">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            ✅ 집중해야 할 것
+                        </h3>
+                        <ul class="space-y-2 text-sm text-green-700">
+                            <li>• <strong>엔티티 비즈니스 로직</strong> (정원 체크 등)</li>
+                            <li>• <strong>주요 API 2~3개</strong> (수강신청, 조회)</li>
+                            <li>• <strong>N+1 해결 검증</strong> (쿼리 개수 확인)</li>
+                            <li>• <strong>예외 처리</strong> (정원 초과 시 에러)</li>
+                            <li>• <strong>발표 자료 활용</strong> (품질 어필)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance Testing -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-rocket text-orange-600 mr-3"></i>
+                    성능 테스트 (nGrinder)
+                </h2>
+
+                <div class="bg-gradient-to-r from-orange-50 to-red-50 border-l-4 border-orange-500 p-6 rounded-lg mb-6">
+                    <h3 class="text-xl font-bold text-orange-800 mb-3">nGrinder란?</h3>
+                    <p class="text-orange-700 mb-3">
+                        네이버에서 만든 <strong>부하 테스트 도구</strong><br>
+                        동시 접속자 100명, 1000명을 시뮬레이션해서 서버가 버티는지 확인
+                    </p>
+                    <div class="bg-white rounded p-4">
+                        <p class="text-sm text-gray-700">
+                            <strong>예시:</strong> "수강신청 API에 동시 100명 요청 → TPS 150, 평균 응답 시간 45ms"
+                        </p>
+                    </div>
+                </div>
+
+                <!-- nGrinder Setup -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-download text-blue-600 mr-2"></i>
+                        1단계: nGrinder 설치 (Docker)
+                    </h3>
+                    <div class="bg-gray-900 text-white rounded-lg p-6">
+                        <p class="text-gray-400 text-sm mb-3"># nGrinder Controller 실행</p>
+                        <code class="block mb-4">docker run -d -p 8300:80 -p 16001:16001 -p 12000-12009:12000-12009 ngrinder/controller</code>
+
+                        <p class="text-gray-400 text-sm mb-3"># 브라우저에서 접속</p>
+                        <code class="block mb-4">http://localhost:8300</code>
+
+                        <p class="text-sm text-green-400">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            기본 계정: admin / admin
+                        </p>
+                    </div>
+                </div>
+
+                <!-- nGrinder Test Script -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-code text-purple-600 mr-2"></i>
+                        2단계: 테스트 스크립트 작성
+                    </h3>
+                    <div class="code-template"><pre><span style="color: #6b7280">// Script → Create → Groovy</span>
+
+<span style="color: #7dd3fc">import</span> static net.grinder.script.Grinder.grinder
+<span style="color: #7dd3fc">import</span> HTTPRequest
+
+<span style="color: #fbbf24">class</span> <span style="color: #ffffff">TestRunner</span> {
+    <span style="color: #fbbf24">private</span> HTTPRequest request
+
+    <span style="color: #7dd3fc">@BeforeThread</span>
+    <span style="color: #fbbf24">void</span> <span style="color: #ffffff">beforeThread</span>() {
+        request = <span style="color: #fbbf24">new</span> HTTPRequest()
+    }
+
+    <span style="color: #7dd3fc">@Test</span>
+    <span style="color: #fbbf24">void</span> <span style="color: #ffffff">test</span>() {
+        <span style="color: #6b7280">// GET 요청 예시</span>
+        request.GET(<span style="color: #86efac">"http://localhost:8080/api/courses/1"</span>)
+
+        <span style="color: #6b7280">// POST 요청 예시</span>
+        <span style="color: #fbbf24">def</span> body = <span style="color: #86efac">"""{"courseNo":1,"userNo":1}"""</span>
+        <span style="color: #fbbf24">def</span> headers = [(<span style="color: #86efac">"Content-Type"</span>): <span style="color: #86efac">"application/json"</span>]
+        request.POST(<span style="color: #86efac">"http://localhost:8080/api/enrollments"</span>, body, headers)
+    }
+}</pre>
+                    </div>
+                </div>
+
+                <!-- nGrinder Test Execution -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-play-circle text-green-600 mr-2"></i>
+                        3단계: 테스트 실행
+                    </h3>
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-3">설정 값</h4>
+                                <ul class="space-y-2 text-sm text-gray-700">
+                                    <li><strong>Vuser (가상 사용자):</strong> 100명</li>
+                                    <li><strong>Duration:</strong> 1분</li>
+                                    <li><strong>Script:</strong> 위에서 작성한 스크립트 선택</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-3">확인할 지표</h4>
+                                <ul class="space-y-2 text-sm text-gray-700">
+                                    <li><strong>TPS:</strong> 초당 처리 요청 수 (높을수록 좋음)</li>
+                                    <li><strong>Mean Test Time:</strong> 평균 응답 시간 (낮을수록 좋음)</li>
+                                    <li><strong>Errors:</strong> 에러 개수 (0이어야 함)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Test Tips -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+                        성능 테스트 활용 팁
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                            <h4 class="font-bold text-blue-800 mb-2">Before/After 비교</h4>
+                            <p class="text-sm text-blue-700">
+                                1. N+1 문제 있을 때 테스트 실행 → TPS 50<br>
+                                2. Fetch Join 적용 후 다시 실행 → TPS 200<br>
+                                3. 발표 자료: "성능 4배 개선"
+                            </p>
+                        </div>
+
+                        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                            <h4 class="font-bold text-green-800 mb-2">Actuator와 함께 사용</h4>
+                            <p class="text-sm text-green-700">
+                                nGrinder 실행 중 <code>/actuator/metrics/system.cpu.usage</code> 확인<br>
+                                CPU 사용률이 100%면 서버 증설 필요
+                            </p>
+                        </div>
+
+                        <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+                            <h4 class="font-bold text-purple-800 mb-2">비관적 락 테스트</h4>
+                            <p class="text-sm text-purple-700">
+                                동시 100명이 같은 강의 수강신청 → 비관적 락으로 순차 처리<br>
+                                에러 없이 30명만 성공, 70명 실패 확인
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Presentation Tips -->
+            <section class="mb-12">
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg shadow-lg p-8">
+                    <h2 class="text-3xl font-bold mb-4">
+                        <i class="fas fa-presentation mr-3"></i>
+                        발표 자료에 활용하기
+                    </h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                            <h3 class="font-bold text-xl mb-3">테스트 통계</h3>
+                            <ul class="space-y-2 text-blue-100">
+                                <li>• "단위 테스트 5개 작성"</li>
+                                <li>• "통합 테스트 3개 작성"</li>
+                                <li>• "정원 초과 버그 사전 발견"</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                            <h3 class="font-bold text-xl mb-3">성능 개선</h3>
+                            <ul class="space-y-2 text-blue-100">
+                                <li>• "N+1 해결로 TPS 4배 향상"</li>
+                                <li>• "평균 응답 시간 350ms → 45ms"</li>
+                                <li>• "동시 100명 부하 테스트 통과"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Summary Checklist -->
+            <section class="mb-12">
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg">
+                    <h2 class="text-2xl font-bold text-yellow-800 mb-4">
+                        <i class="fas fa-tasks mr-2"></i>
+                        최종 체크리스트
+                    </h2>
+                    <div class="space-y-3">
+                        <label class="flex items-center text-yellow-700">
+                            <input type="checkbox" class="mr-3 w-5 h-5">
+                            <span>비즈니스 로직 테스트 최소 3개 작성 (엔티티 메서드)</span>
+                        </label>
+                        <label class="flex items-center text-yellow-700">
+                            <input type="checkbox" class="mr-3 w-5 h-5">
+                            <span>주요 API 통합 테스트 2개 이상</span>
+                        </label>
+                        <label class="flex items-center text-yellow-700">
+                            <input type="checkbox" class="mr-3 w-5 h-5">
+                            <span>N+1 문제 해결 검증 (쿼리 개수 확인)</span>
+                        </label>
+                        <label class="flex items-center text-yellow-700">
+                            <input type="checkbox" class="mr-3 w-5 h-5">
+                            <span>nGrinder로 부하 테스트 실행 (선택)</span>
+                        </label>
+                        <label class="flex items-center text-yellow-700">
+                            <input type="checkbox" class="mr-3 w-5 h-5">
+                            <span>발표 자료에 테스트 통계 및 성능 개선 수치 포함</span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</body>
+</html>

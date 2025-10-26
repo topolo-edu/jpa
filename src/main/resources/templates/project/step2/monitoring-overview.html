@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/step2-layout}">
+<head>
+    <title>모니터링 개요</title>
+    <style>
+        .tool-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg">
+            <div class="container mx-auto px-6 py-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold mb-2">
+                            <i class="fas fa-chart-line mr-3"></i>
+                            애플리케이션 모니터링
+                        </h1>
+                        <p class="text-xl text-blue-100">
+                            내 서버 상태를 확인하는 세 가지 방법
+                        </p>
+                    </div>
+                    <a href="/project/step2/overview" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition">
+                        <i class="fas fa-arrow-left mr-2"></i>목록으로
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 py-12">
+
+            <!-- 모니터링이란? -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-question-circle text-blue-600 mr-3"></i>
+                    모니터링이란?
+                </h2>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-6">
+                    <p class="text-blue-800 text-lg leading-relaxed">
+                        실행 중인 서버의 <strong>건강 상태</strong>를 확인하는 것<br>
+                        "서버 잘 돌아가고 있어?", "메모리 부족하진 않아?", "에러 발생했어?" 같은 질문에 답하기
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">왜 필요한가?</h3>
+                    <ul class="space-y-3 text-gray-700">
+                        <li>
+                            <i class="fas fa-exclamation-triangle text-yellow-500 mr-3"></i>
+                            <strong>장애 조기 발견:</strong> 서버 다운되기 전에 메모리/CPU 부족 감지
+                        </li>
+                        <li>
+                            <i class="fas fa-tachometer-alt text-green-500 mr-3"></i>
+                            <strong>성능 개선:</strong> 느린 API 찾아서 최적화
+                        </li>
+                        <li>
+                            <i class="fas fa-chart-bar text-blue-500 mr-3"></i>
+                            <strong>사용량 분석:</strong> 어떤 기능이 많이 쓰이는지 파악
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 세 가지 도구 비교 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-tools text-purple-600 mr-3"></i>
+                    모니터링 도구 3총사
+                </h2>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Actuator -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 tool-card border-t-4 border-green-500">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-heartbeat text-5xl text-green-500 mb-3"></i>
+                            <h3 class="text-2xl font-bold text-gray-800">Actuator</h3>
+                            <p class="text-sm text-gray-500">Spring Boot 내장</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold inline-block">
+                                기본 필수
+                            </div>
+                        </div>
+
+                        <p class="text-gray-700 mb-4">
+                            <strong>무엇에 쓰는 물건?</strong><br>
+                            서버 상태를 HTTP 주소로 바로 확인
+                        </p>
+
+                        <div class="bg-gray-100 rounded p-3 text-sm font-mono mb-4">
+                            GET /actuator/health<br>
+                            GET /actuator/metrics
+                        </div>
+
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>설치 불필요 (내장)</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>간단한 JSON 응답</li>
+                            <li><i class="fas fa-check text-green-500 mr-2"></i>헬스 체크, 메트릭 조회</li>
+                        </ul>
+
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <p class="text-xs text-gray-500">
+                                <strong>언제 써?</strong><br>
+                                로컬 개발, 간단한 서버 상태 확인
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Prometheus -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 tool-card border-t-4 border-orange-500">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-database text-5xl text-orange-500 mb-3"></i>
+                            <h3 class="text-2xl font-bold text-gray-800">Prometheus</h3>
+                            <p class="text-sm text-gray-500">시계열 데이터베이스</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-bold inline-block">
+                                선택 (중급)
+                            </div>
+                        </div>
+
+                        <p class="text-gray-700 mb-4">
+                            <strong>무엇에 쓰는 물건?</strong><br>
+                            메트릭을 자동으로 수집하고 저장
+                        </p>
+
+                        <div class="bg-gray-100 rounded p-3 text-sm mb-4">
+                            15초마다 Actuator를 찾아가서<br>
+                            메모리, CPU 등을 가져와 저장
+                        </div>
+
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><i class="fas fa-clock text-orange-500 mr-2"></i>시간별 데이터 저장</li>
+                            <li><i class="fas fa-bell text-orange-500 mr-2"></i>임계값 초과 시 알림</li>
+                            <li><i class="fas fa-server text-orange-500 mr-2"></i>별도 서버 필요 (Docker)</li>
+                        </ul>
+
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <p class="text-xs text-gray-500">
+                                <strong>언제 써?</strong><br>
+                                운영 서버, 장기 모니터링
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Grafana -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 tool-card border-t-4 border-blue-500">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-chart-area text-5xl text-blue-500 mb-3"></i>
+                            <h3 class="text-2xl font-bold text-gray-800">Grafana</h3>
+                            <p class="text-sm text-gray-500">시각화 대시보드</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold inline-block">
+                                선택 (중급)
+                            </div>
+                        </div>
+
+                        <p class="text-gray-700 mb-4">
+                            <strong>무엇에 쓰는 물건?</strong><br>
+                            Prometheus 데이터를 예쁘게 그래프로 표시
+                        </p>
+
+                        <div class="bg-gray-100 rounded p-3 text-sm mb-4">
+                            꺾은선 그래프, 게이지, 히트맵 등<br>
+                            실시간 대시보드 제공
+                        </div>
+
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li><i class="fas fa-paint-brush text-blue-500 mr-2"></i>다양한 차트/그래프</li>
+                            <li><i class="fas fa-eye text-blue-500 mr-2"></i>실시간 시각화</li>
+                            <li><i class="fas fa-puzzle-piece text-blue-500 mr-2"></i>Prometheus와 세트</li>
+                        </ul>
+
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <p class="text-xs text-gray-500">
+                                <strong>언제 써?</strong><br>
+                                Prometheus 데이터를 보기 좋게
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 도구 조합 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-link text-green-600 mr-3"></i>
+                    어떻게 같이 쓰나요?
+                </h2>
+
+                <div class="bg-gradient-to-r from-green-50 via-orange-50 to-blue-50 rounded-lg p-8">
+                    <div class="flex items-center justify-between">
+                        <!-- Spring Boot -->
+                        <div class="text-center flex-1">
+                            <div class="bg-white rounded-lg shadow-lg p-6 inline-block">
+                                <i class="fas fa-leaf text-5xl text-green-600 mb-3"></i>
+                                <h4 class="font-bold text-gray-800">Spring Boot</h4>
+                                <p class="text-sm text-gray-600">Actuator</p>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-3">
+                                메트릭 제공<br>
+                                <code class="text-xs">/actuator/prometheus</code>
+                            </p>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="text-center px-4">
+                            <i class="fas fa-arrow-right text-3xl text-orange-500"></i>
+                            <p class="text-xs text-gray-600 mt-2">15초마다<br>자동 수집</p>
+                        </div>
+
+                        <!-- Prometheus -->
+                        <div class="text-center flex-1">
+                            <div class="bg-white rounded-lg shadow-lg p-6 inline-block">
+                                <i class="fas fa-database text-5xl text-orange-600 mb-3"></i>
+                                <h4 class="font-bold text-gray-800">Prometheus</h4>
+                                <p class="text-sm text-gray-600">수집 + 저장</p>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-3">
+                                시계열 DB<br>
+                                <code class="text-xs">localhost:9090</code>
+                            </p>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="text-center px-4">
+                            <i class="fas fa-arrow-right text-3xl text-blue-500"></i>
+                            <p class="text-xs text-gray-600 mt-2">데이터<br>조회</p>
+                        </div>
+
+                        <!-- Grafana -->
+                        <div class="text-center flex-1">
+                            <div class="bg-white rounded-lg shadow-lg p-6 inline-block">
+                                <i class="fas fa-chart-area text-5xl text-blue-600 mb-3"></i>
+                                <h4 class="font-bold text-gray-800">Grafana</h4>
+                                <p class="text-sm text-gray-600">시각화</p>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-3">
+                                대시보드<br>
+                                <code class="text-xs">localhost:3000</code>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg mt-6">
+                    <h3 class="font-bold text-yellow-800 mb-2">
+                        <i class="fas fa-lightbulb mr-2"></i>핵심 정리
+                    </h3>
+                    <ul class="text-yellow-700 space-y-2">
+                        <li><strong>Prometheus + Grafana는 세트</strong> (혼자 못 씀)</li>
+                        <li>Prometheus는 "수집기 + 저장소", Grafana는 "보여주는 화면"</li>
+                        <li>둘 다 별도 서버 필요 (보통 Docker로 실행)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 프로젝트별 권장사항 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-graduation-cap text-indigo-600 mr-3"></i>
+                    우리 프로젝트에서는?
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- 필수: Actuator -->
+                    <div class="bg-green-50 border-2 border-green-500 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-green-800 mb-4">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            ✅ 필수: Actuator만 사용
+                        </h3>
+                        <p class="text-green-700 mb-4">
+                            <strong>7일 단기 프로젝트는 Actuator면 충분</strong>
+                        </p>
+                        <ul class="space-y-2 text-green-700">
+                            <li><i class="fas fa-arrow-right text-green-500 mr-2"></i>로컬 개발 환경</li>
+                            <li><i class="fas fa-arrow-right text-green-500 mr-2"></i>간단한 헬스 체크</li>
+                            <li><i class="fas fa-arrow-right text-green-500 mr-2"></i>메트릭 확인 (JSON)</li>
+                            <li><i class="fas fa-arrow-right text-green-500 mr-2"></i>별도 서버 불필요</li>
+                        </ul>
+                        <div class="mt-4">
+                            <a href="/project/step2/actuator-demo" class="inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                                <i class="fas fa-play mr-2"></i>Actuator 실습하기
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 선택: Prometheus + Grafana -->
+                    <div class="bg-blue-50 border-2 border-blue-500 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-blue-800 mb-4">
+                            <i class="fas fa-star mr-2"></i>
+                            ⭐ 선택: Prometheus + Grafana
+                        </h3>
+                        <p class="text-blue-700 mb-4">
+                            <strong>실무 경험용</strong>
+                        </p>
+                        <ul class="space-y-2 text-blue-700">
+                            <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i>AWS 배포 후 사용</li>
+                            <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i>실시간 대시보드</li>
+                            <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i>부하 테스트 시각화</li>
+                            <li><i class="fas fa-arrow-right text-blue-500 mr-2"></i>Docker Compose 필요</li>
+                        </ul>
+                        <div class="mt-4">
+                            <span class="inline-block bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed">
+                                <i class="fas fa-lock mr-2"></i>2차 프로젝트 이후
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 실무 Tips -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-briefcase text-purple-600 mr-3"></i>
+                    실무에서는 어떻게 써?
+                </h2>
+
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="font-bold text-gray-800 mb-3">
+                            <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">스타트업/중소기업</span>
+                            Actuator + 클라우드 모니터링
+                        </h3>
+                        <p class="text-gray-700">
+                            AWS CloudWatch, Azure Monitor 같은 클라우드 기본 제공 서비스 사용<br>
+                            Prometheus/Grafana는 초기엔 불필요
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="font-bold text-gray-800 mb-3">
+                            <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">중견/대기업</span>
+                            Prometheus + Grafana + ELK Stack
+                        </h3>
+                        <p class="text-gray-700">
+                            메트릭(Prometheus) + 로그(ELK) + 추적(Zipkin/Jaeger)<br>
+                            전담 DevOps 팀이 인프라 관리
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="font-bold text-gray-800 mb-3">
+                            <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">글로벌 기업</span>
+                            Datadog, New Relic 같은 SaaS 서비스
+                        </h3>
+                        <p class="text-gray-700">
+                            유료 모니터링 서비스 사용 (설치/관리 불필요)<br>
+                            비용 vs 편의성 트레이드오프
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AWS CloudWatch 섹션 -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-cloud text-orange-600 mr-3"></i>
+                    AWS CloudWatch (배포 후 추천)
+                </h2>
+
+                <div class="bg-gradient-to-r from-orange-50 to-yellow-50 border-l-4 border-orange-500 p-6 rounded-lg mb-6">
+                    <h3 class="text-xl font-bold text-orange-800 mb-3">
+                        <i class="fas fa-question-circle mr-2"></i>
+                        CloudWatch란?
+                    </h3>
+                    <p class="text-orange-700 mb-3">
+                        AWS에서 제공하는 모니터링 서비스 - <strong>EC2 생성하면 자동으로 메트릭 기록됨</strong>
+                    </p>
+                    <div class="bg-white rounded p-4">
+                        <p class="text-sm text-gray-700">
+                            <strong>Actuator vs CloudWatch:</strong><br>
+                            • Actuator: "지금 이 순간" 서버 상태 확인 (실시간)<br>
+                            • CloudWatch: "지난 24시간" 서버 추이 확인 (과거 데이터 그래프)
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <!-- 장점 -->
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                            왜 CloudWatch를 사용하나요?
+                        </h3>
+                        <ul class="space-y-3 text-gray-700 text-sm">
+                            <li>
+                                <i class="fas fa-chart-line text-blue-500 mr-2"></i>
+                                <strong>과거 데이터 그래프:</strong> "어제 오후 3시에 CPU 급등" 같은 패턴 확인
+                            </li>
+                            <li>
+                                <i class="fas fa-bell text-yellow-500 mr-2"></i>
+                                <strong>자동 알림:</strong> CPU 80% 넘으면 이메일/Slack 알림
+                            </li>
+                            <li>
+                                <i class="fas fa-history text-purple-500 mr-2"></i>
+                                <strong>문제 원인 추적:</strong> "서버 다운 시점에 메모리 100% 도달" 분석
+                            </li>
+                            <li>
+                                <i class="fas fa-presentation text-orange-500 mr-2"></i>
+                                <strong>발표 자료:</strong> "24시간 안정성 모니터링" 그래프 첨부
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 무료 vs 유료 -->
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-dollar-sign text-green-600 mr-2"></i>
+                            무료 vs 유료
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="bg-green-50 rounded p-3">
+                                <p class="font-bold text-green-800 text-sm mb-2">✅ 무료 (기본 메트릭)</p>
+                                <ul class="text-xs text-green-700 space-y-1">
+                                    <li>• CPU 사용률</li>
+                                    <li>• 네트워크 트래픽</li>
+                                    <li>• 디스크 I/O</li>
+                                    <li>• 5분 간격 자동 수집</li>
+                                    <li>• 로그 5GB/월 무료</li>
+                                </ul>
+                            </div>
+                            <div class="bg-red-50 rounded p-3">
+                                <p class="font-bold text-red-800 text-sm mb-2">❌ 유료 (고급 기능)</p>
+                                <ul class="text-xs text-red-700 space-y-1">
+                                    <li>• 1분 간격 상세 모니터링 ($2.10/월)</li>
+                                    <li>• Custom Metrics ($0.30/월/메트릭)</li>
+                                    <li>• 로그 5GB 초과 ($0.50/GB)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-3 bg-yellow-50 p-2 rounded">
+                            <strong>💡 7일 프로젝트:</strong> 기본 메트릭만 써도 충분! (무료)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 사용 방법 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-rocket text-blue-600 mr-2"></i>
+                        CloudWatch 사용법 (초간단)
+                    </h3>
+
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">1</div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-800 mb-2">EC2 인스턴스 생성</h4>
+                                <p class="text-sm text-gray-600">
+                                    EC2 만들면 <strong>자동으로</strong> CloudWatch에 메트릭 전송 시작<br>
+                                    <span class="text-green-600">→ 추가 설정 불필요!</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">2</div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-800 mb-2">AWS Console에서 확인</h4>
+                                <div class="bg-gray-900 text-white rounded p-3 text-xs font-mono">
+AWS Console → CloudWatch → Metrics → EC2
+→ 자동으로 그래프 생성됨 (설정 안 해도!)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 flex-shrink-0">3</div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-800 mb-2">알림 설정 (선택)</h4>
+                                <p class="text-sm text-gray-600 mb-2">
+                                    CPU 80% 넘으면 알림 받기:
+                                </p>
+                                <div class="bg-gray-100 rounded p-3 text-xs">
+                                    CloudWatch → Alarms → Create Alarm<br>
+                                    → Metric: EC2 > CPU Utilization<br>
+                                    → Threshold: 80%<br>
+                                    → Action: SNS Topic (이메일/Slack)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actuator vs CloudWatch 비교 -->
+                <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-balance-scale text-purple-600 mr-2"></i>
+                        Actuator vs CloudWatch 어떤 걸 써야 할까?
+                    </h3>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="p-3 text-left">기능</th>
+                                    <th class="p-3 text-center">Actuator</th>
+                                    <th class="p-3 text-center">CloudWatch 기본</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-700">
+                                <tr class="border-b">
+                                    <td class="p-3">현재 서버 상태 확인</td>
+                                    <td class="p-3 text-center">✅ 즉시 확인</td>
+                                    <td class="p-3 text-center">✅ 5분 지연</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-3">과거 데이터 (1시간 전)</td>
+                                    <td class="p-3 text-center">❌</td>
+                                    <td class="p-3 text-center">✅</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-3">그래프/차트</td>
+                                    <td class="p-3 text-center">❌ JSON만</td>
+                                    <td class="p-3 text-center">✅ 예쁜 그래프</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-3">알림 설정</td>
+                                    <td class="p-3 text-center">❌</td>
+                                    <td class="p-3 text-center">✅</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-3">설정 복잡도</td>
+                                    <td class="p-3 text-center">⭐ 매우 쉬움</td>
+                                    <td class="p-3 text-center">⭐⭐ 쉬움 (자동)</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-3">비용</td>
+                                    <td class="p-3 text-center">무료</td>
+                                    <td class="p-3 text-center">무료 (기본)</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3">발표 자료 활용</td>
+                                    <td class="p-3 text-center">⭐⭐ 보통</td>
+                                    <td class="p-3 text-center">⭐⭐⭐⭐ 우수</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-4 bg-green-100 border-l-4 border-green-500 p-4 rounded">
+                        <p class="text-sm text-green-800">
+                            <strong>💡 추천 조합:</strong> Actuator (실시간 확인) + CloudWatch (과거 분석)<br>
+                            설정 시간: 0분 (EC2 만들면 자동으로 CloudWatch 연동됨)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 실습 예시 -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-laptop-code text-green-600 mr-2"></i>
+                        발표 자료 활용 예시
+                    </h3>
+
+                    <div class="space-y-3">
+                        <div class="bg-gray-50 rounded p-4">
+                            <p class="font-bold text-gray-800 mb-2">Before (Actuator만 사용)</p>
+                            <p class="text-sm text-gray-700">
+                                "서버를 AWS EC2에 배포했습니다. Actuator로 헬스 체크 가능합니다."
+                            </p>
+                        </div>
+
+                        <div class="text-center text-2xl">👇</div>
+
+                        <div class="bg-blue-50 rounded p-4">
+                            <p class="font-bold text-blue-800 mb-2">After (Actuator + CloudWatch)</p>
+                            <p class="text-sm text-blue-700 mb-3">
+                                "서버를 AWS EC2에 배포하고 <strong>CloudWatch로 24시간 모니터링</strong>을 구축했습니다."
+                            </p>
+                            <ul class="text-xs text-blue-600 space-y-1 list-disc list-inside">
+                                <li>Actuator: 실시간 헬스 체크 및 메트릭 조회</li>
+                                <li>CloudWatch: 24시간 CPU/메모리 사용률 그래프 (스크린샷 첨부)</li>
+                                <li>알림 설정: CPU 80% 초과 시 이메일 자동 발송</li>
+                                <li>안정성 증명: "24시간 가동 중 장애 0건"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 다음 단계 -->
+            <section class="mb-12">
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg shadow-lg p-8">
+                    <h2 class="text-3xl font-bold mb-4">
+                        <i class="fas fa-route mr-3"></i>
+                        학습 로드맵
+                    </h2>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                            <div class="text-2xl font-bold mb-2">1단계</div>
+                            <p class="text-blue-100">Actuator로 기본 개념 익히기</p>
+                            <a href="/project/step2/actuator-demo" class="inline-block mt-2 bg-white text-blue-600 px-3 py-1 rounded text-sm font-bold hover:bg-blue-50 transition">
+                                실습 시작 →
+                            </a>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                            <div class="text-2xl font-bold mb-2">2단계</div>
+                            <p class="text-blue-100">AWS 배포 후 CloudWatch 자동 연동</p>
+                            <p class="text-xs text-blue-200 mt-2">설정 0분 (자동)</p>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                            <div class="text-2xl font-bold mb-2">3단계</div>
+                            <p class="text-blue-100">Prometheus + Grafana 도전 (선택)</p>
+                            <p class="text-xs text-blue-200 mt-2">여유 시간 있을 때</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</body>
+</html>

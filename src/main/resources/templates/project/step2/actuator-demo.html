@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/step2-layout}">
+<head>
+    <title>Actuator 실습</title>
+    <style>
+        .endpoint-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .endpoint-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        .json-viewer {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .json-key {
+            color: #7dd3fc;
+        }
+        .json-string {
+            color: #86efac;
+        }
+        .json-number {
+            color: #fbbf24;
+        }
+        .json-boolean {
+            color: #f472b6;
+        }
+        .loading-spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg">
+            <div class="container mx-auto px-6 py-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold mb-2">
+                            <i class="fas fa-heartbeat mr-3"></i>
+                            Actuator 실습
+                        </h1>
+                        <p class="text-xl text-blue-100">
+                            클릭으로 서버 상태 확인하기
+                        </p>
+                    </div>
+                    <a href="/project/step2/monitoring-overview" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition">
+                        <i class="fas fa-arrow-left mr-2"></i>이론으로
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 py-12">
+
+            <!-- Quick Start -->
+            <section class="mb-12">
+                <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                    <h2 class="text-2xl font-bold text-green-800 mb-3">
+                        <i class="fas fa-play-circle mr-2"></i>
+                        시작하기
+                    </h2>
+                    <p class="text-green-700 mb-4">
+                        아래 카드를 클릭하면 실제 서버에서 응답을 가져옵니다. JSON이 어려워 보여도 걱정 마세요!<br>
+                        <strong>오른쪽에 설명</strong>이 나타납니다.
+                    </p>
+                    <div class="flex items-center space-x-2 text-green-700">
+                        <i class="fas fa-info-circle"></i>
+                        <span>현재 서버 주소: <code class="bg-green-100 px-2 py-1 rounded">http://localhost:8080</code></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Endpoint Cards -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-plug text-blue-600 mr-3"></i>
+                    Actuator 엔드포인트
+                </h2>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Health -->
+                    <div class="endpoint-card bg-white rounded-lg shadow-lg p-6 border-t-4 border-green-500"
+                         onclick="fetchEndpoint('/actuator/health', 'health')">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-heartbeat text-4xl text-green-500 mb-2"></i>
+                            <h3 class="text-xl font-bold text-gray-800">Health</h3>
+                            <code class="text-sm text-gray-500">/actuator/health</code>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-3">
+                            서버가 정상인지 확인<br>
+                            DB 연결 상태도 체크
+                        </p>
+                        <div class="bg-green-50 rounded p-2 text-xs text-green-700">
+                            <strong>확인 사항:</strong> status가 UP인지
+                        </div>
+                    </div>
+
+                    <!-- Metrics -->
+                    <div class="endpoint-card bg-white rounded-lg shadow-lg p-6 border-t-4 border-blue-500"
+                         onclick="fetchEndpoint('/actuator/metrics', 'metrics')">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-chart-bar text-4xl text-blue-500 mb-2"></i>
+                            <h3 class="text-xl font-bold text-gray-800">Metrics</h3>
+                            <code class="text-sm text-gray-500">/actuator/metrics</code>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-3">
+                            측정 가능한 항목 목록<br>
+                            메모리, CPU, HTTP 요청 등
+                        </p>
+                        <div class="bg-blue-50 rounded p-2 text-xs text-blue-700">
+                            <strong>확인 사항:</strong> names 배열
+                        </div>
+                    </div>
+
+                    <!-- JVM Memory -->
+                    <div class="endpoint-card bg-white rounded-lg shadow-lg p-6 border-t-4 border-purple-500"
+                         onclick="fetchEndpoint('/actuator/metrics/jvm.memory.used', 'jvm-memory')">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-memory text-4xl text-purple-500 mb-2"></i>
+                            <h3 class="text-xl font-bold text-gray-800">JVM Memory</h3>
+                            <code class="text-sm text-gray-500">/metrics/jvm.memory.used</code>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-3">
+                            현재 메모리 사용량<br>
+                            바이트 단위로 표시
+                        </p>
+                        <div class="bg-purple-50 rounded p-2 text-xs text-purple-700">
+                            <strong>확인 사항:</strong> measurements[0].value
+                        </div>
+                    </div>
+
+                    <!-- HTTP Requests -->
+                    <div class="endpoint-card bg-white rounded-lg shadow-lg p-6 border-t-4 border-orange-500"
+                         onclick="fetchEndpoint('/actuator/metrics/http.server.requests', 'http-requests')">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-exchange-alt text-4xl text-orange-500 mb-2"></i>
+                            <h3 class="text-xl font-bold text-gray-800">HTTP Requests</h3>
+                            <code class="text-sm text-gray-500">/metrics/http.server.requests</code>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-3">
+                            API 요청 통계<br>
+                            횟수, 평균 시간 등
+                        </p>
+                        <div class="bg-orange-50 rounded p-2 text-xs text-orange-700">
+                            <strong>확인 사항:</strong> COUNT, TOTAL_TIME
+                        </div>
+                    </div>
+
+                    <!-- Info -->
+                    <div class="endpoint-card bg-white rounded-lg shadow-lg p-6 border-t-4 border-teal-500"
+                         onclick="fetchEndpoint('/actuator/info', 'info')">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-info-circle text-4xl text-teal-500 mb-2"></i>
+                            <h3 class="text-xl font-bold text-gray-800">Info</h3>
+                            <code class="text-sm text-gray-500">/actuator/info</code>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-3">
+                            애플리케이션 정보<br>
+                            버전, 설명 등 (설정 필요)
+                        </p>
+                        <div class="bg-teal-50 rounded p-2 text-xs text-teal-700">
+                            <strong>확인 사항:</strong> 빈 객체일 수 있음
+                        </div>
+                    </div>
+
+                    <!-- System CPU -->
+                    <div class="endpoint-card bg-white rounded-lg shadow-lg p-6 border-t-4 border-red-500"
+                         onclick="fetchEndpoint('/actuator/metrics/system.cpu.usage', 'system-cpu')">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-microchip text-4xl text-red-500 mb-2"></i>
+                            <h3 class="text-xl font-bold text-gray-800">System CPU</h3>
+                            <code class="text-sm text-gray-500">/metrics/system.cpu.usage</code>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-3">
+                            CPU 사용률<br>
+                            0.0 ~ 1.0 (0% ~ 100%)
+                        </p>
+                        <div class="bg-red-50 rounded p-2 text-xs text-red-700">
+                            <strong>확인 사항:</strong> value (0.5 = 50%)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Result Display -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-desktop text-purple-600 mr-3"></i>
+                    응답 결과
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Raw JSON -->
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-bold text-gray-800">
+                                <i class="fas fa-code mr-2 text-blue-600"></i>
+                                실제 JSON 응답
+                            </h3>
+                            <button id="copyBtn" onclick="copyJson()" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition" style="display: none;">
+                                <i class="fas fa-copy mr-1"></i>복사
+                            </button>
+                        </div>
+                        <div id="jsonResponse" class="json-viewer">
+                            <div class="text-gray-400 text-center py-8">
+                                <i class="fas fa-arrow-up text-3xl mb-3"></i>
+                                <p>위쪽 카드를 클릭하세요</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Human Readable -->
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">
+                            <i class="fas fa-language mr-2 text-green-600"></i>
+                            쉬운 설명
+                        </h3>
+                        <div id="explanation" class="bg-white rounded-lg shadow-lg p-6 border border-gray-200 min-h-[500px]">
+                            <div class="text-gray-400 text-center py-8">
+                                <i class="fas fa-lightbulb text-3xl mb-3"></i>
+                                <p>응답을 받으면 여기에 설명이 나타납니다</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Practical Tips -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-lightbulb text-yellow-600 mr-3"></i>
+                    실무 활용 가이드
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Tip 1: 배포 직후 확인 -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3">
+                            <i class="fas fa-rocket text-green-600 mr-2"></i>
+                            1. 배포 직후 서버 상태 확인
+                        </h3>
+                        <p class="text-gray-700 text-sm mb-3">
+                            AWS EC2에 배포했다면 브라우저에서:
+                        </p>
+                        <div class="bg-gray-100 rounded p-3 mb-3">
+                            <code class="text-sm text-blue-600">http://서버주소:8080/actuator/health</code>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded">
+                            <p class="text-xs text-green-800">
+                                <strong>✅ {"status":"UP"}</strong> 이 나오면 서버 정상<br>
+                                <strong>❌ 연결 안 됨</strong> → 포트 8080 방화벽 확인
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Tip 2: 메모리 누수 감지 -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-purple-500">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3">
+                            <i class="fas fa-memory text-purple-600 mr-2"></i>
+                            2. 메모리 누수 의심될 때
+                        </h3>
+                        <p class="text-gray-700 text-sm mb-3">
+                            같은 페이지를 10~20번 새로고침 후:
+                        </p>
+                        <div class="bg-gray-100 rounded p-3 mb-3">
+                            <code class="text-sm text-blue-600">/actuator/metrics/jvm.memory.used</code>
+                        </div>
+                        <div class="bg-purple-50 p-3 rounded">
+                            <p class="text-xs text-purple-800">
+                                <strong>정상:</strong> 메모리 사용량이 비슷<br>
+                                <strong>문제:</strong> 계속 증가 → 메모리 누수 가능성
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Tip 3: 느린 API 찾기 -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-orange-500">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3">
+                            <i class="fas fa-tachometer-alt text-orange-600 mr-2"></i>
+                            3. 느린 API 찾는 방법
+                        </h3>
+                        <div class="bg-yellow-50 border border-yellow-300 rounded p-3 mb-3">
+                            <p class="text-xs text-yellow-800">
+                                <strong>⚠️ 주의:</strong> 위 "HTTP Requests" 카드는 <strong>전체 평균</strong>만 보여줍니다.<br>
+                                <strong>어느 API가 느린지는 알 수 없습니다.</strong>
+                            </p>
+                        </div>
+                        <p class="text-gray-700 text-sm font-bold mb-2">실제 느린 API 찾는 방법:</p>
+                        <div class="bg-gray-100 rounded p-3 mb-3">
+                            <p class="text-xs text-gray-700">
+                                <strong>방법 1 (추천):</strong> 브라우저 개발자 도구<br>
+                                • F12 → Network 탭<br>
+                                • 페이지 새로고침<br>
+                                • Time 컬럼에서 느린 요청 확인<br><br>
+
+                                <strong>방법 2:</strong> Postman으로 API 하나씩 테스트<br>
+                                • 각 API 호출 후 우측 하단 시간 확인<br>
+                                • 300ms 이상이면 느린 편<br><br>
+
+                                <strong>방법 3 (고급):</strong> 애플리케이션 로그<br>
+                                • <code>logging.level.org.springframework.web=DEBUG</code><br>
+                                • 콘솔에서 각 요청의 처리 시간 확인
+                            </p>
+                        </div>
+                        <div class="bg-orange-50 p-3 rounded">
+                            <p class="text-xs text-orange-800">
+                                <strong>개선 방법:</strong> N+1 쿼리, Fetch Join 확인
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Tip 4: 운영 환경 보안 -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-red-500">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3">
+                            <i class="fas fa-shield-alt text-red-600 mr-2"></i>
+                            4. 운영 환경 보안 설정
+                        </h3>
+                        <p class="text-gray-700 text-sm mb-3">
+                            실제 운영 서버에서는 Actuator URL 변경:
+                        </p>
+                        <div class="bg-gray-100 rounded p-3 mb-3">
+                            <code class="text-xs text-gray-700">
+# application-prod.properties<br>
+management.endpoints.web.base-path=/internal-monitor<br>
+management.server.port=9090
+                            </code>
+                        </div>
+                        <div class="bg-red-50 p-3 rounded">
+                            <p class="text-xs text-red-800">
+                                <strong>효과:</strong> /actuator → /internal-monitor<br>
+                                포트도 8080 → 9090으로 분리 (외부 차단)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- When to Check -->
+            <section class="mb-12">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-6 rounded-lg">
+                    <h2 class="text-2xl font-bold text-blue-800 mb-4">
+                        <i class="fas fa-clock mr-2"></i>
+                        언제 확인하면 좋을까?
+                    </h2>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-white bg-opacity-70 rounded-lg p-4">
+                            <h4 class="font-bold text-gray-800 mb-2">
+                                <i class="fas fa-upload text-blue-600 mr-2"></i>
+                                배포 직후
+                            </h4>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• Health 체크 (서버 살아있나?)</li>
+                                <li>• DB 연결 확인</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white bg-opacity-70 rounded-lg p-4">
+                            <h4 class="font-bold text-gray-800 mb-2">
+                                <i class="fas fa-bug text-orange-600 mr-2"></i>
+                                버그 수정 후
+                            </h4>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• 메모리 사용량 비교</li>
+                                <li>• API 응답 시간 개선됐나?</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white bg-opacity-70 rounded-lg p-4">
+                            <h4 class="font-bold text-gray-800 mb-2">
+                                <i class="fas fa-users text-green-600 mr-2"></i>
+                                부하 테스트 중
+                            </h4>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• CPU 사용률 확인</li>
+                                <li>• 메모리 부족 여부</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- JavaScript -->
+        <script>
+            let currentJson = '';
+
+            async function fetchEndpoint(endpoint, type) {
+                const jsonDiv = document.getElementById('jsonResponse');
+                const explanationDiv = document.getElementById('explanation');
+                const copyBtn = document.getElementById('copyBtn');
+
+                // Show loading
+                jsonDiv.innerHTML = '<div class="text-center py-8"><div class="loading-spinner mx-auto mb-3"></div><p class="text-gray-400">불러오는 중...</p></div>';
+                explanationDiv.innerHTML = '<div class="text-center py-8"><div class="loading-spinner mx-auto mb-3"></div><p class="text-gray-400">분석 중...</p></div>';
+
+                try {
+                    const response = await fetch(endpoint);
+                    const data = await response.json();
+                    currentJson = JSON.stringify(data, null, 2);
+
+                    // Display formatted JSON
+                    jsonDiv.innerHTML = '<pre>' + syntaxHighlight(currentJson) + '</pre>';
+                    copyBtn.style.display = 'block';
+
+                    // Display explanation
+                    explanationDiv.innerHTML = getExplanation(type, data);
+                } catch (error) {
+                    jsonDiv.innerHTML = '<div class="text-red-400 p-4"><i class="fas fa-exclamation-triangle mr-2"></i>오류: ' + error.message + '</div>';
+                    explanationDiv.innerHTML = '<div class="text-red-600 p-4">데이터를 불러올 수 없습니다. 서버가 실행 중인지 확인하세요.</div>';
+                }
+            }
+
+            function syntaxHighlight(json) {
+                json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                    let cls = 'json-number';
+                    if (/^"/.test(match)) {
+                        if (/:$/.test(match)) {
+                            cls = 'json-key';
+                        } else {
+                            cls = 'json-string';
+                        }
+                    } else if (/true|false/.test(match)) {
+                        cls = 'json-boolean';
+                    } else if (/null/.test(match)) {
+                        cls = 'json-null';
+                    }
+                    return '<span class="' + cls + '">' + match + '</span>';
+                });
+            }
+
+            function getExplanation(type, data) {
+                switch(type) {
+                    case 'health':
+                        const status = data.status;
+                        const dbStatus = data.components?.db?.status || 'N/A';
+                        return `
+                            <div class="space-y-4">
+                                <div class="bg-${status === 'UP' ? 'green' : 'red'}-50 border-l-4 border-${status === 'UP' ? 'green' : 'red'}-500 p-4 rounded">
+                                    <h4 class="font-bold text-${status === 'UP' ? 'green' : 'red'}-800 text-lg mb-2">
+                                        <i class="fas fa-${status === 'UP' ? 'check-circle' : 'times-circle'} mr-2"></i>
+                                        서버 상태: ${status}
+                                    </h4>
+                                    <p class="text-${status === 'UP' ? 'green' : 'red'}-700">
+                                        ${status === 'UP' ? '✅ 서버가 정상적으로 작동 중입니다' : '❌ 서버에 문제가 있습니다'}
+                                    </p>
+                                </div>
+                                <div class="bg-blue-50 p-4 rounded">
+                                    <h4 class="font-bold text-blue-800 mb-2">데이터베이스</h4>
+                                    <p class="text-blue-700">상태: ${dbStatus}</p>
+                                    <p class="text-sm text-blue-600 mt-2">
+                                        DB 연결이 정상이면 데이터를 읽고 쓸 수 있습니다
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+
+                    case 'metrics':
+                        const count = data.names?.length || 0;
+                        return `
+                            <div class="space-y-4">
+                                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                                    <h4 class="font-bold text-blue-800 text-lg mb-2">
+                                        <i class="fas fa-list mr-2"></i>
+                                        사용 가능한 메트릭: ${count}개
+                                    </h4>
+                                    <p class="text-blue-700">
+                                        이 목록에 있는 이름을 사용해서 상세 정보를 조회할 수 있습니다
+                                    </p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded">
+                                    <h4 class="font-bold text-gray-800 mb-3">주요 메트릭</h4>
+                                    <ul class="space-y-2 text-sm text-gray-700">
+                                        <li><code class="bg-gray-200 px-2 py-1 rounded">jvm.memory.used</code> - 메모리 사용량</li>
+                                        <li><code class="bg-gray-200 px-2 py-1 rounded">system.cpu.usage</code> - CPU 사용률</li>
+                                        <li><code class="bg-gray-200 px-2 py-1 rounded">http.server.requests</code> - HTTP 요청 통계</li>
+                                        <li><code class="bg-gray-200 px-2 py-1 rounded">jvm.threads.live</code> - 활성 스레드 수</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        `;
+
+                    case 'jvm-memory':
+                        const memoryBytes = data.measurements?.[0]?.value || 0;
+                        const memoryMB = (memoryBytes / 1024 / 1024).toFixed(2);
+                        return `
+                            <div class="space-y-4">
+                                <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+                                    <h4 class="font-bold text-purple-800 text-lg mb-2">
+                                        <i class="fas fa-memory mr-2"></i>
+                                        현재 메모리 사용량
+                                    </h4>
+                                    <div class="text-3xl font-bold text-purple-700 my-3">${memoryMB} MB</div>
+                                    <p class="text-sm text-purple-600">(${memoryBytes.toLocaleString()} bytes)</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded">
+                                    <h4 class="font-bold text-gray-800 mb-2">이게 뭔가요?</h4>
+                                    <p class="text-gray-700 text-sm">
+                                        Java 애플리케이션이 현재 사용 중인 메모리 양입니다.<br>
+                                        이 값이 계속 증가하면 메모리 누수를 의심해볼 수 있습니다.
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+
+                    case 'http-requests':
+                        const measurements = data.measurements || [];
+                        const count_measure = measurements.find(m => m.statistic === 'COUNT')?.value || 0;
+                        const total_time = measurements.find(m => m.statistic === 'TOTAL_TIME')?.value || 0;
+                        const avg_time = count_measure > 0 ? (total_time / count_measure * 1000).toFixed(2) : 0;
+                        return `
+                            <div class="space-y-4">
+                                <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded">
+                                    <h4 class="font-bold text-orange-800 text-lg mb-3">
+                                        <i class="fas fa-exchange-alt mr-2"></i>
+                                        HTTP 요청 통계
+                                    </h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <p class="text-sm text-orange-600">총 요청 수</p>
+                                            <p class="text-2xl font-bold text-orange-700">${count_measure}회</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-orange-600">평균 응답 시간</p>
+                                            <p class="text-2xl font-bold text-orange-700">${avg_time}ms</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded">
+                                    <h4 class="font-bold text-gray-800 mb-2">활용 방법</h4>
+                                    <p class="text-gray-700 text-sm">
+                                        API를 여러 번 호출한 후 이 엔드포인트를 다시 확인해보세요.<br>
+                                        COUNT가 증가하고, 평균 응답 시간을 확인할 수 있습니다.
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+
+                    case 'system-cpu':
+                        const cpuUsage = data.measurements?.[0]?.value || 0;
+                        const cpuPercent = (cpuUsage * 100).toFixed(2);
+                        return `
+                            <div class="space-y-4">
+                                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                                    <h4 class="font-bold text-red-800 text-lg mb-2">
+                                        <i class="fas fa-microchip mr-2"></i>
+                                        시스템 CPU 사용률
+                                    </h4>
+                                    <div class="text-3xl font-bold text-red-700 my-3">${cpuPercent}%</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-4">
+                                        <div class="bg-red-600 h-4 rounded-full" style="width: ${cpuPercent}%"></div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded">
+                                    <h4 class="font-bold text-gray-800 mb-2">해석</h4>
+                                    <ul class="text-sm text-gray-700 space-y-1">
+                                        <li>• 0~30%: 여유로움</li>
+                                        <li>• 30~70%: 정상 범위</li>
+                                        <li>• 70~100%: 부하 높음 (최적화 필요)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        `;
+
+                    case 'info':
+                        return `
+                            <div class="space-y-4">
+                                <div class="bg-teal-50 border-l-4 border-teal-500 p-4 rounded">
+                                    <h4 class="font-bold text-teal-800 text-lg mb-2">
+                                        <i class="fas fa-info-circle mr-2"></i>
+                                        애플리케이션 정보
+                                    </h4>
+                                    <p class="text-teal-700">
+                                        ${Object.keys(data).length === 0 ? '설정된 정보가 없습니다' : 'Git 정보, 빌드 정보 등이 표시됩니다'}
+                                    </p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded">
+                                    <h4 class="font-bold text-gray-800 mb-2">설정 방법</h4>
+                                    <p class="text-sm text-gray-700 mb-2">application.properties에 추가:</p>
+                                    <code class="block bg-gray-800 text-white p-3 rounded text-xs">
+info.app.name=JPA Project<br>
+info.app.version=1.0.0<br>
+info.app.description=Spring Boot JPA
+                                    </code>
+                                </div>
+                            </div>
+                        `;
+
+                    default:
+                        return '<p class="text-gray-600">설명을 준비 중입니다.</p>';
+                }
+            }
+
+            function copyJson() {
+                navigator.clipboard.writeText(currentJson).then(() => {
+                    const copyBtn = document.getElementById('copyBtn');
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check mr-1"></i>복사됨!';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                    }, 2000);
+                });
+            }
+        </script>
+    </div>
+</body>
+</html>

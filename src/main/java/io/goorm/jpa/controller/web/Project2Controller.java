@@ -119,4 +119,32 @@ public class Project2Controller {
         model.addAttribute("pageTitle", "OAuth 2.0 소셜 로그인");
         return "project/step2/oauth-theory";
     }
+
+    @GetMapping("/monitoring-overview")
+    public String monitoringOverview(Model model) {
+        log.info("Step 2 monitoring overview page accessed");
+        model.addAttribute("pageTitle", "모니터링 개요");
+        return "project/step2/monitoring-overview";
+    }
+
+    @GetMapping("/actuator-demo")
+    public String actuatorDemo(Model model) {
+        log.info("Step 2 Actuator demo page accessed");
+        model.addAttribute("pageTitle", "Actuator 실습");
+        return "project/step2/actuator-demo";
+    }
+
+    @GetMapping("/testing-guide")
+    public String testingGuide(Model model) {
+        log.info("Step 2 testing guide page accessed");
+        model.addAttribute("pageTitle", "테스트 & 성능 테스트");
+        return "project/step2/testing-guide";
+    }
+
+    @GetMapping("/security-testing")
+    public String securityTesting(Model model) {
+        log.info("Step 2 security testing page accessed");
+        model.addAttribute("pageTitle", "보안 취약점 테스트");
+        return "project/step2/security-testing";
+    }
 }
