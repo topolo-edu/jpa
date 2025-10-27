@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/springboot-layout}">
+<head>
+    <title>Repository 어노테이션</title>
+</head>
+<body>
+    <div layout:fragment="content">
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-3">
+                <i class="fas fa-database text-purple-600 mr-3"></i>
+                Repository 레이어
+            </h1>
+            <p class="text-lg text-gray-600">
+                데이터베이스 접근을 담당하는 Repository의 JPA와 MyBatis 방식을 비교합니다
+            </p>
+        </div>
+
+        <!-- JPA vs MyBatis Comparison -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-balance-scale text-indigo-600 mr-2"></i>
+                JPA vs MyBatis
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- JPA -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-purple-500">
+                    <h3 class="text-xl font-bold text-purple-800 mb-4">
+                        <i class="fas fa-magic mr-2"></i>JPA (Spring Data JPA)
+                    </h3>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mr-2 mt-1"></i>
+                            <span class="text-sm"><strong>SQL 자동 생성:</strong> 쿼리 작성 불필요</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mr-2 mt-1"></i>
+                            <span class="text-sm"><strong>객체 지향적:</strong> Entity 중심 개발</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mr-2 mt-1"></i>
+                            <span class="text-sm"><strong>DB 독립성:</strong> DB 변경 쉬움</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-times-circle text-red-600 mr-2 mt-1"></i>
+                            <span class="text-sm"><strong>러닝 커브:</strong> 개념 이해 필요</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-times-circle text-red-600 mr-2 mt-1"></i>
+                            <span class="text-sm"><strong>복잡한 쿼리:</strong> JPQL/QueryDSL 필요</span>
+                        </div>
+                    </div>
+                    <div class="bg-purple-50 p-3 rounded text-xs text-purple-700">
+                        <strong>추천:</strong> 새 프로젝트, 도메인 중심 설계
+                    </div>
+                </div>
+
+                <!-- MyBatis -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-blue-500">
+                    <h3 class="text-xl font-bold text-blue-800 mb-4">
+                        <i class="fas fa-file-code mr-2"></i>MyBatis
+                    </h3>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mr-2 mt-1"></i>
+                            <span class="text-sm"><strong>SQL 직접 작성:</strong> 세밀한 제어 가능</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mr-2 mt-1"></i>
+                            <span class="text-sm"><strong>복잡한 쿼리:</strong> 조인, 서브쿼리 자유롭게</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mr-2 mt-1"></i>
+                            <span class="text-sm"><strong>러닝 커브:</strong> SQL만 알면 OK</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-times-circle text-red-600 mr-2 mt-1"></i>
+                            <span class="text-sm"><strong>반복 작업:</strong> CRUD SQL 수동 작성</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-times-circle text-red-600 mr-2 mt-1"></i>
+                            <span class="text-sm"><strong>DB 종속성:</strong> DB 변경 시 SQL 수정</span>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded text-xs text-blue-700">
+                        <strong>추천:</strong> 레거시 시스템, 복잡한 SQL 필요
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- JPA Repository Example -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-code text-purple-600 mr-2"></i>
+                예제: JPA Repository
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="code-block"><pre><span style="color: #7dd3fc">@Repository</span>
+<span style="color: #fbbf24">public interface</span> <span style="color: #ffffff">OrderRepository</span> <span style="color: #fbbf24">extends</span> JpaRepository&lt;Order, Long&gt; {
+
+    <span style="color: #6b7280">// 1. 기본 제공 메서드 (구현 불필요)</span>
+    <span style="color: #6b7280">// - save(order)           // INSERT or UPDATE</span>
+    <span style="color: #6b7280">// - findById(id)          // SELECT by PK</span>
+    <span style="color: #6b7280">// - findAll()             // SELECT ALL</span>
+    <span style="color: #6b7280">// - delete(order)         // DELETE</span>
+    <span style="color: #6b7280">// - count()               // COUNT(*)</span>
+    <span style="color: #6b7280">// - existsById(id)        // EXISTS</span>
+
+    <span style="color: #6b7280">// 2. 메서드 이름으로 쿼리 자동 생성</span>
+    List&lt;Order&gt; <span style="color: #ffffff">findByCustomerName</span>(String customerName);
+    <span style="color: #6b7280">// SELECT * FROM orders WHERE customer_name = ?</span>
+
+    List&lt;Order&gt; <span style="color: #ffffff">findByCustomerNameContaining</span>(String keyword);
+    <span style="color: #6b7280">// SELECT * FROM orders WHERE customer_name LIKE %?%</span>
+
+    List&lt;Order&gt; <span style="color: #ffffff">findByStatusAndOrderDateAfter</span>(OrderStatus status, LocalDateTime date);
+    <span style="color: #6b7280">// SELECT * FROM orders WHERE status = ? AND order_date > ?</span>
+
+    List&lt;Order&gt; <span style="color: #ffffff">findByCustomerNameOrderByOrderDateDesc</span>(String name);
+    <span style="color: #6b7280">// SELECT * FROM orders WHERE customer_name = ? ORDER BY order_date DESC</span>
+
+    <span style="color: #6b7280">// 3. @Query로 JPQL 직접 작성</span>
+    <span style="color: #7dd3fc">@Query</span>(<span style="color: #86efac">"SELECT o FROM Order o WHERE o.customerName LIKE %:keyword%"</span>)
+    List&lt;Order&gt; <span style="color: #ffffff">searchByKeyword</span>(<span style="color: #7dd3fc">@Param</span>(<span style="color: #86efac">"keyword"</span>) String keyword);
+
+    <span style="color: #6b7280">// 4. Fetch Join으로 N+1 해결</span>
+    <span style="color: #7dd3fc">@Query</span>(<span style="color: #86efac">"SELECT o FROM Order o JOIN FETCH o.items WHERE o.id = :id"</span>)
+    Optional&lt;Order&gt; <span style="color: #ffffff">findByIdWithItems</span>(<span style="color: #7dd3fc">@Param</span>(<span style="color: #86efac">"id"</span>) Long id);
+
+    <span style="color: #6b7280">// 5. 네이티브 SQL 사용</span>
+    <span style="color: #7dd3fc">@Query</span>(value = <span style="color: #86efac">"SELECT * FROM orders WHERE customer_name = ?1"</span>,
+           nativeQuery = <span style="color: #f472b6">true</span>)
+    List&lt;Order&gt; <span style="color: #ffffff">findByNameNative</span>(String name);
+
+    <span style="color: #6b7280">// 6. 수정/삭제 쿼리</span>
+    <span style="color: #7dd3fc">@Modifying</span>
+    <span style="color: #7dd3fc">@Query</span>(<span style="color: #86efac">"UPDATE Order o SET o.status = :status WHERE o.id = :id"</span>)
+    <span style="color: #fbbf24">int</span> <span style="color: #ffffff">updateStatus</span>(<span style="color: #7dd3fc">@Param</span>(<span style="color: #86efac">"id"</span>) Long id, <span style="color: #7dd3fc">@Param</span>(<span style="color: #86efac">"status"</span>) OrderStatus status);
+
+    <span style="color: #6b7280">// 7. 페이징 처리</span>
+    Page&lt;Order&gt; <span style="color: #ffffff">findByStatus</span>(OrderStatus status, Pageable pageable);
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- MyBatis Repository Example -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-code text-blue-600 mr-2"></i>
+                예제: MyBatis Mapper
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-4">
+                <h3 class="text-lg font-bold text-gray-800 mb-3">Java Interface</h3>
+                <div class="code-block"><pre><span style="color: #7dd3fc">@Mapper</span>
+<span style="color: #fbbf24">public interface</span> <span style="color: #ffffff">OrderMapper</span> {
+
+    <span style="color: #6b7280">// 1. 전체 조회</span>
+    List&lt;Order&gt; <span style="color: #ffffff">findAll</span>();
+
+    <span style="color: #6b7280">// 2. ID로 조회</span>
+    Order <span style="color: #ffffff">findById</span>(Long id);
+
+    <span style="color: #6b7280">// 3. 이름으로 검색</span>
+    List&lt;Order&gt; <span style="color: #ffffff">findByCustomerName</span>(String name);
+
+    <span style="color: #6b7280">// 4. 생성</span>
+    <span style="color: #fbbf24">void</span> <span style="color: #ffffff">insert</span>(Order order);
+
+    <span style="color: #6b7280">// 5. 수정</span>
+    <span style="color: #fbbf24">void</span> <span style="color: #ffffff">update</span>(Order order);
+
+    <span style="color: #6b7280">// 6. 삭제</span>
+    <span style="color: #fbbf24">void</span> <span style="color: #ffffff">delete</span>(Long id);
+
+    <span style="color: #6b7280">// 7. 동적 쿼리 (조건부 검색)</span>
+    List&lt;Order&gt; <span style="color: #ffffff">searchOrders</span>(OrderSearchDto dto);
+}</pre>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-3">XML Mapper (src/main/resources/mapper/OrderMapper.xml)</h3>
+                <div class="code-block"><pre><span style="color: #7dd3fc">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span style="color: #7dd3fc">&lt;!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"&gt;</span>
+
+<span style="color: #7dd3fc">&lt;mapper</span> <span style="color: #fbbf24">namespace</span>=<span style="color: #86efac">"com.example.demo.repository.OrderMapper"</span><span style="color: #7dd3fc">&gt;</span>
+
+    <span style="color: #6b7280">&lt;!-- 1. 전체 조회 --&gt;</span>
+    <span style="color: #7dd3fc">&lt;select</span> <span style="color: #fbbf24">id</span>=<span style="color: #86efac">"findAll"</span> <span style="color: #fbbf24">resultType</span>=<span style="color: #86efac">"Order"</span><span style="color: #7dd3fc">&gt;</span>
+        SELECT * FROM orders
+    <span style="color: #7dd3fc">&lt;/select&gt;</span>
+
+    <span style="color: #6b7280">&lt;!-- 2. ID로 조회 --&gt;</span>
+    <span style="color: #7dd3fc">&lt;select</span> <span style="color: #fbbf24">id</span>=<span style="color: #86efac">"findById"</span> <span style="color: #fbbf24">resultType</span>=<span style="color: #86efac">"Order"</span><span style="color: #7dd3fc">&gt;</span>
+        SELECT * FROM orders WHERE id = #{id}
+    <span style="color: #7dd3fc">&lt;/select&gt;</span>
+
+    <span style="color: #6b7280">&lt;!-- 3. 이름으로 검색 --&gt;</span>
+    <span style="color: #7dd3fc">&lt;select</span> <span style="color: #fbbf24">id</span>=<span style="color: #86efac">"findByCustomerName"</span> <span style="color: #fbbf24">resultType</span>=<span style="color: #86efac">"Order"</span><span style="color: #7dd3fc">&gt;</span>
+        SELECT * FROM orders WHERE customer_name LIKE CONCAT('%', #{name}, '%')
+    <span style="color: #7dd3fc">&lt;/select&gt;</span>
+
+    <span style="color: #6b7280">&lt;!-- 4. 생성 --&gt;</span>
+    <span style="color: #7dd3fc">&lt;insert</span> <span style="color: #fbbf24">id</span>=<span style="color: #86efac">"insert"</span> <span style="color: #fbbf24">parameterType</span>=<span style="color: #86efac">"Order"</span>
+            <span style="color: #fbbf24">useGeneratedKeys</span>=<span style="color: #86efac">"true"</span> <span style="color: #fbbf24">keyProperty</span>=<span style="color: #86efac">"id"</span><span style="color: #7dd3fc">&gt;</span>
+        INSERT INTO orders (customer_name, order_date, status)
+        VALUES (#{customerName}, #{orderDate}, #{status})
+    <span style="color: #7dd3fc">&lt;/insert&gt;</span>
+
+    <span style="color: #6b7280">&lt;!-- 5. 수정 --&gt;</span>
+    <span style="color: #7dd3fc">&lt;update</span> <span style="color: #fbbf24">id</span>=<span style="color: #86efac">"update"</span> <span style="color: #fbbf24">parameterType</span>=<span style="color: #86efac">"Order"</span><span style="color: #7dd3fc">&gt;</span>
+        UPDATE orders
+        SET customer_name = #{customerName},
+            status = #{status}
+        WHERE id = #{id}
+    <span style="color: #7dd3fc">&lt;/update&gt;</span>
+
+    <span style="color: #6b7280">&lt;!-- 6. 삭제 --&gt;</span>
+    <span style="color: #7dd3fc">&lt;delete</span> <span style="color: #fbbf24">id</span>=<span style="color: #86efac">"delete"</span><span style="color: #7dd3fc">&gt;</span>
+        DELETE FROM orders WHERE id = #{id}
+    <span style="color: #7dd3fc">&lt;/delete&gt;</span>
+
+    <span style="color: #6b7280">&lt;!-- 7. 동적 쿼리 (조건부 검색) --&gt;</span>
+    <span style="color: #7dd3fc">&lt;select</span> <span style="color: #fbbf24">id</span>=<span style="color: #86efac">"searchOrders"</span> <span style="color: #fbbf24">resultType</span>=<span style="color: #86efac">"Order"</span><span style="color: #7dd3fc">&gt;</span>
+        SELECT * FROM orders
+        <span style="color: #7dd3fc">&lt;where&gt;</span>
+            <span style="color: #7dd3fc">&lt;if</span> <span style="color: #fbbf24">test</span>=<span style="color: #86efac">"name != null"</span><span style="color: #7dd3fc">&gt;</span>
+                AND customer_name LIKE CONCAT('%', #{name}, '%')
+            <span style="color: #7dd3fc">&lt;/if&gt;</span>
+            <span style="color: #7dd3fc">&lt;if</span> <span style="color: #fbbf24">test</span>=<span style="color: #86efac">"status != null"</span><span style="color: #7dd3fc">&gt;</span>
+                AND status = #{status}
+            <span style="color: #7dd3fc">&lt;/if&gt;</span>
+        <span style="color: #7dd3fc">&lt;/where&gt;</span>
+    <span style="color: #7dd3fc">&lt;/select&gt;</span>
+
+<span style="color: #7dd3fc">&lt;/mapper&gt;</span></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- JPA Repository Annotations -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-table text-purple-600 mr-2"></i>
+                JPA Repository 어노테이션
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 35%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-purple-600">@Repository</code></td>
+                            <td>Repository 컴포넌트 선언<br><small class="text-gray-500">생략 가능 (JpaRepository 상속 시)</small></td>
+                            <td><code>@Repository public interface OrderRepo { }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-purple-600">@Query</code></td>
+                            <td>JPQL 또는 네이티브 SQL 작성<br><small class="text-gray-500">복잡한 쿼리 직접 작성</small></td>
+                            <td><code>@Query("SELECT o FROM Order o")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-purple-600">@Param</code></td>
+                            <td>JPQL 파라미터 바인딩<br><small class="text-gray-500">:name 형태의 이름 기반 파라미터</small></td>
+                            <td><code>@Param("name") String name</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-purple-600">@Modifying</code></td>
+                            <td>UPDATE/DELETE 쿼리 실행<br><small class="text-gray-500">@Query와 함께 사용, 반환값은 int</small></td>
+                            <td><code>@Modifying @Query("UPDATE...")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-purple-600">@EntityGraph</code></td>
+                            <td>Fetch Join 간소화<br><small class="text-gray-500">연관 엔티티 한 번에 조회</small></td>
+                            <td><code>@EntityGraph(attributePaths = "items")</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- MyBatis Annotations -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-table text-blue-600 mr-2"></i>
+                MyBatis 어노테이션
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 35%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-blue-600">@Mapper</code></td>
+                            <td>MyBatis Mapper 인터페이스 선언<br><small class="text-gray-500">필수 어노테이션</small></td>
+                            <td><code>@Mapper public interface OrderMapper { }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">@Select</code></td>
+                            <td>SELECT 쿼리 (XML 없이)<br><small class="text-gray-500">간단한 쿼리는 어노테이션으로</small></td>
+                            <td><code>@Select("SELECT * FROM orders")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">@Insert</code></td>
+                            <td>INSERT 쿼리<br><small class="text-gray-500">데이터 생성</small></td>
+                            <td><code>@Insert("INSERT INTO...")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">@Update</code></td>
+                            <td>UPDATE 쿼리<br><small class="text-gray-500">데이터 수정</small></td>
+                            <td><code>@Update("UPDATE orders...")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">@Delete</code></td>
+                            <td>DELETE 쿼리<br><small class="text-gray-500">데이터 삭제</small></td>
+                            <td><code>@Delete("DELETE FROM...")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">@Param</code></td>
+                            <td>파라미터 이름 지정<br><small class="text-gray-500">#{name} 형태로 사용</small></td>
+                            <td><code>findByName(@Param("name") String name)</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- JPA Basic Methods -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-book text-green-600 mr-2"></i>
+                JPA Repository 기본 제공 메서드
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <p class="text-gray-700 mb-4">
+                    <code class="bg-gray-100 px-2 py-1 rounded">JpaRepository&lt;Order, Long&gt;</code>를 상속하면 기본 CRUD 메서드를 자동으로 사용할 수 있습니다.
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- 저장/수정 -->
+                    <div class="border rounded-lg p-4">
+                        <h4 class="font-bold text-green-800 mb-3">
+                            <i class="fas fa-save mr-2"></i>저장 / 수정
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">save(order)</code><br>
+                                <small class="text-gray-600">// INSERT or UPDATE (ID 존재 여부로 판단)</small>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">saveAll(orders)</code><br>
+                                <small class="text-gray-600">// 여러 엔티티 한 번에 저장</small>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">flush()</code><br>
+                                <small class="text-gray-600">// 영속성 컨텍스트 DB 동기화</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 조회 -->
+                    <div class="border rounded-lg p-4">
+                        <h4 class="font-bold text-blue-800 mb-3">
+                            <i class="fas fa-search mr-2"></i>조회
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">findById(id)</code><br>
+                                <small class="text-gray-600">// ID로 단건 조회 (Optional 반환)</small>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">findAll()</code><br>
+                                <small class="text-gray-600">// 전체 조회</small>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">findAllById(ids)</code><br>
+                                <small class="text-gray-600">// ID 목록으로 조회</small>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">findAll(pageable)</code><br>
+                                <small class="text-gray-600">// 페이징 조회</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 삭제 -->
+                    <div class="border rounded-lg p-4">
+                        <h4 class="font-bold text-red-800 mb-3">
+                            <i class="fas fa-trash mr-2"></i>삭제
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">delete(order)</code><br>
+                                <small class="text-gray-600">// 엔티티 삭제</small>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">deleteById(id)</code><br>
+                                <small class="text-gray-600">// ID로 삭제</small>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">deleteAll()</code><br>
+                                <small class="text-gray-600">// 전체 삭제</small>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">deleteAllInBatch()</code><br>
+                                <small class="text-gray-600">// 배치 삭제 (성능 최적화)</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 유틸리티 -->
+                    <div class="border rounded-lg p-4">
+                        <h4 class="font-bold text-purple-800 mb-3">
+                            <i class="fas fa-tools mr-2"></i>유틸리티
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">count()</code><br>
+                                <small class="text-gray-600">// 전체 개수 (COUNT)</small>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">existsById(id)</code><br>
+                                <small class="text-gray-600">// 존재 여부 확인 (boolean)</small>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">getById(id)</code><br>
+                                <small class="text-gray-600">// 프록시 반환 (지연 로딩)</small>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <code class="text-blue-600">getReferenceById(id)</code><br>
+                                <small class="text-gray-600">// 레퍼런스만 반환 (실제 조회 지연)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practical Tips -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+                실무 팁
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+                    <h3 class="font-bold text-purple-800 mb-2">
+                        <i class="fas fa-magic mr-2"></i>JPA 사용 시
+                    </h3>
+                    <ul class="text-sm text-purple-700 space-y-1">
+                        <li>• <strong>메서드 네이밍:</strong> findBy, existsBy 등 규칙 활용</li>
+                        <li>• <strong>Fetch Join:</strong> N+1 문제 반드시 해결</li>
+                        <li>• <strong>@Query 활용:</strong> 복잡한 쿼리는 직접 작성</li>
+                        <li>• <strong>DTO 프로젝션:</strong> 필요한 필드만 조회</li>
+                    </ul>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                    <h3 class="font-bold text-blue-800 mb-2">
+                        <i class="fas fa-file-code mr-2"></i>MyBatis 사용 시
+                    </h3>
+                    <ul class="text-sm text-blue-700 space-y-1">
+                        <li>• <strong>동적 쿼리:</strong> &lt;if&gt;, &lt;choose&gt; 적극 활용</li>
+                        <li>• <strong>재사용성:</strong> &lt;sql&gt;로 공통 쿼리 분리</li>
+                        <li>• <strong>ResultMap:</strong> 복잡한 매핑은 resultMap 사용</li>
+                        <li>• <strong>배치 처리:</strong> foreach로 대량 INSERT</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Completion Message -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500 p-6 rounded-lg">
+                <h2 class="text-2xl font-bold text-green-800 mb-4">
+                    <i class="fas fa-graduation-cap mr-2"></i>
+                    학습 완료!
+                </h2>
+                <p class="text-gray-700 mb-4">
+                    Spring Boot의 4가지 레이어 (Controller, Service, Repository, Model)와 각 레이어의 어노테이션을 모두 학습했습니다!
+                </p>
+                <div class="grid md:grid-cols-4 gap-4">
+                    <a href="/springboot/setup" class="block bg-white rounded-lg p-3 shadow hover:shadow-lg transition text-center">
+                        <i class="fas fa-cog text-green-600 text-2xl mb-2"></i>
+                        <p class="text-sm font-semibold">프로젝트 설정</p>
+                    </a>
+                    <a href="/springboot/model" class="block bg-white rounded-lg p-3 shadow hover:shadow-lg transition text-center">
+                        <i class="fas fa-cube text-orange-600 text-2xl mb-2"></i>
+                        <p class="text-sm font-semibold">Model/Entity</p>
+                    </a>
+                    <a href="/springboot/controller" class="block bg-white rounded-lg p-3 shadow hover:shadow-lg transition text-center">
+                        <i class="fas fa-layer-group text-blue-600 text-2xl mb-2"></i>
+                        <p class="text-sm font-semibold">Controller</p>
+                    </a>
+                    <a href="/springboot/service" class="block bg-white rounded-lg p-3 shadow hover:shadow-lg transition text-center">
+                        <i class="fas fa-cogs text-green-600 text-2xl mb-2"></i>
+                        <p class="text-sm font-semibold">Service</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>

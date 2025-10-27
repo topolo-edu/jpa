@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/qa-layout}">
+<head>
+    <title>실전 종합 미션 - QA Hands-On</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 rounded-lg shadow-xl p-8 mb-8 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-trophy text-5xl mr-4"></i>
+                    <h1 class="text-4xl font-bold">실전 종합 미션</h1>
+                </div>
+                <p class="text-xl mb-2">모든 도구를 활용한 완벽한 QA 프로세스</p>
+                <div class="flex items-center space-x-6 text-sm">
+                    <span><i class="fas fa-clock mr-2"></i>소요시간: 60-90분</span>
+                    <span><i class="fas fa-star mr-2"></i>난이도: 종합 실전</span>
+                    <span><i class="fas fa-trophy mr-2"></i>목표: 대기업 수준 품질 보증</span>
+                </div>
+            </div>
+            <div class="text-6xl">🏆</div>
+        </div>
+    </div>
+
+    <!-- Mission Overview -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-flag-checkered text-orange-600 mr-3"></i>
+            미션: 완벽한 주문 관리 시스템 QA
+        </h2>
+
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-5 rounded-r-lg mb-6">
+            <h3 class="font-bold text-blue-900 mb-3 text-lg">📋 시나리오</h3>
+            <p class="text-blue-800 mb-3">
+                당신은 <strong>"스마트 쇼핑몰"</strong> 프로젝트의 QA 엔지니어입니다.<br>
+                주문 관리 API가 완성되어 운영 배포 전 <strong>최종 품질 검증</strong>을 진행해야 합니다.
+            </p>
+            <div class="bg-white p-4 rounded-lg">
+                <p class="font-semibold text-blue-900 mb-2">✅ 통과 조건:</p>
+                <ul class="space-y-1 text-sm text-blue-800 ml-4">
+                    <li>• 모든 API 엔드포인트 정상 동작 확인 (Postman)</li>
+                    <li>• 단위 테스트 커버리지 60% 이상 (JUnit)</li>
+                    <li>• 성능 테스트 TPS 300 이상 달성 (nGrinder 또는 JMeter)</li>
+                    <li>• CI/CD 파이프라인 구축 완료 (GitHub Actions)</li>
+                    <li>• 최종 발표 자료 준비 (스크린샷 + 메트릭)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-r from-green-500 to-teal-500 rounded-lg p-5 text-white">
+            <h3 class="font-bold text-lg mb-2 flex items-center">
+                <i class="fas fa-gift mr-2"></i>완료 시 얻는 것
+            </h3>
+            <ul class="space-y-1 text-sm">
+                <li>• ✅ <strong>대기업 수준의 QA 포트폴리오</strong> 완성</li>
+                <li>• ✅ <strong>면접에서 바로 쓸 수 있는 실전 경험</strong></li>
+                <li>• ✅ <strong>GitHub 프로필에 빛나는 초록불</strong> (Actions 성공)</li>
+                <li>• ✅ <strong>발표 시 "와, 전문가네" 소리 듣기</strong> 🎤</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Mission Checklist -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-tasks text-orange-600 mr-3"></i>
+            체크리스트: 단계별 미션
+        </h2>
+
+        <!-- Mission 1: Postman -->
+        <div class="mb-6 border-2 border-gray-200 rounded-lg p-5 hover:border-green-400 transition">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 mr-4">
+                    <span class="level-badge level-1 text-base">Lv.1</span>
+                </div>
+                <div class="flex-grow">
+                    <h3 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-paper-plane text-green-600 mr-2"></i>
+                        Mission 1: Postman Collection 구성
+                    </h3>
+                    <div class="space-y-2 text-sm">
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-green-600">
+                            <span>
+                                <strong>주문 생성 API 테스트</strong><br>
+                                <code class="bg-gray-100 px-1 text-xs">POST /api/orders</code> - 정상 케이스 (200 OK)
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-green-600">
+                            <span>
+                                <strong>주문 목록 조회</strong><br>
+                                <code class="bg-gray-100 px-1 text-xs">GET /api/orders</code> - 페이징 확인
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-green-600">
+                            <span>
+                                <strong>단건 조회</strong><br>
+                                <code class="bg-gray-100 px-1 text-xs">GET /api/orders/{id}</code> - 존재하는 ID
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-green-600">
+                            <span>
+                                <strong>주문 수정</strong><br>
+                                <code class="bg-gray-100 px-1 text-xs">PUT /api/orders/{id}</code> - 배송 상태 업데이트
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-green-600">
+                            <span>
+                                <strong>에러 케이스 테스트</strong><br>
+                                400 (잘못된 입력), 404 (없는 ID), 500 (서버 에러)
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-green-600">
+                            <span>
+                                <strong>Collection 내보내기</strong><br>
+                                JSON 파일로 Export → 프로젝트 폴더에 저장
+                            </span>
+                        </label>
+                    </div>
+                    <div class="mt-4 bg-green-50 border-l-4 border-green-500 p-3 rounded-r-lg">
+                        <p class="text-sm text-green-800">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            <strong>Pro Tip</strong>: Tests 탭에서 <code class="bg-green-100 px-1">pm.test("Status code is 200")</code> 추가하면 자동 검증!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mission 2: JUnit -->
+        <div class="mb-6 border-2 border-gray-200 rounded-lg p-5 hover:border-blue-400 transition">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 mr-4">
+                    <span class="level-badge level-2 text-base">Lv.2</span>
+                </div>
+                <div class="flex-grow">
+                    <h3 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-vial text-blue-600 mr-2"></i>
+                        Mission 2: JUnit 자동 테스트 작성
+                    </h3>
+                    <div class="space-y-2 text-sm">
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-blue-600">
+                            <span>
+                                <strong>Order 엔티티 단위 테스트</strong><br>
+                                <code class="bg-gray-100 px-1 text-xs">OrderTest.java</code> - 아이템 추가, 총액 계산 테스트
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-blue-600">
+                            <span>
+                                <strong>OrderItem 비즈니스 로직 테스트</strong><br>
+                                수량 변경, 가격 계산 로직 검증
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-blue-600">
+                            <span>
+                                <strong>OrderController API 통합 테스트</strong><br>
+                                <code class="bg-gray-100 px-1 text-xs">OrderControllerTest.java</code> - MockMvc 사용
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-blue-600">
+                            <span>
+                                <strong>OrderService 비즈니스 로직 테스트</strong><br>
+                                주문 생성, 조회, 수정 시나리오 테스트
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-blue-600">
+                            <span>
+                                <strong>테스트 커버리지 확인</strong><br>
+                                <code class="bg-gray-100 px-1 text-xs">./gradlew test jacocoTestReport</code> - 60% 이상 달성
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-blue-600">
+                            <span>
+                                <strong>커버리지 리포트 스크린샷</strong><br>
+                                <code class="bg-gray-100 px-1 text-xs">build/reports/jacoco/test/html/index.html</code> 캡처
+                            </span>
+                        </label>
+                    </div>
+                    <div class="mt-4 bg-blue-50 border-l-4 border-blue-500 p-3 rounded-r-lg">
+                        <p class="text-sm text-blue-800">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            <strong>Pro Tip</strong>: Given-When-Then 패턴으로 작성하면 가독성 UP! 면접관이 좋아함.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mission 3: Performance -->
+        <div class="mb-6 border-2 border-gray-200 rounded-lg p-5 hover:border-yellow-400 transition">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 mr-4">
+                    <span class="level-badge level-3 text-base">Lv.3</span>
+                </div>
+                <div class="flex-grow">
+                    <h3 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-tachometer-alt text-yellow-600 mr-2"></i>
+                        Mission 3: 성능 테스트 (nGrinder 또는 JMeter)
+                    </h3>
+                    <div class="space-y-2 text-sm">
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-yellow-600">
+                            <span>
+                                <strong>성능 테스트 도구 선택 및 설치</strong><br>
+                                nGrinder (Docker) 또는 JMeter 중 하나 선택
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-yellow-600">
+                            <span>
+                                <strong>Before 테스트: N+1 문제 있는 상태</strong><br>
+                                VUser 100, Duration 1분 → TPS, 평균 응답 시간 기록
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-yellow-600">
+                            <span>
+                                <strong>쿼리 최적화 적용</strong><br>
+                                <code class="bg-gray-100 px-1 text-xs">@EntityGraph</code> 또는 Fetch Join으로 N+1 해결
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-yellow-600">
+                            <span>
+                                <strong>After 테스트: 최적화 후</strong><br>
+                                동일 조건으로 재테스트 → TPS 300 이상 달성 확인
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-yellow-600">
+                            <span>
+                                <strong>결과 리포트 캡처</strong><br>
+                                Before/After 그래프 비교 스크린샷 (nGrinder) 또는 HTML 대시보드 (JMeter)
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-yellow-600">
+                            <span>
+                                <strong>성능 개선률 계산</strong><br>
+                                예: TPS 50 → 500 (10배 향상), 응답 시간 2초 → 150ms (93% 개선)
+                            </span>
+                        </label>
+                    </div>
+                    <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r-lg">
+                        <p class="text-sm text-yellow-800">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            <strong>Pro Tip</strong>: 7일 프로젝트면 nGrinder 추천! 포트폴리오면 둘 다 해보면 금상첨화.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mission 4: CI/CD -->
+        <div class="mb-6 border-2 border-gray-200 rounded-lg p-5 hover:border-indigo-400 transition">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 mr-4">
+                    <i class="fas fa-rocket text-2xl text-indigo-600"></i>
+                </div>
+                <div class="flex-grow">
+                    <h3 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-cogs text-indigo-600 mr-2"></i>
+                        Mission 4: GitHub Actions CI/CD 구축
+                    </h3>
+                    <div class="space-y-2 text-sm">
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-indigo-600">
+                            <span>
+                                <strong>워크플로우 파일 생성</strong><br>
+                                <code class="bg-gray-100 px-1 text-xs">.github/workflows/test.yml</code> 추가
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-indigo-600">
+                            <span>
+                                <strong>자동 테스트 트리거 설정</strong><br>
+                                <code class="bg-gray-100 px-1 text-xs">push</code> 및 <code class="bg-gray-100 px-1 text-xs">pull_request</code> 이벤트에 반응
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-indigo-600">
+                            <span>
+                                <strong>GitHub에 푸시 후 Actions 탭 확인</strong><br>
+                                워크플로우가 자동 실행되고 ✅ 초록불 확인
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-indigo-600">
+                            <span>
+                                <strong>(선택) 커버리지 자동 체크 추가</strong><br>
+                                JaCoCo 플러그인 + <code class="bg-gray-100 px-1 text-xs">jacocoTestCoverageVerification</code>
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-indigo-600">
+                            <span>
+                                <strong>(선택) PR 보호 규칙 설정</strong><br>
+                                Settings → Branches → Require status checks
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-indigo-600">
+                            <span>
+                                <strong>Actions 탭 스크린샷</strong><br>
+                                성공한 워크플로우 실행 결과 캡처 (초록 체크 ✅)
+                            </span>
+                        </label>
+                    </div>
+                    <div class="mt-4 bg-indigo-50 border-l-4 border-indigo-500 p-3 rounded-r-lg">
+                        <p class="text-sm text-indigo-800">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            <strong>Pro Tip</strong>: GitHub 프로필에 초록불이 가득하면 채용 담당자가 "열심히 하는 사람"이라고 인식!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mission 5: Documentation -->
+        <div class="mb-6 border-2 border-gray-200 rounded-lg p-5 hover:border-purple-400 transition">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 mr-4">
+                    <i class="fas fa-file-alt text-2xl text-purple-600"></i>
+                </div>
+                <div class="flex-grow">
+                    <h3 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-book text-purple-600 mr-2"></i>
+                        Mission 5: 발표 자료 준비
+                    </h3>
+                    <div class="space-y-2 text-sm">
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-purple-600">
+                            <span>
+                                <strong>README.md 작성</strong><br>
+                                프로젝트 소개, 기술 스택, 실행 방법
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-purple-600">
+                            <span>
+                                <strong>QA 프로세스 섹션 추가</strong><br>
+                                Postman → JUnit → nGrinder → CI/CD 순서로 설명
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-purple-600">
+                            <span>
+                                <strong>핵심 스크린샷 첨부</strong><br>
+                                Postman Collection, 커버리지 리포트, 성능 그래프, Actions 탭
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-purple-600">
+                            <span>
+                                <strong>성능 개선 전후 비교 표</strong><br>
+                                Before/After 메트릭 (TPS, 응답 시간, 에러율) Markdown 표로
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-purple-600">
+                            <span>
+                                <strong>배지(Badge) 추가</strong><br>
+                                <code class="bg-gray-100 px-1 text-xs">![CI](https://github.com/.../workflows/test.yml/badge.svg)</code>
+                            </span>
+                        </label>
+                        <label class="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
+                            <input type="checkbox" class="mt-1 mr-3 w-5 h-5 text-purple-600">
+                            <span>
+                                <strong>발표 대본 준비 (1분 버전)</strong><br>
+                                문제 제기 → 해결 과정 → 결과 → 배운 점
+                            </span>
+                        </label>
+                    </div>
+                    <div class="mt-4 bg-purple-50 border-l-4 border-purple-500 p-3 rounded-r-lg">
+                        <p class="text-sm text-purple-800">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            <strong>Pro Tip</strong>: README가 잘 정리된 프로젝트는 GitHub Star 받기 쉬움! 포트폴리오 효과 2배.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Presentation Script -->
+    <div class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg shadow-xl p-6 mb-8 text-white">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-microphone-alt mr-3"></i>
+            최종 발표 완벽 대본 (3분 버전)
+        </h2>
+
+        <div class="bg-white bg-opacity-20 rounded-lg p-5 mb-4">
+            <h3 class="font-bold text-lg mb-3">🎤 구조: 문제 → 과정 → 결과 → 배움</h3>
+            <div class="space-y-4 text-sm">
+                <!-- Part 1 -->
+                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+                    <p class="font-semibold mb-2 text-yellow-200">
+                        <i class="fas fa-exclamation-circle mr-2"></i>1️⃣ 문제 제기 (30초)
+                    </p>
+                    <p class="italic leading-relaxed">
+                        "안녕하세요. 저희는 <strong>스마트 쇼핑몰</strong> 프로젝트를 진행했습니다.<br>
+                        개발 초기에는 기능만 급하게 만들다 보니 <strong>테스트 없이 배포</strong>했고,
+                        그 결과 <strong>운영 중에 주문이 누락</strong>되는 치명적인 버그가 발생했습니다.<br>
+                        이 경험을 통해 <strong>'품질 보증 프로세스'</strong>가 얼마나 중요한지 깨달았습니다."
+                    </p>
+                </div>
+
+                <!-- Part 2 -->
+                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+                    <p class="font-semibold mb-2 text-green-200">
+                        <i class="fas fa-tools mr-2"></i>2️⃣ 해결 과정 (90초)
+                    </p>
+                    <div class="space-y-2">
+                        <p class="italic">
+                            <strong class="text-green-300">[Postman]</strong>
+                            "먼저 <strong>Postman</strong>으로 모든 API 엔드포인트를 수동 테스트했습니다.
+                            정상 케이스뿐 아니라 400, 404 등 에러 케이스까지 검증했고, Collection으로 저장했습니다."
+                        </p>
+                        <p class="italic">
+                            <strong class="text-blue-300">[JUnit]</strong>
+                            "하지만 매번 수동 테스트는 비효율적이라 <strong>JUnit</strong>으로 자동 테스트를 작성했습니다.
+                            Entity 비즈니스 로직부터 API 통합 테스트까지 총 <strong>커버리지 70%</strong>를 달성했습니다."
+                        </p>
+                        <p class="italic">
+                            <strong class="text-yellow-300">[nGrinder/JMeter]</strong>
+                            "기능은 정상이지만 <strong>성능이 문제</strong>였습니다.
+                            nGrinder로 부하 테스트를 해보니 N+1 쿼리 문제로 TPS가 50에 불과했습니다.
+                            <strong>Fetch Join</strong>을 적용한 결과 <strong>TPS 500</strong>으로 10배 개선되었습니다."
+                        </p>
+                        <p class="italic">
+                            <strong class="text-indigo-300">[CI/CD]</strong>
+                            "마지막으로 <strong>GitHub Actions</strong>로 CI/CD를 구축했습니다.
+                            이제 코드를 푸시하면 자동으로 모든 테스트가 실행되고,
+                            실패하면 PR 머지가 차단됩니다. 팀원들의 실수를 사전에 방지할 수 있게 되었습니다."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Part 3 -->
+                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+                    <p class="font-semibold mb-2 text-blue-200">
+                        <i class="fas fa-chart-line mr-2"></i>3️⃣ 결과 (30초)
+                    </p>
+                    <p class="italic leading-relaxed mb-2">
+                        "결과적으로 다음과 같은 성과를 달성했습니다:"
+                    </p>
+                    <ul class="space-y-1 text-xs list-disc list-inside ml-4">
+                        <li>✅ <strong>배포 후 버그 발생률 80% 감소</strong></li>
+                        <li>✅ <strong>테스트 커버리지 70% 달성</strong> (자동 검증)</li>
+                        <li>✅ <strong>성능 10배 향상</strong> (TPS 50 → 500)</li>
+                        <li>✅ <strong>CI/CD 파이프라인 구축</strong> (푸시 시 자동 테스트)</li>
+                    </ul>
+                </div>
+
+                <!-- Part 4 -->
+                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
+                    <p class="font-semibold mb-2 text-pink-200">
+                        <i class="fas fa-graduation-cap mr-2"></i>4️⃣ 배운 점 (30초)
+                    </p>
+                    <p class="italic leading-relaxed">
+                        "이 프로젝트를 통해 <strong>'테스트는 선택이 아닌 필수'</strong>라는 것을 배웠습니다.<br>
+                        처음에는 테스트 작성이 시간 낭비라고 생각했지만,
+                        오히려 <strong>버그 수정 시간을 줄여</strong> 전체 개발 속도가 빨라졌습니다.<br>
+                        또한 <strong>대기업 수준의 QA 프로세스</strong>를 경험하면서
+                        실무에서 바로 적용할 수 있는 자신감을 얻었습니다. 감사합니다."
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white bg-opacity-20 rounded-lg p-4">
+            <h3 class="font-bold mb-2 flex items-center">
+                <i class="fas fa-star mr-2"></i>발표 꿀팁
+            </h3>
+            <ul class="space-y-1 text-sm">
+                <li>• 숫자를 강조하세요: "10배 향상", "80% 감소", "TPS 500" 같은 구체적 수치</li>
+                <li>• 화면을 보여주세요: 말만 하지 말고 실제 GitHub Actions 탭, 성능 그래프 띄우기</li>
+                <li>• 실패 경험을 먼저 말하세요: "처음엔 실패했지만 이렇게 해결했다"가 더 진정성 있음</li>
+                <li>• 3분 넘지 않기: 연습해서 정확히 2분 50초 맞추면 프로처럼 보임</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Interview Q&A -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-question-circle text-orange-600 mr-3"></i>
+            예상 질문 & 모범 답변 (면접 대비)
+        </h2>
+
+        <div class="space-y-4">
+            <!-- Q1 -->
+            <details class="bg-gray-50 border-l-4 border-blue-500 p-4 rounded-r-lg cursor-pointer">
+                <summary class="font-bold text-gray-800 flex items-center">
+                    <i class="fas fa-chevron-right mr-2 text-blue-500"></i>
+                    Q1: 테스트 커버리지 70%인데, 나머지 30%는 왜 안 했나요?
+                </summary>
+                <div class="mt-3 pl-6 text-sm text-gray-700 border-l-2 border-blue-300">
+                    <p class="mb-2"><strong>모범 답변:</strong></p>
+                    <p>
+                        "100% 커버리지를 목표로 하면 <strong>단순 getter/setter까지 테스트</strong>하게 되어 비효율적입니다.
+                        저희는 <strong>핵심 비즈니스 로직 우선</strong> 전략을 택했습니다.
+                        예를 들어 Order 엔티티의 총액 계산 로직, 주문 생성 프로세스 등 <strong>버그 발생 시 치명적인 부분</strong>에 집중했습니다.
+                        결과적으로 70% 커버리지로도 배포 후 버그가 80% 감소했습니다."
+                    </p>
+                </div>
+            </details>
+
+            <!-- Q2 -->
+            <details class="bg-gray-50 border-l-4 border-green-500 p-4 rounded-r-lg cursor-pointer">
+                <summary class="font-bold text-gray-800 flex items-center">
+                    <i class="fas fa-chevron-right mr-2 text-green-500"></i>
+                    Q2: nGrinder와 JMeter 중 왜 nGrinder를 선택했나요?
+                </summary>
+                <div class="mt-3 pl-6 text-sm text-gray-700 border-l-2 border-green-300">
+                    <p class="mb-2"><strong>모범 답변:</strong></p>
+                    <p>
+                        "7일 프로젝트라 <strong>시간이 제한적</strong>이었습니다.
+                        nGrinder는 <strong>Docker Compose 한 줄</strong>로 설치되고 웹 UI가 직관적이라 빠르게 시작할 수 있었습니다.
+                        JMeter는 설치부터 GUI 사용법 익히기까지 시간이 더 걸립니다.
+                        다만 포트폴리오나 대기업 지원 시에는 <strong>JMeter HTML 리포트</strong>가 더 전문적으로 보이기 때문에,
+                        시간이 허락한다면 둘 다 해보는 걸 추천합니다."
+                    </p>
+                </div>
+            </details>
+
+            <!-- Q3 -->
+            <details class="bg-gray-50 border-l-4 border-yellow-500 p-4 rounded-r-lg cursor-pointer">
+                <summary class="font-bold text-gray-800 flex items-center">
+                    <i class="fas fa-chevron-right mr-2 text-yellow-500"></i>
+                    Q3: N+1 문제를 어떻게 발견했나요?
+                </summary>
+                <div class="mt-3 pl-6 text-sm text-gray-700 border-l-2 border-yellow-300">
+                    <p class="mb-2"><strong>모범 답변:</strong></p>
+                    <p>
+                        "두 가지 방법으로 발견했습니다.<br>
+                        첫째, <code class="bg-gray-100 px-1">application.yml</code>에서
+                        <code class="bg-gray-100 px-1">spring.jpa.show-sql=true</code>로 설정해서
+                        <strong>실제 실행되는 쿼리</strong>를 로그로 확인했습니다.
+                        주문 1개 조회인데 쿼리가 10개 이상 나가는 걸 보고 의심했습니다.<br>
+                        둘째, nGrinder로 부하 테스트를 돌렸을 때 <strong>TPS가 50에 불과</strong>했습니다.
+                        평균 응답 시간도 2초나 걸렸고요. 이걸 보고 쿼리 최적화가 필요하다고 판단했습니다."
+                    </p>
+                </div>
+            </details>
+
+            <!-- Q4 -->
+            <details class="bg-gray-50 border-l-4 border-indigo-500 p-4 rounded-r-lg cursor-pointer">
+                <summary class="font-bold text-gray-800 flex items-center">
+                    <i class="fas fa-chevron-right mr-2 text-indigo-500"></i>
+                    Q4: CI/CD 구축 후 실제로 도움이 됐나요?
+                </summary>
+                <div class="mt-3 pl-6 text-sm text-gray-700 border-l-2 border-indigo-300">
+                    <p class="mb-2"><strong>모범 답변:</strong></p>
+                    <p>
+                        "네, 엄청 도움 됐습니다. 구체적인 사례를 들어드리면,<br>
+                        팀원 A가 급하게 기능을 추가하면서 <strong>기존 테스트를 깨뜨린 적</strong>이 있었습니다.
+                        CI/CD가 없었다면 그대로 배포되어 운영 장애가 났을 텐데,
+                        GitHub Actions가 자동으로 테스트를 돌리고 <strong>PR 머지를 차단</strong>해줬습니다.<br>
+                        또한 '내 로컬에서는 되는데?'라는 말이 사라졌습니다.
+                        모든 테스트가 <strong>동일한 환경(GitHub 서버)</strong>에서 실행되니 환경 차이로 인한 문제가 없어졌습니다."
+                    </p>
+                </div>
+            </details>
+
+            <!-- Q5 -->
+            <details class="bg-gray-50 border-l-4 border-purple-500 p-4 rounded-r-lg cursor-pointer">
+                <summary class="font-bold text-gray-800 flex items-center">
+                    <i class="fas fa-chevron-right mr-2 text-purple-500"></i>
+                    Q5: 실무에서도 이런 프로세스를 쓸 건가요?
+                </summary>
+                <div class="mt-3 pl-6 text-sm text-gray-700 border-l-2 border-purple-300">
+                    <p class="mb-2"><strong>모범 답변:</strong></p>
+                    <p>
+                        "네, 하지만 회사 규모에 맞게 조정할 것 같습니다.<br>
+                        <strong>스타트업</strong>이라면 Postman + JUnit + GitHub Actions CI만으로도 충분하고,
+                        성능 테스트는 배포 전에만 한 번씩 할 것 같습니다.<br>
+                        <strong>중견 기업</strong>이라면 여기에 nGrinder를 추가해서 정기적으로 성능 체크하고,
+                        스테이징 서버 자동 배포까지 구축할 것 같습니다.<br>
+                        <strong>대기업</strong>이라면 JMeter + Jenkins로 더욱 정교한 파이프라인을 만들고,
+                        SonarQube 같은 코드 품질 도구까지 연동할 것 같습니다.<br>
+                        중요한 건 <strong>도구보다 '테스트 자동화'의 철학</strong>을 이해하고 실천하는 것이라고 생각합니다."
+                    </p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- Bonus Resources -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-gift text-orange-600 mr-3"></i>
+            보너스: 더 나아가기
+        </h2>
+
+        <div class="grid md:grid-cols-3 gap-6">
+            <!-- Advanced 1 -->
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-5 text-white">
+                <h3 class="font-bold text-lg mb-3 flex items-center">
+                    <i class="fas fa-database mr-2"></i>
+                    고급 테스트 전략
+                </h3>
+                <ul class="space-y-2 text-sm">
+                    <li>• <strong>Testcontainers</strong>: 실제 DB로 통합 테스트</li>
+                    <li>• <strong>Mutation Testing</strong>: 테스트의 품질 검증</li>
+                    <li>• <strong>Contract Testing</strong>: API 계약 보장</li>
+                    <li>• <strong>Chaos Engineering</strong>: 장애 시뮬레이션</li>
+                </ul>
+            </div>
+
+            <!-- Advanced 2 -->
+            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg p-5 text-white">
+                <h3 class="font-bold text-lg mb-3 flex items-center">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    모니터링 연동
+                </h3>
+                <ul class="space-y-2 text-sm">
+                    <li>• <strong>Prometheus</strong>: 메트릭 수집</li>
+                    <li>• <strong>Grafana</strong>: 실시간 대시보드</li>
+                    <li>• <strong>ELK Stack</strong>: 로그 분석</li>
+                    <li>• <strong>Sentry</strong>: 에러 추적</li>
+                </ul>
+            </div>
+
+            <!-- Advanced 3 -->
+            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-5 text-white">
+                <h3 class="font-bold text-lg mb-3 flex items-center">
+                    <i class="fas fa-rocket mr-2"></i>
+                    CD까지 확장
+                </h3>
+                <ul class="space-y-2 text-sm">
+                    <li>• <strong>Docker Hub 푸시</strong>: 이미지 자동 빌드</li>
+                    <li>• <strong>AWS ECS 배포</strong>: 운영 서버 자동 업데이트</li>
+                    <li>• <strong>Blue-Green 배포</strong>: 무중단 배포</li>
+                    <li>• <strong>Canary 배포</strong>: 점진적 배포</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Congratulations -->
+    <div class="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-lg shadow-xl p-8 text-white text-center">
+        <div class="text-6xl mb-4">🎉</div>
+        <h2 class="text-4xl font-bold mb-4">축하합니다!</h2>
+        <p class="text-xl mb-6">
+            <strong>QA Hands-On 전 과정</strong>을 완료하셨습니다!<br>
+            이제 당신은 <strong>대기업 수준의 품질 보증 프로세스</strong>를 구축할 수 있습니다.
+        </p>
+        <div class="bg-white bg-opacity-20 rounded-lg p-6 mb-6">
+            <h3 class="font-bold text-lg mb-3">🏅 획득한 스킬</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div class="bg-white bg-opacity-10 p-3 rounded">
+                    <span class="level-badge level-1 mb-2 block">Lv.1</span>
+                    <strong>Postman</strong><br>API 수동 테스트
+                </div>
+                <div class="bg-white bg-opacity-10 p-3 rounded">
+                    <span class="level-badge level-2 mb-2 block">Lv.2</span>
+                    <strong>JUnit</strong><br>자동 테스트
+                </div>
+                <div class="bg-white bg-opacity-10 p-3 rounded">
+                    <span class="level-badge level-3 mb-2 block">Lv.3</span>
+                    <strong>nGrinder</strong><br>성능 테스트
+                </div>
+                <div class="bg-white bg-opacity-10 p-3 rounded">
+                    <span class="level-badge level-4 mb-2 block">Lv.4</span>
+                    <strong>JMeter</strong><br>고급 성능 분석
+                </div>
+            </div>
+            <div class="mt-4 bg-white bg-opacity-10 p-3 rounded">
+                <i class="fas fa-rocket text-2xl mr-2"></i>
+                <strong>CI/CD</strong> - GitHub Actions 자동화
+            </div>
+        </div>
+        <div class="flex justify-center space-x-4">
+            <a href="/qa-hands-on/overview" class="bg-white text-orange-600 px-6 py-3 rounded-lg font-bold hover:bg-orange-50 transition">
+                <i class="fas fa-redo mr-2"></i>다시 복습하기
+            </a>
+            <a href="/project/step2/index" class="bg-orange-700 text-white px-6 py-3 rounded-lg font-bold hover:bg-orange-800 transition">
+                <i class="fas fa-code mr-2"></i>프로젝트로 돌아가기
+            </a>
+        </div>
+        <p class="mt-6 text-sm opacity-90">
+            이 학습 자료가 도움이 되었다면 GitHub에 ⭐ Star를 눌러주세요!
+        </p>
+    </div>
+
+</main>
+</body>
+</html>

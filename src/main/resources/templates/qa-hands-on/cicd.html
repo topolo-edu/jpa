@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/qa-layout}">
+<head>
+    <title>CI/CD - GitHub Actions 자동 테스트</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-lg shadow-xl p-8 mb-8 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-rocket text-4xl mr-4"></i>
+                    <h1 class="text-4xl font-bold">CI/CD 자동화</h1>
+                </div>
+                <p class="text-xl mb-2">GitHub Actions로 푸시할 때마다 자동 테스트</p>
+                <div class="flex items-center space-x-6 text-sm">
+                    <span><i class="fas fa-clock mr-2"></i>소요시간: 20분</span>
+                    <span><i class="fas fa-star mr-2"></i>중요도: ⭐⭐⭐⭐⭐</span>
+                    <span><i class="fas fa-chart-line mr-2"></i>난이도: 중급</span>
+                </div>
+            </div>
+            <div class="text-6xl">🚀</div>
+        </div>
+    </div>
+
+    <!-- Why CI/CD -->
+    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 mb-8 rounded-r-lg">
+        <div class="flex items-start">
+            <i class="fas fa-exclamation-triangle text-yellow-500 text-2xl mr-4 mt-1"></i>
+            <div>
+                <h3 class="text-lg font-bold text-yellow-900 mb-3">💥 실무에서 자주 일어나는 비극</h3>
+                <div class="bg-white p-4 rounded-lg mb-4">
+                    <p class="text-yellow-800 mb-2 font-semibold">상황:</p>
+                    <ul class="space-y-2 text-sm text-yellow-800">
+                        <li>• 개발자 A: "제 로컬에서는 모든 테스트가 통과했어요!" ✅</li>
+                        <li>• 개발자 B: "저도요! 푸시합니다." ✅</li>
+                        <li>• <strong class="text-red-600">[1시간 후] 운영 서버 다운 💥</strong></li>
+                        <li>• 팀장: "누가 테스트 안 하고 푸시했어?!" 😡</li>
+                        <li>• 개발자들: "저는 다 했는데요...?" 😰</li>
+                    </ul>
+                </div>
+                <div class="bg-green-100 border-l-4 border-green-500 p-4 rounded-r-lg">
+                    <p class="text-green-800 font-semibold mb-2">
+                        <i class="fas fa-check-circle mr-2"></i>CI/CD가 있었다면?
+                    </p>
+                    <ul class="space-y-1 text-sm text-green-700">
+                        <li>• GitHub에 푸시하는 순간 <strong>자동으로 모든 테스트 실행</strong></li>
+                        <li>• 테스트 실패하면 <strong>PR 머지 차단</strong> 🚫</li>
+                        <li>• 모든 팀원이 <strong>테스트 결과를 실시간 확인</strong> 👀</li>
+                        <li>• 운영 배포 전 <strong>자동 검증</strong> ✅</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- What is CI/CD -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-info-circle text-blue-600 mr-3"></i>
+            CI/CD가 뭔가요?
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <!-- CI -->
+            <div class="bg-blue-50 border-2 border-blue-500 rounded-lg p-5">
+                <h3 class="font-bold text-blue-900 mb-3 text-lg flex items-center">
+                    <i class="fas fa-code-branch mr-2"></i>
+                    CI (Continuous Integration)
+                </h3>
+                <p class="text-sm text-blue-800 mb-3">
+                    <strong>지속적 통합</strong>: 코드를 푸시할 때마다 자동으로 <strong>빌드 + 테스트</strong>
+                </p>
+                <div class="bg-white p-3 rounded">
+                    <p class="text-xs text-gray-700 mb-2"><strong>예시:</strong></p>
+                    <ol class="text-xs text-gray-700 space-y-1 ml-4">
+                        <li>1. 개발자가 <code class="bg-gray-100 px-1">git push</code></li>
+                        <li>2. GitHub Actions 자동 실행</li>
+                        <li>3. <code class="bg-gray-100 px-1">./gradlew test</code> 자동 수행</li>
+                        <li>4. 결과를 PR에 표시 (✅ 성공 / ❌ 실패)</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- CD -->
+            <div class="bg-green-50 border-2 border-green-500 rounded-lg p-5">
+                <h3 class="font-bold text-green-900 mb-3 text-lg flex items-center">
+                    <i class="fas fa-rocket mr-2"></i>
+                    CD (Continuous Deployment)
+                </h3>
+                <p class="text-sm text-green-800 mb-3">
+                    <strong>지속적 배포</strong>: 테스트 통과하면 자동으로 <strong>운영 서버에 배포</strong>
+                </p>
+                <div class="bg-white p-3 rounded">
+                    <p class="text-xs text-gray-700 mb-2"><strong>예시:</strong></p>
+                    <ol class="text-xs text-gray-700 space-y-1 ml-4">
+                        <li>1. <code class="bg-gray-100 px-1">main</code> 브랜치에 머지</li>
+                        <li>2. 모든 테스트 자동 실행</li>
+                        <li>3. 통과하면 Docker 이미지 빌드</li>
+                        <li>4. AWS/Azure에 자동 배포 🚀</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-r-lg">
+            <p class="text-purple-800 font-semibold">
+                <i class="fas fa-lightbulb mr-2"></i>
+                <strong>이번 실습</strong>:
+                7일 프로젝트에서는 <strong>CI (자동 테스트)</strong>만 구현해도 충분히 임팩트 있음!
+                CD (자동 배포)는 시간이 남으면 도전해보세요.
+            </p>
+        </div>
+    </div>
+
+    <!-- GitHub Actions -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-github text-blue-600 mr-3"></i>
+            GitHub Actions란?
+        </h2>
+
+        <p class="text-gray-700 mb-4">
+            GitHub에서 제공하는 <strong>무료 CI/CD 도구</strong>. 별도 설치 없이 <code class="bg-gray-100 px-1">.github/workflows/</code> 폴더에
+            YAML 파일만 추가하면 끝!
+        </p>
+
+        <div class="overflow-x-auto mb-6">
+            <table class="min-w-full border-collapse text-sm">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="border border-gray-300 px-4 py-3 text-left">항목</th>
+                        <th class="border border-gray-300 px-4 py-3 text-left">GitHub Actions</th>
+                        <th class="border border-gray-300 px-4 py-3 text-left">Jenkins (전통적)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-3 font-semibold">설치</td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-green-600 font-bold">✅ 불필요</span><br>
+                            <span class="text-xs text-gray-600">GitHub에 내장됨</span>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-orange-600 font-bold">❌ 필요</span><br>
+                            <span class="text-xs text-gray-600">별도 서버 구축</span>
+                        </td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <td class="border border-gray-300 px-4 py-3 font-semibold">비용</td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-green-600 font-bold">무료</span><br>
+                            <span class="text-xs text-gray-600">Public 저장소 무제한</span>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-gray-600 font-bold">서버 비용 발생</span><br>
+                            <span class="text-xs text-gray-600">EC2 등 필요</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-3 font-semibold">설정</td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-green-600 font-bold">YAML 파일 하나</span><br>
+                            <span class="text-xs text-gray-600">30줄 이내</span>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-orange-600 font-bold">복잡한 UI 설정</span><br>
+                            <span class="text-xs text-gray-600">플러그인 관리</span>
+                        </td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <td class="border border-gray-300 px-4 py-3 font-semibold">러닝 커브</td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-green-600 font-bold">⭐ 낮음</span><br>
+                            <span class="text-xs text-gray-600">5분이면 시작 가능</span>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-orange-600 font-bold">⭐⭐⭐ 높음</span><br>
+                            <span class="text-xs text-gray-600">학습 시간 필요</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+            <p class="text-blue-800">
+                <i class="fas fa-check-circle mr-2"></i>
+                <strong>결론</strong>:
+                7일 프로젝트에서는 <strong>GitHub Actions가 최적</strong>!
+                Jenkins는 대규모 조직에서 쓰이지만, 초기 세팅이 복잡함.
+            </p>
+        </div>
+    </div>
+
+    <!-- Hands-on: Setup -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-play-circle text-blue-600 mr-3"></i>
+            실습: GitHub Actions로 자동 테스트 설정
+        </h2>
+
+        <div class="space-y-6">
+            <!-- Step 1: Create YAML -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">①</span>
+                    워크플로우 파일 생성
+                </h3>
+                <p class="text-sm text-gray-700 mb-3">
+                    프로젝트 루트에 <code class="bg-gray-100 px-1">.github/workflows/test.yml</code> 파일 생성:
+                </p>
+                <div class="bg-gray-900 text-gray-100 p-4 rounded-lg">
+                    <pre class="text-xs overflow-x-auto"><code>name: Run Tests
+
+# 트리거: main/develop 브랜치에 push 또는 PR 생성 시
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # GitHub가 제공하는 우분투 서버
+
+    steps:
+    # 1단계: 코드 체크아웃
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2단계: Java 17 설치
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    # 3단계: Gradle 캐싱 (빌드 속도 향상)
+    - name: Cache Gradle packages
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    # 4단계: Gradle 권한 부여
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    # 5단계: 테스트 실행
+    - name: Run tests with Gradle
+      run: ./gradlew test
+
+    # 6단계: 테스트 결과 리포트 (실패 시에도 실행)
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v4
+      if: always()  # 테스트 실패해도 리포트 생성
+      with:
+        report_paths: '**/build/test-results/test/TEST-*.xml'
+        fail_on_failure: true</code></pre>
+                </div>
+            </div>
+
+            <!-- Step 2: Commit and Push -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">②</span>
+                    GitHub에 푸시
+                </h3>
+                <div class="bg-gray-900 text-gray-100 p-4 rounded-lg mb-3">
+                    <pre class="text-sm"><code>git add .github/workflows/test.yml
+git commit -m "Add GitHub Actions CI workflow"
+git push origin main</code></pre>
+                </div>
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                    <p class="text-green-800">
+                        <i class="fas fa-magic mr-2"></i>
+                        이제 푸시하는 순간 자동으로 테스트가 실행됩니다! 🎉
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 3: Check Results -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">③</span>
+                    실행 결과 확인
+                </h3>
+                <p class="text-sm text-gray-700 mb-3">
+                    GitHub 저장소 → <strong>Actions</strong> 탭 클릭:
+                </p>
+                <div class="placeholder-image">
+                    <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-600 font-bold">📸 이미지 필요: github-actions-tab.png</p>
+                    <details class="mt-3 text-left text-sm">
+                        <summary class="cursor-pointer text-blue-600 font-semibold">📋 스크린샷 가이드 (클릭)</summary>
+                        <ol class="mt-2 space-y-1 text-gray-700 ml-4">
+                            <li>1. GitHub 저장소 페이지 상단의 <strong>Actions</strong> 탭 클릭</li>
+                            <li>2. "Run Tests" 워크플로우 목록 보이게</li>
+                            <li>3. 최근 실행 결과 (✅ 초록 체크 또는 ❌ 빨간 X) 캡처</li>
+                        </ol>
+                    </details>
+                </div>
+                <div class="mt-4 placeholder-image">
+                    <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-600 font-bold">📸 이미지 필요: github-actions-detail.png</p>
+                    <details class="mt-3 text-left text-sm">
+                        <summary class="cursor-pointer text-blue-600 font-semibold">📋 스크린샷 가이드 (클릭)</summary>
+                        <ol class="mt-2 space-y-1 text-gray-700 ml-4">
+                            <li>1. 특정 워크플로우 실행 클릭</li>
+                            <li>2. 각 step (Checkout, Setup JDK, Run tests 등) 펼쳐서 보기</li>
+                            <li>3. 테스트 결과 로그 보이게 캡처</li>
+                        </ol>
+                    </details>
+                </div>
+            </div>
+
+            <!-- Step 4: PR Protection -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">④</span>
+                    (선택) PR 보호 규칙 설정
+                </h3>
+                <p class="text-sm text-gray-700 mb-3">
+                    테스트 통과해야만 머지 가능하도록 설정:
+                </p>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <ol class="text-sm text-gray-700 space-y-2 ml-4">
+                        <li>1. 저장소 → <strong>Settings</strong> 탭</li>
+                        <li>2. 좌측 메뉴 → <strong>Branches</strong></li>
+                        <li>3. <strong>Add branch protection rule</strong> 클릭</li>
+                        <li>4. Branch name pattern: <code class="bg-white px-1">main</code></li>
+                        <li>5. ✅ <strong>Require status checks to pass before merging</strong> 체크</li>
+                        <li>6. Status checks 검색에서 <strong>"test"</strong> 선택</li>
+                        <li>7. <strong>Create</strong> 버튼 클릭</li>
+                    </ol>
+                </div>
+                <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-r-lg mt-3">
+                    <p class="text-purple-800 text-sm">
+                        <i class="fas fa-shield-alt mr-2"></i>
+                        이제 테스트가 실패하면 PR을 머지할 수 없습니다! 코드 품질이 보장됨 🔒
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced: Coverage -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-chart-pie text-blue-600 mr-3"></i>
+            고급: 테스트 커버리지 자동 체크
+        </h2>
+
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg">
+            <p class="text-blue-800">
+                <i class="fas fa-info-circle mr-2"></i>
+                <strong>테스트 커버리지</strong>: 전체 코드 중 몇 %가 테스트되었는지 측정<br>
+                → CI에서 자동으로 체크하여 "커버리지 60% 미만이면 머지 차단" 가능!
+            </p>
+        </div>
+
+        <div class="space-y-6">
+            <!-- JaCoCo Plugin -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">①</span>
+                    build.gradle에 JaCoCo 추가
+                </h3>
+                <div class="bg-gray-900 text-gray-100 p-4 rounded-lg">
+                    <pre class="text-sm"><code>plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
+    id 'jacoco'  // JaCoCo 플러그인 추가
+}
+
+// JaCoCo 설정
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+// 커버리지 검증 태스크
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.60  // 최소 60% 커버리지
+            }
+        }
+    }
+}
+
+// 테스트 후 커버리지 리포트 자동 생성
+test {
+    finalizedBy jacocoTestReport
+}
+
+// 커버리지 리포트 설정
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Update Workflow -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">②</span>
+                    test.yml 워크플로우 업데이트
+                </h3>
+                <div class="bg-gray-900 text-gray-100 p-4 rounded-lg">
+                    <pre class="text-xs overflow-x-auto"><code>    # 5단계: 테스트 및 커버리지 실행
+    - name: Run tests with coverage
+      run: ./gradlew test jacocoTestReport jacocoTestCoverageVerification
+
+    # 6단계: 커버리지 리포트를 PR 코멘트로 추가
+    - name: Add coverage to PR
+      if: github.event_name == 'pull_request'
+      uses: madrapps/jacoco-report@v1.6.1
+      with:
+        paths: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
+        token: ${{ secrets.GITHUB_TOKEN }}
+        min-coverage-overall: 60
+        title: 'Test Coverage Report'</code></pre>
+                </div>
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg mt-3">
+                    <p class="text-green-800 text-sm">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        이제 PR을 올리면 자동으로 커버리지가 코멘트로 달립니다!<br>
+                        60% 미만이면 워크플로우가 실패합니다 ❌
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real-world Examples -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-building text-blue-600 mr-3"></i>
+            실무에서는 이렇게 씁니다
+        </h2>
+
+        <div class="space-y-6">
+            <!-- Startup -->
+            <div class="bg-green-50 border-l-4 border-green-500 p-5 rounded-r-lg">
+                <h3 class="font-bold text-green-900 mb-3 flex items-center">
+                    <i class="fas fa-seedling mr-2"></i>
+                    스타트업 / 소규모 팀
+                </h3>
+                <div class="bg-white p-4 rounded">
+                    <p class="text-sm text-gray-700 mb-3"><strong>전략</strong>: 최소한의 설정으로 빠르게 시작</p>
+                    <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                        <li>• GitHub Actions로 CI만 구현 (테스트 자동 실행)</li>
+                        <li>• CD는 <code class="bg-gray-100 px-1">main</code> 브랜치에 머지 후 <strong>수동 배포</strong></li>
+                        <li>• 커버리지 목표: <strong>50% 이상</strong></li>
+                        <li>• 배포 주기: 주 1-2회 (금요일 피함)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Mid-size -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-5 rounded-r-lg">
+                <h3 class="font-bold text-blue-900 mb-3 flex items-center">
+                    <i class="fas fa-building mr-2"></i>
+                    중견 기업
+                </h3>
+                <div class="bg-white p-4 rounded">
+                    <p class="text-sm text-gray-700 mb-3"><strong>전략</strong>: CI + 스테이징 자동 배포</p>
+                    <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                        <li>• <code class="bg-gray-100 px-1">develop</code> 브랜치 → 스테이징 서버 <strong>자동 배포</strong></li>
+                        <li>• <code class="bg-gray-100 px-1">main</code> 브랜치 → 운영 서버는 <strong>승인 후 배포</strong></li>
+                        <li>• 커버리지 목표: <strong>70% 이상</strong></li>
+                        <li>• Slack/Discord 알림 연동</li>
+                        <li>• 배포 주기: 매일 (데일리 배포)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Enterprise -->
+            <div class="bg-purple-50 border-l-4 border-purple-500 p-5 rounded-r-lg">
+                <h3 class="font-bold text-purple-900 mb-3 flex items-center">
+                    <i class="fas fa-city mr-2"></i>
+                    대기업
+                </h3>
+                <div class="bg-white p-4 rounded">
+                    <p class="text-sm text-gray-700 mb-3"><strong>전략</strong>: 완전 자동화 + 다단계 배포</p>
+                    <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                        <li>• Jenkins 또는 GitLab CI/CD (자체 호스팅)</li>
+                        <li>• 테스트 → 스테이징 → 카나리 배포 → 운영 (단계별 자동)</li>
+                        <li>• 커버리지 목표: <strong>80% 이상</strong> (강제)</li>
+                        <li>• SonarQube 코드 품질 검사</li>
+                        <li>• 성능 테스트 자동 실행 (JMeter/nGrinder)</li>
+                        <li>• 배포 주기: 하루 여러 번 (Continuous Deployment)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Presentation Tips -->
+    <div class="bg-gradient-to-r from-indigo-500 to-blue-500 rounded-lg shadow-xl p-6 mb-8 text-white">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-microphone-alt mr-3"></i>
+            발표 가이드: CI/CD 어필하기
+        </h2>
+
+        <div class="bg-white bg-opacity-20 rounded-lg p-5 mb-4">
+            <h3 class="font-bold text-lg mb-3">🎤 완벽한 발표 시나리오 (30초)</h3>
+            <div class="space-y-3 text-sm">
+                <div class="bg-white bg-opacity-10 p-3 rounded">
+                    <p class="font-semibold mb-1">1️⃣ 문제 제기 (7초)</p>
+                    <p class="italic">"팀 프로젝트에서 가장 무서운 게 뭘까요? 다른 사람이 테스트 안 하고 푸시하는 거죠."</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-3 rounded">
+                    <p class="font-semibold mb-1">2️⃣ 해결책 (10초)</p>
+                    <p class="italic">"그래서 GitHub Actions로 CI/CD를 구축했습니다.
+                    코드를 푸시하면 <strong>자동으로 모든 테스트가 실행</strong>되고,
+                    실패하면 <strong>PR 머지가 차단</strong>됩니다."</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-3 rounded">
+                    <p class="font-semibold mb-1">3️⃣ 실제 화면 시연 (10초)</p>
+                    <p class="italic">"(GitHub Actions 탭 보여주며)
+                    이렇게 푸시할 때마다 자동으로 테스트가 돌고, 결과를 실시간으로 확인할 수 있습니다."</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-3 rounded">
+                    <p class="font-semibold mb-1">4️⃣ 효과 강조 (3초)</p>
+                    <p class="italic">"덕분에 배포 후 버그가 <strong>80% 감소</strong>했습니다."</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white bg-opacity-20 rounded-lg p-4">
+            <h3 class="font-bold mb-2 flex items-center">
+                <i class="fas fa-question-circle mr-2"></i>면접에서 자주 나오는 질문
+            </h3>
+            <div class="space-y-2 text-sm">
+                <details class="bg-white bg-opacity-10 p-3 rounded cursor-pointer">
+                    <summary class="font-semibold">Q1: CI와 CD의 차이는?</summary>
+                    <p class="mt-2 pl-4 border-l-2 border-white">
+                        A: CI는 코드 통합 시 자동으로 빌드와 테스트를 수행하는 것이고,
+                        CD는 테스트 통과 후 자동으로 배포까지 하는 것입니다.
+                        저희 프로젝트에서는 CI를 먼저 구축했고, 시간이 허락하면 CD도 추가할 예정입니다.
+                    </p>
+                </details>
+                <details class="bg-white bg-opacity-10 p-3 rounded cursor-pointer">
+                    <summary class="font-semibold">Q2: GitHub Actions 말고 다른 도구도 있나요?</summary>
+                    <p class="mt-2 pl-4 border-l-2 border-white">
+                        A: Jenkins가 가장 유명하고 대기업에서 많이 씁니다.
+                        GitLab CI/CD, CircleCI, Travis CI 등도 있습니다.
+                        GitHub Actions를 선택한 이유는 별도 설치 없이 즉시 사용 가능하고 무료이기 때문입니다.
+                    </p>
+                </details>
+                <details class="bg-white bg-opacity-10 p-3 rounded cursor-pointer">
+                    <summary class="font-semibold">Q3: 테스트가 너무 오래 걸리면 어떻게 하나요?</summary>
+                    <p class="mt-2 pl-4 border-l-2 border-white">
+                        A: 단위 테스트와 통합 테스트를 분리해서,
+                        PR 시에는 단위 테스트만 빠르게 실행하고,
+                        main 머지 시에는 통합 테스트까지 전부 실행하는 전략을 쓸 수 있습니다.
+                        또는 캐싱을 활용하거나 테스트를 병렬로 실행할 수도 있습니다.
+                    </p>
+                </details>
+                <details class="bg-white bg-opacity-10 p-3 rounded cursor-pointer">
+                    <summary class="font-semibold">Q4: 커버리지 목표는 얼마가 적당한가요?</summary>
+                    <p class="mt-2 pl-4 border-l-2 border-white">
+                        A: 일반적으로 60-80%가 적당합니다.
+                        100%를 목표로 하면 테스트 작성에 너무 많은 시간이 들어가고,
+                        오히려 중요한 로직보다 단순 getter/setter 테스트에 집중하게 됩니다.
+                        저희는 핵심 비즈니스 로직 위주로 70% 이상을 목표로 했습니다.
+                    </p>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pro Tips -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-magic text-blue-600 mr-3"></i>
+            Pro Tips: CI/CD 고급 활용
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Tip 1 -->
+            <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-r-lg">
+                <h3 class="font-bold text-purple-900 mb-2 flex items-center">
+                    <i class="fas fa-bell mr-2"></i>Slack 알림 연동
+                </h3>
+                <p class="text-sm text-purple-800 mb-3">
+                    테스트 실패 시 Slack 채널에 자동 알림
+                </p>
+                <div class="bg-white p-3 rounded text-xs">
+                    <pre class="bg-gray-100 p-2 rounded overflow-x-auto"><code>- name: Slack Notification
+  if: failure()
+  uses: 8398a7/action-slack@v3
+  with:
+    status: ${{ job.status }}
+    text: '테스트 실패! 확인 필요'
+    webhook_url: ${{ secrets.SLACK_WEBHOOK }}</code></pre>
+                </div>
+            </div>
+
+            <!-- Tip 2 -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                <h3 class="font-bold text-blue-900 mb-2 flex items-center">
+                    <i class="fas fa-database mr-2"></i>PostgreSQL 테스트 DB
+                </h3>
+                <p class="text-sm text-blue-800 mb-3">
+                    실제 DB로 통합 테스트하기
+                </p>
+                <div class="bg-white p-3 rounded text-xs">
+                    <pre class="bg-gray-100 p-2 rounded overflow-x-auto"><code>services:
+  postgres:
+    image: postgres:16
+    env:
+      POSTGRES_DB: testdb
+      POSTGRES_PASSWORD: test
+    ports:
+      - 5432:5432
+    options: >-
+      --health-cmd pg_isready
+      --health-interval 10s</code></pre>
+                </div>
+            </div>
+
+            <!-- Tip 3 -->
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                <h3 class="font-bold text-green-900 mb-2 flex items-center">
+                    <i class="fas fa-clock mr-2"></i>캐싱으로 속도 향상
+                </h3>
+                <p class="text-sm text-green-800 mb-3">
+                    Gradle 의존성 캐싱으로 2분 → 30초
+                </p>
+                <div class="bg-white p-3 rounded text-xs">
+                    <p class="text-gray-700 mb-2">이미 위 예제에 포함되어 있음:</p>
+                    <code class="bg-gray-100 px-1 block">uses: actions/cache@v3</code>
+                    <p class="mt-2 text-green-700">→ 두 번째 실행부터 <strong>엄청 빨라짐!</strong></p>
+                </div>
+            </div>
+
+            <!-- Tip 4 -->
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg">
+                <h3 class="font-bold text-yellow-900 mb-2 flex items-center">
+                    <i class="fas fa-shield-alt mr-2"></i>보안: Secrets 관리
+                </h3>
+                <p class="text-sm text-yellow-800 mb-3">
+                    API Key 같은 민감 정보는 Secrets에
+                </p>
+                <div class="bg-white p-3 rounded text-xs">
+                    <ol class="space-y-1 text-gray-700 ml-4">
+                        <li>1. 저장소 → Settings → Secrets → Actions</li>
+                        <li>2. <strong>New repository secret</strong> 클릭</li>
+                        <li>3. Name: <code class="bg-gray-100 px-1">DB_PASSWORD</code></li>
+                        <li>4. YAML에서 사용: <code class="bg-gray-100 px-1">${{ secrets.DB_PASSWORD }}</code></li>
+                    </ol>
+                    <p class="mt-2 text-yellow-700">→ 로그에 절대 노출되지 않음 🔒</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Next Steps -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-xl p-8 text-white text-center">
+        <h2 class="text-3xl font-bold mb-4">🚀 CI/CD 자동화 완료!</h2>
+        <p class="text-lg mb-6">
+            이제 당신의 프로젝트는 <strong>대기업 수준의 자동화</strong>를 갖췄습니다!<br>
+            코드 푸시 → 자동 테스트 → 품질 보장 🔥
+        </p>
+        <div class="flex justify-center space-x-4">
+            <a href="/qa-hands-on/final" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-bold hover:bg-blue-50 transition">
+                <i class="fas fa-trophy mr-2"></i>실전 종합 미션 도전!
+            </a>
+            <a href="/qa-hands-on/overview" class="bg-blue-700 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-800 transition">
+                <i class="fas fa-home mr-2"></i>처음으로
+            </a>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

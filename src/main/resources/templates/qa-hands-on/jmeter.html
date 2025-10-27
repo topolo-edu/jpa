@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/qa-layout}">
+<head>
+    <title>Lv.4 JMeter - 대기업 표준 성능 테스트</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-red-500 to-pink-500 rounded-lg shadow-xl p-8 mb-8 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center mb-4">
+                    <span class="level-badge level-4 text-lg mr-3">Lv.4 Expert</span>
+                    <h1 class="text-4xl font-bold">Apache JMeter</h1>
+                </div>
+                <p class="text-xl mb-2">대기업 표준 성능 테스트 도구</p>
+                <div class="flex items-center space-x-6 text-sm">
+                    <span><i class="fas fa-clock mr-2"></i>소요시간: 30분</span>
+                    <span><i class="fas fa-star mr-2"></i>중요도: ⭐⭐⭐ (선택)</span>
+                    <span><i class="fas fa-chart-line mr-2"></i>난이도: 고급</span>
+                </div>
+            </div>
+            <div class="text-6xl">📊</div>
+        </div>
+    </div>
+
+    <!-- nGrinder vs JMeter -->
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8 rounded-r-lg">
+        <div class="flex items-start">
+            <i class="fas fa-info-circle text-blue-500 text-2xl mr-4 mt-1"></i>
+            <div>
+                <h3 class="text-lg font-bold text-blue-900 mb-3">🤔 nGrinder가 있는데 왜 JMeter를?</h3>
+                <p class="text-blue-800 mb-3">
+                    <strong>솔직히 말하면</strong>: 7일 프로젝트나 포트폴리오에서는 <strong>nGrinder만으로 충분</strong>합니다.<br>
+                    하지만 <strong>대기업 취업</strong>을 목표로 한다면? JMeter는 <strong>거의 필수</strong>입니다.
+                </p>
+                <div class="bg-white p-4 rounded-lg">
+                    <p class="font-semibold text-blue-900 mb-2">📌 실무 사례:</p>
+                    <ul class="space-y-1 text-sm text-blue-800">
+                        <li>• 삼성SDS, LG CNS 등 SI 대기업: <strong>JMeter 표준 도구</strong></li>
+                        <li>• 금융권(은행, 증권): <strong>JMeter + 사내 플러그인</strong> 조합</li>
+                        <li>• 네이버, 카카오 일부 팀: <strong>nGrinder 선호</strong> (한국 기업이라)</li>
+                        <li>• 쿠팡, 배민 등 스타트업: <strong>k6, Locust 등 최신 도구</strong> 사용</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-balance-scale text-pink-600 mr-3"></i>
+            nGrinder vs JMeter 비교
+        </h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="border border-gray-300 px-4 py-3 text-left">항목</th>
+                        <th class="border border-gray-300 px-4 py-3 text-left">
+                            <span class="level-badge level-3">nGrinder</span>
+                        </th>
+                        <th class="border border-gray-300 px-4 py-3 text-left">
+                            <span class="level-badge level-4">JMeter</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-3 font-semibold">설치 난이도</td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-green-600 font-bold">⭐ 쉬움</span><br>
+                            <span class="text-sm text-gray-600">Docker Compose 한 줄</span>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-orange-600 font-bold">⭐⭐⭐ 보통</span><br>
+                            <span class="text-sm text-gray-600">Java 설치 + 압축 해제</span>
+                        </td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <td class="border border-gray-300 px-4 py-3 font-semibold">UI</td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-green-600 font-bold">웹 기반 (깔끔)</span><br>
+                            <span class="text-sm text-gray-600">브라우저에서 모든 작업</span>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-blue-600 font-bold">Swing GUI (복잡)</span><br>
+                            <span class="text-sm text-gray-600">자바 데스크톱 앱</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-3 font-semibold">한글 지원</td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-green-600 font-bold">✅ 완벽</span><br>
+                            <span class="text-sm text-gray-600">한국 네이버 개발</span>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-gray-600 font-bold">△ 부분</span><br>
+                            <span class="text-sm text-gray-600">영문 중심, 플러그인 필요</span>
+                        </td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <td class="border border-gray-300 px-4 py-3 font-semibold">스크립트 작성</td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-purple-600 font-bold">Groovy</span><br>
+                            <span class="text-sm text-gray-600">프로그래밍 지식 필요</span>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-green-600 font-bold">GUI 드래그 앤 드롭</span><br>
+                            <span class="text-sm text-gray-600">코딩 없이 가능 (XML 저장)</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-3 font-semibold">플러그인 생태계</td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-orange-600 font-bold">⭐⭐ 제한적</span><br>
+                            <span class="text-sm text-gray-600">기본 기능 충실</span>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-green-600 font-bold">⭐⭐⭐⭐⭐ 매우 풍부</span><br>
+                            <span class="text-sm text-gray-600">Plugins Manager로 확장</span>
+                        </td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <td class="border border-gray-300 px-4 py-3 font-semibold">리포트</td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-green-600 font-bold">웹에서 실시간 확인</span><br>
+                            <span class="text-sm text-gray-600">그래프 + 통계 자동</span>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-blue-600 font-bold">HTML 대시보드 생성</span><br>
+                            <span class="text-sm text-gray-600">jmeter -g 명령 필요</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-3 font-semibold">글로벌 인지도</td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-orange-600 font-bold">⭐⭐⭐ 중간</span><br>
+                            <span class="text-sm text-gray-600">한국, 중국 중심</span>
+                        </td>
+                        <td class="border border-gray-300 px-4 py-3">
+                            <span class="text-green-600 font-bold">⭐⭐⭐⭐⭐ 압도적</span><br>
+                            <span class="text-sm text-gray-600">Apache 재단 공식 프로젝트</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg">
+            <p class="text-yellow-800 font-semibold">
+                <i class="fas fa-lightbulb mr-2"></i>결론:
+                <span class="text-yellow-900">빠르게 배우려면 nGrinder, 이력서에 쓰려면 JMeter 둘 다!</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Installation -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-download text-pink-600 mr-3"></i>
+            1단계: JMeter 설치
+        </h2>
+
+        <div class="space-y-6">
+            <!-- Prerequisites -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-pink-100 text-pink-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">①</span>
+                    사전 준비: Java 11 이상
+                </h3>
+                <div class="bg-gray-900 text-gray-100 p-4 rounded-lg mb-3">
+                    <pre class="text-sm"><code># Java 버전 확인
+java -version
+
+# 출력 예시:
+# openjdk version "17.0.2" 2022-01-18
+# ✅ 11 이상이면 OK!</code></pre>
+                </div>
+                <p class="text-sm text-gray-600">
+                    Java가 없다면: <a href="https://adoptium.net/" class="text-blue-600 underline" target="_blank">https://adoptium.net/</a> 에서 설치
+                </p>
+            </div>
+
+            <!-- Download -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-pink-100 text-pink-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">②</span>
+                    JMeter 다운로드
+                </h3>
+                <div class="placeholder-image">
+                    <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-600 font-bold">📸 이미지 필요: jmeter-download.png</p>
+                    <details class="mt-3 text-left text-sm">
+                        <summary class="cursor-pointer text-blue-600 font-semibold">📋 스크린샷 가이드 (클릭)</summary>
+                        <ol class="mt-2 space-y-1 text-gray-700 ml-4">
+                            <li>1. 브라우저에서 <code class="bg-gray-200 px-1">https://jmeter.apache.org/download_jmeter.cgi</code> 접속</li>
+                            <li>2. Binaries 섹션에서 <strong>apache-jmeter-5.x.zip</strong> (Windows) 또는 <strong>.tgz</strong> (Mac/Linux) 다운로드</li>
+                            <li>3. 다운로드 페이지 전체 스크린샷 캡처</li>
+                        </ol>
+                    </details>
+                </div>
+            </div>
+
+            <!-- Extract and Run -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-pink-100 text-pink-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">③</span>
+                    압축 해제 및 실행
+                </h3>
+                <div class="bg-gray-900 text-gray-100 p-4 rounded-lg mb-3">
+                    <pre class="text-sm"><code># Windows
+압축 해제 → apache-jmeter-5.6.3\bin\jmeter.bat 실행
+
+# Mac/Linux
+tar -xzf apache-jmeter-5.6.3.tgz
+cd apache-jmeter-5.6.3/bin
+./jmeter.sh</code></pre>
+                </div>
+                <div class="placeholder-image">
+                    <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-600 font-bold">📸 이미지 필요: jmeter-gui.png</p>
+                    <details class="mt-3 text-left text-sm">
+                        <summary class="cursor-pointer text-blue-600 font-semibold">📋 스크린샷 가이드 (클릭)</summary>
+                        <ol class="mt-2 space-y-1 text-gray-700 ml-4">
+                            <li>1. jmeter.bat (또는 .sh) 실행</li>
+                            <li>2. Swing GUI 창이 뜨면 전체 화면 캡처</li>
+                            <li>3. 좌측 트리 구조 (Test Plan) 보이게</li>
+                        </ol>
+                    </details>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hands-on 1: First Test -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-flask text-pink-600 mr-3"></i>
+            2단계: 첫 성능 테스트 (nGrinder와 동일 시나리오)
+        </h2>
+
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg">
+            <p class="text-blue-800">
+                <i class="fas fa-info-circle mr-2"></i>
+                <strong>목표</strong>: nGrinder Lv.3에서 했던 것과 <strong>똑같은 주문 API 테스트</strong>를 JMeter로 해보기<br>
+                → 두 도구의 차이를 몸으로 체감하는 것이 핵심!
+            </p>
+        </div>
+
+        <div class="space-y-6">
+            <!-- Step 1: Thread Group -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-pink-100 text-pink-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">①</span>
+                    Thread Group 추가 (= nGrinder의 VUser 설정)
+                </h3>
+                <div class="bg-gray-100 p-4 rounded-lg mb-3">
+                    <p class="text-sm text-gray-700 mb-2"><strong>GUI 경로:</strong></p>
+                    <code class="text-sm bg-white px-2 py-1 rounded">
+                        Test Plan 우클릭 → Add → Threads (Users) → Thread Group
+                    </code>
+                </div>
+                <div class="overflow-x-auto mb-3">
+                    <table class="min-w-full border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border border-gray-300 px-3 py-2 text-left">설정 항목</th>
+                                <th class="border border-gray-300 px-3 py-2 text-left">값</th>
+                                <th class="border border-gray-300 px-3 py-2 text-left">의미</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-gray-300 px-3 py-2 font-mono">Number of Threads</td>
+                                <td class="border border-gray-300 px-3 py-2"><code>100</code></td>
+                                <td class="border border-gray-300 px-3 py-2">동시 사용자 100명</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border border-gray-300 px-3 py-2 font-mono">Ramp-Up Period</td>
+                                <td class="border border-gray-300 px-3 py-2"><code>10</code></td>
+                                <td class="border border-gray-300 px-3 py-2">10초에 걸쳐 점진적 증가</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-3 py-2 font-mono">Loop Count</td>
+                                <td class="border border-gray-300 px-3 py-2"><code>10</code></td>
+                                <td class="border border-gray-300 px-3 py-2">각 사용자가 10번 반복</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="placeholder-image">
+                    <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-600 font-bold">📸 이미지 필요: jmeter-thread-group.png</p>
+                    <details class="mt-3 text-left text-sm">
+                        <summary class="cursor-pointer text-blue-600 font-semibold">📋 스크린샷 가이드 (클릭)</summary>
+                        <ol class="mt-2 space-y-1 text-gray-700 ml-4">
+                            <li>1. Thread Group 추가 후 우측 패널 캡처</li>
+                            <li>2. Number of Threads, Ramp-Up, Loop Count 입력 필드 보이게</li>
+                        </ol>
+                    </details>
+                </div>
+            </div>
+
+            <!-- Step 2: HTTP Request -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-pink-100 text-pink-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">②</span>
+                    HTTP Request 추가 (POST /api/orders)
+                </h3>
+                <div class="bg-gray-100 p-4 rounded-lg mb-3">
+                    <p class="text-sm text-gray-700 mb-2"><strong>GUI 경로:</strong></p>
+                    <code class="text-sm bg-white px-2 py-1 rounded">
+                        Thread Group 우클릭 → Add → Sampler → HTTP Request
+                    </code>
+                </div>
+                <div class="overflow-x-auto mb-3">
+                    <table class="min-w-full border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border border-gray-300 px-3 py-2 text-left">필드</th>
+                                <th class="border border-gray-300 px-3 py-2 text-left">입력값</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-gray-300 px-3 py-2 font-mono">Protocol</td>
+                                <td class="border border-gray-300 px-3 py-2"><code>http</code></td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border border-gray-300 px-3 py-2 font-mono">Server Name or IP</td>
+                                <td class="border border-gray-300 px-3 py-2"><code>localhost</code></td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-3 py-2 font-mono">Port Number</td>
+                                <td class="border border-gray-300 px-3 py-2"><code>8080</code></td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border border-gray-300 px-3 py-2 font-mono">HTTP Request Method</td>
+                                <td class="border border-gray-300 px-3 py-2"><code>POST</code></td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-3 py-2 font-mono">Path</td>
+                                <td class="border border-gray-300 px-3 py-2"><code>/api/orders</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm font-semibold text-gray-700 mb-2">Body Data 탭으로 이동하여 입력:</p>
+                <div class="bg-gray-900 text-gray-100 p-4 rounded-lg mb-3">
+                    <pre class="text-sm"><code>{
+  "customerName": "홍길동",
+  "items": [
+    {
+      "itemName": "노트북",
+      "quantity": 1,
+      "price": 1500000
+    }
+  ]
+}</code></pre>
+                </div>
+                <p class="text-sm font-semibold text-gray-700 mb-2">HTTP Header Manager 추가:</p>
+                <div class="bg-gray-100 p-4 rounded-lg mb-3">
+                    <p class="text-sm text-gray-700 mb-2"><strong>GUI 경로:</strong></p>
+                    <code class="text-sm bg-white px-2 py-1 rounded">
+                        HTTP Request 우클릭 → Add → Config Element → HTTP Header Manager
+                    </code>
+                    <p class="text-sm text-gray-700 mt-3"><strong>Add 버튼 클릭하여 추가:</strong></p>
+                    <code class="text-xs bg-white px-2 py-1 rounded block mt-1">Name: Content-Type | Value: application/json</code>
+                </div>
+                <div class="placeholder-image">
+                    <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-600 font-bold">📸 이미지 필요: jmeter-http-request.png</p>
+                    <details class="mt-3 text-left text-sm">
+                        <summary class="cursor-pointer text-blue-600 font-semibold">📋 스크린샷 가이드 (클릭)</summary>
+                        <ol class="mt-2 space-y-1 text-gray-700 ml-4">
+                            <li>1. HTTP Request 설정 화면 캡처</li>
+                            <li>2. Protocol, Server Name, Port, Method, Path 보이게</li>
+                            <li>3. Body Data 탭의 JSON도 함께 캡처</li>
+                        </ol>
+                    </details>
+                </div>
+            </div>
+
+            <!-- Step 3: Listeners -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-pink-100 text-pink-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">③</span>
+                    Listener 추가 (결과 확인용)
+                </h3>
+                <div class="bg-gray-100 p-4 rounded-lg mb-3">
+                    <p class="text-sm text-gray-700 mb-2"><strong>추가할 Listener 3개:</strong></p>
+                    <code class="text-sm bg-white px-2 py-1 rounded block mb-2">
+                        Thread Group 우클릭 → Add → Listener → View Results Tree
+                    </code>
+                    <code class="text-sm bg-white px-2 py-1 rounded block mb-2">
+                        Thread Group 우클릭 → Add → Listener → Summary Report
+                    </code>
+                    <code class="text-sm bg-white px-2 py-1 rounded block">
+                        Thread Group 우클릭 → Add → Listener → Aggregate Report
+                    </code>
+                </div>
+                <div class="overflow-x-auto mb-3">
+                    <table class="min-w-full border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border border-gray-300 px-3 py-2 text-left">Listener</th>
+                                <th class="border border-gray-300 px-3 py-2 text-left">용도</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-gray-300 px-3 py-2 font-mono">View Results Tree</td>
+                                <td class="border border-gray-300 px-3 py-2">각 요청/응답 상세 확인 (디버깅용)</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border border-gray-300 px-3 py-2 font-mono">Summary Report</td>
+                                <td class="border border-gray-300 px-3 py-2">TPS, 평균 응답 시간 요약</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-3 py-2 font-mono">Aggregate Report</td>
+                                <td class="border border-gray-300 px-3 py-2">더 상세한 통계 (50%, 90%, 95% percentile)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Step 4: Run Test -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-pink-100 text-pink-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">④</span>
+                    테스트 실행 및 결과 확인
+                </h3>
+                <div class="bg-gray-100 p-4 rounded-lg mb-3">
+                    <p class="text-sm text-gray-700 mb-2"><strong>실행:</strong></p>
+                    <code class="text-sm bg-white px-2 py-1 rounded">
+                        상단 메뉴 → Run → Start (또는 Ctrl+R)
+                    </code>
+                </div>
+                <div class="placeholder-image">
+                    <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-600 font-bold">📸 이미지 필요: jmeter-aggregate-report.png</p>
+                    <details class="mt-3 text-left text-sm">
+                        <summary class="cursor-pointer text-blue-600 font-semibold">📋 스크린샷 가이드 (클릭)</summary>
+                        <ol class="mt-2 space-y-1 text-gray-700 ml-4">
+                            <li>1. 테스트 실행 후 Aggregate Report 클릭</li>
+                            <li>2. Average, 90% Line, Throughput 열 보이게</li>
+                            <li>3. 전체 테이블 캡처</li>
+                        </ol>
+                    </details>
+                </div>
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg mt-4">
+                    <p class="text-green-800 font-semibold mb-2">
+                        <i class="fas fa-check-circle mr-2"></i>예상 결과 (Fetch Join 적용 후)
+                    </p>
+                    <ul class="text-sm text-green-700 space-y-1">
+                        <li>• <strong>Average</strong>: 150ms 내외</li>
+                        <li>• <strong>90% Line</strong>: 200ms 내외</li>
+                        <li>• <strong>Throughput</strong>: 500+ requests/sec</li>
+                        <li>• <strong>Error %</strong>: 0.00%</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hands-on 2: HTML Report -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-chart-bar text-pink-600 mr-3"></i>
+            3단계: HTML 대시보드 생성 (발표용)
+        </h2>
+
+        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6 rounded-r-lg">
+            <p class="text-yellow-800">
+                <i class="fas fa-star mr-2"></i>
+                <strong>JMeter의 핵심 강점</strong>: GUI 테스트 후 <code class="bg-yellow-100 px-1">jmeter -g</code> 명령으로
+                <strong>멋진 HTML 리포트</strong>를 자동 생성!<br>
+                → 이 리포트를 발표 자료로 쓰면 <strong>정말 전문가처럼 보임</strong> 👔
+            </p>
+        </div>
+
+        <div class="space-y-6">
+            <!-- Save Test Plan -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-pink-100 text-pink-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">①</span>
+                    테스트 플랜 저장
+                </h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <code class="text-sm bg-white px-2 py-1 rounded">
+                        File → Save Test Plan as → order-api-test.jmx
+                    </code>
+                </div>
+            </div>
+
+            <!-- CLI Test -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-pink-100 text-pink-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">②</span>
+                    CLI 모드로 테스트 실행 (리포트용)
+                </h3>
+                <div class="bg-gray-900 text-gray-100 p-4 rounded-lg mb-3">
+                    <pre class="text-sm"><code># Windows
+jmeter -n -t order-api-test.jmx -l results.jtl
+
+# Mac/Linux
+./jmeter.sh -n -t order-api-test.jmx -l results.jtl
+
+# 옵션 설명:
+# -n : Non-GUI 모드 (CLI)
+# -t : Test plan 파일
+# -l : 결과 로그 파일</code></pre>
+                </div>
+            </div>
+
+            <!-- Generate Report -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <span class="bg-pink-100 text-pink-800 rounded-full w-8 h-8 flex items-center justify-center mr-3">③</span>
+                    HTML 대시보드 생성
+                </h3>
+                <div class="bg-gray-900 text-gray-100 p-4 rounded-lg mb-3">
+                    <pre class="text-sm"><code># Windows
+jmeter -g results.jtl -o html-report
+
+# Mac/Linux
+./jmeter.sh -g results.jtl -o html-report
+
+# 옵션 설명:
+# -g : 로그 파일 지정
+# -o : 출력 폴더 (자동 생성)</code></pre>
+                </div>
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                    <p class="text-green-800">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <code class="bg-green-100 px-1">html-report/index.html</code> 파일이 생성됨!<br>
+                        → 브라우저로 열면 <strong>프로페셔널한 대시보드</strong> 확인 가능 📊
+                    </p>
+                </div>
+                <div class="placeholder-image mt-4">
+                    <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-600 font-bold">📸 이미지 필요: jmeter-html-dashboard.png</p>
+                    <details class="mt-3 text-left text-sm">
+                        <summary class="cursor-pointer text-blue-600 font-semibold">📋 스크린샷 가이드 (클릭)</summary>
+                        <ol class="mt-2 space-y-1 text-gray-700 ml-4">
+                            <li>1. html-report/index.html 브라우저로 열기</li>
+                            <li>2. 대시보드 상단 (Test and Report information 섹션) 캡처</li>
+                            <li>3. Statistics 표와 그래프 포함되게</li>
+                        </ol>
+                    </details>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pro Tips -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-magic text-pink-600 mr-3"></i>
+            Pro Tips: JMeter 고급 활용
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Tip 1 -->
+            <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-r-lg">
+                <h3 class="font-bold text-purple-900 mb-2 flex items-center">
+                    <i class="fas fa-plug mr-2"></i>Plugins Manager 설치
+                </h3>
+                <p class="text-sm text-purple-800 mb-3">
+                    JMeter 기본 기능만으로는 부족? <strong>Plugins Manager</strong>로 확장!
+                </p>
+                <div class="bg-white p-3 rounded text-xs">
+                    <p class="mb-2"><strong>설치 방법:</strong></p>
+                    <ol class="space-y-1 text-gray-700 ml-4">
+                        <li>1. <a href="https://jmeter-plugins.org/install/Install/" class="text-blue-600 underline" target="_blank">jmeter-plugins.org</a> 접속</li>
+                        <li>2. plugins-manager.jar 다운로드</li>
+                        <li>3. lib/ext 폴더에 복사</li>
+                        <li>4. JMeter 재시작 → Options → Plugins Manager</li>
+                    </ol>
+                    <p class="mt-3 text-purple-700"><strong>추천 플러그인:</strong> 3 Basic Graphs, PerfMon, Composite Graph</p>
+                </div>
+            </div>
+
+            <!-- Tip 2 -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                <h3 class="font-bold text-blue-900 mb-2 flex items-center">
+                    <i class="fas fa-database mr-2"></i>CSV Data Set Config
+                </h3>
+                <p class="text-sm text-blue-800 mb-3">
+                    매번 같은 데이터 말고 <strong>다양한 고객명</strong>으로 테스트하려면?
+                </p>
+                <div class="bg-white p-3 rounded text-xs">
+                    <p class="mb-2"><strong>customers.csv 파일 생성:</strong></p>
+                    <pre class="bg-gray-100 p-2 rounded mb-2"><code>customerName
+홍길동
+김철수
+이영희
+박민수</code></pre>
+                    <p class="mb-2"><strong>CSV Data Set Config 추가:</strong></p>
+                    <code class="bg-gray-100 px-1">Thread Group 우클릭 → Config Element → CSV Data Set Config</code>
+                    <p class="mt-2"><strong>사용:</strong> Body Data에서 <code class="bg-gray-100 px-1">${customerName}</code>으로 참조</p>
+                </div>
+            </div>
+
+            <!-- Tip 3 -->
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                <h3 class="font-bold text-green-900 mb-2 flex items-center">
+                    <i class="fas fa-bolt mr-2"></i>Constant Throughput Timer
+                </h3>
+                <p class="text-sm text-green-800 mb-3">
+                    "정확히 TPS 100 유지"처럼 <strong>일정한 처리량</strong>을 원한다면?
+                </p>
+                <div class="bg-white p-3 rounded text-xs">
+                    <p class="mb-2"><strong>추가 방법:</strong></p>
+                    <code class="bg-gray-100 px-1 block mb-2">Thread Group 우클릭 → Timer → Constant Throughput Timer</code>
+                    <p class="mb-2"><strong>설정:</strong></p>
+                    <ul class="space-y-1 text-gray-700 ml-4">
+                        <li>• Target Throughput: <code class="bg-gray-100 px-1">6000</code> (분당 6000 = 초당 100)</li>
+                        <li>• Calculate Throughput based on: <code class="bg-gray-100 px-1">all active threads</code></li>
+                    </ul>
+                    <p class="mt-2 text-green-700">→ TPS가 일정하게 유지됨!</p>
+                </div>
+            </div>
+
+            <!-- Tip 4 -->
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg">
+                <h3 class="font-bold text-yellow-900 mb-2 flex items-center">
+                    <i class="fas fa-code mr-2"></i>BeanShell / JSR223 Sampler
+                </h3>
+                <p class="text-sm text-yellow-800 mb-3">
+                    복잡한 로직 (동적 토큰, 암호화 등)이 필요하다면?
+                </p>
+                <div class="bg-white p-3 rounded text-xs">
+                    <p class="mb-2"><strong>JSR223 PreProcessor 추가:</strong></p>
+                    <code class="bg-gray-100 px-1 block mb-2">HTTP Request 우클릭 → Pre Processors → JSR223 PreProcessor</code>
+                    <p class="mb-2"><strong>예시: 랜덤 가격 생성</strong></p>
+                    <pre class="bg-gray-100 p-2 rounded"><code>import java.util.Random;
+Random rand = new Random();
+int price = 1000000 + rand.nextInt(1000000);
+vars.put("randomPrice", String.valueOf(price));</code></pre>
+                    <p class="mt-2"><strong>Body에서 사용:</strong> <code class="bg-gray-100 px-1">"price": ${randomPrice}</code></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Presentation Tips -->
+    <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg shadow-xl p-6 mb-8 text-white">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-microphone-alt mr-3"></i>
+            발표 가이드: JMeter 리포트로 임팩트 주기
+        </h2>
+
+        <div class="bg-white bg-opacity-20 rounded-lg p-5 mb-4">
+            <h3 class="font-bold text-lg mb-3">📊 완벽한 발표 시나리오</h3>
+            <div class="space-y-3 text-sm">
+                <div class="bg-white bg-opacity-10 p-3 rounded">
+                    <p class="font-semibold mb-1">1️⃣ 문제 제기 (10초)</p>
+                    <p class="italic">"현재 주문 API가 동시에 100명이 접속하면 어떻게 될까요? 성능 테스트를 해봤습니다."</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-3 rounded">
+                    <p class="font-semibold mb-1">2️⃣ Before 결과 공유 (20초)</p>
+                    <p class="italic">"N+1 문제가 있는 상태에서는 평균 응답 시간이 <strong>2초</strong>, TPS는 <strong>50</strong>에 불과했습니다.<br>
+                    (nGrinder 그래프 또는 JMeter HTML 리포트 보여주기)"</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-3 rounded">
+                    <p class="font-semibold mb-1">3️⃣ 해결 방법 (15초)</p>
+                    <p class="italic">"Fetch Join으로 쿼리를 1개로 줄였습니다. (코드 슬라이드)"</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-3 rounded">
+                    <p class="font-semibold mb-1">4️⃣ After 결과 (20초)</p>
+                    <p class="italic">"개선 후 평균 응답 시간 <strong>150ms</strong>, TPS <strong>500</strong>으로 <strong>10배 향상</strong>되었습니다!<br>
+                    (JMeter HTML 대시보드 보여주기 - 이게 핵심!)"</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-3 rounded">
+                    <p class="font-semibold mb-1">5️⃣ 마무리 (10초)</p>
+                    <p class="italic">"실제 대기업에서 사용하는 Apache JMeter로 검증했습니다."</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white bg-opacity-20 rounded-lg p-4">
+            <h3 class="font-bold mb-2 flex items-center">
+                <i class="fas fa-exclamation-triangle mr-2"></i>면접에서 자주 나오는 질문
+            </h3>
+            <div class="space-y-2 text-sm">
+                <details class="bg-white bg-opacity-10 p-3 rounded cursor-pointer">
+                    <summary class="font-semibold">Q1: JMeter와 nGrinder 차이가 뭔가요?</summary>
+                    <p class="mt-2 pl-4 border-l-2 border-white">
+                        A: nGrinder는 웹 기반이라 설치가 쉽고 한글 지원이 완벽합니다.
+                        JMeter는 GUI 기반이지만 플러그인 생태계가 방대하고 글로벌 표준이라 대기업에서 선호합니다.
+                        저는 빠른 테스트는 nGrinder, 정식 리포트는 JMeter HTML 대시보드를 사용합니다.
+                    </p>
+                </details>
+                <details class="bg-white bg-opacity-10 p-3 rounded cursor-pointer">
+                    <summary class="font-semibold">Q2: GUI 모드와 CLI 모드 차이는?</summary>
+                    <p class="mt-2 pl-4 border-l-2 border-white">
+                        A: GUI 모드는 테스트 시나리오를 만들 때 사용하고,
+                        실제 성능 테스트는 CLI 모드(-n 옵션)로 실행해야 정확합니다.
+                        GUI는 자체적으로 리소스를 많이 먹기 때문입니다.
+                    </p>
+                </details>
+                <details class="bg-white bg-opacity-10 p-3 rounded cursor-pointer">
+                    <summary class="font-semibold">Q3: TPS 목표치는 어떻게 정하나요?</summary>
+                    <p class="mt-2 pl-4 border-l-2 border-white">
+                        A: 비즈니스 요구사항에 따라 다릅니다.
+                        예를 들어 1초에 100명이 주문할 수 있어야 한다면 TPS 100이 목표입니다.
+                        이번 프로젝트에서는 TPS 500을 달성했고, 이는 초당 500건의 주문 처리가 가능하다는 의미입니다.
+                    </p>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <!-- When to Use -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-question-circle text-pink-600 mr-3"></i>
+            언제 JMeter를 써야 할까?
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Use JMeter -->
+            <div class="bg-green-50 border-2 border-green-500 rounded-lg p-5">
+                <h3 class="font-bold text-green-900 mb-4 text-lg flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>JMeter 추천 상황
+                </h3>
+                <ul class="space-y-2 text-sm text-green-800">
+                    <li class="flex items-start">
+                        <i class="fas fa-chevron-right mr-2 mt-1 text-green-600"></i>
+                        <span><strong>대기업 취업 목표</strong> (삼성SDS, LG CNS, SI 업체)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-chevron-right mr-2 mt-1 text-green-600"></i>
+                        <span><strong>정식 성능 리포트</strong>가 필요한 경우 (HTML 대시보드)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-chevron-right mr-2 mt-1 text-green-600"></i>
+                        <span><strong>복잡한 시나리오</strong> (다단계 트랜잭션, 조건 분기 등)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-chevron-right mr-2 mt-1 text-green-600"></i>
+                        <span><strong>플러그인 활용</strong>이 필요한 경우 (DB, FTP, MQTT 등)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-chevron-right mr-2 mt-1 text-green-600"></i>
+                        <span><strong>글로벌 표준</strong> 도구 경험을 쌓고 싶을 때</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Use nGrinder -->
+            <div class="bg-blue-50 border-2 border-blue-500 rounded-lg p-5">
+                <h3 class="font-bold text-blue-900 mb-4 text-lg flex items-center">
+                    <i class="fas fa-rocket mr-2"></i>nGrinder 추천 상황
+                </h3>
+                <ul class="space-y-2 text-sm text-blue-800">
+                    <li class="flex items-start">
+                        <i class="fas fa-chevron-right mr-2 mt-1 text-blue-600"></i>
+                        <span><strong>7일 프로젝트</strong> (시간이 부족할 때)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-chevron-right mr-2 mt-1 text-blue-600"></i>
+                        <span><strong>빠른 성능 체크</strong>가 목적 (N+1 확인 등)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-chevron-right mr-2 mt-1 text-blue-600"></i>
+                        <span><strong>Docker 환경</strong>을 선호하는 경우</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-chevron-right mr-2 mt-1 text-blue-600"></i>
+                        <span><strong>한국 기업</strong> (네이버, 카카오, 쿠팡 등) 지원 시</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-chevron-right mr-2 mt-1 text-blue-600"></i>
+                        <span><strong>웹 UI</strong>가 편한 초보자</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mt-6 bg-purple-50 border-l-4 border-purple-500 p-4 rounded-r-lg">
+            <p class="text-purple-800 font-semibold">
+                <i class="fas fa-lightbulb mr-2"></i>
+                <strong>나의 추천</strong>:
+                시간이 허락한다면 <strong>둘 다 경험</strong>해보세요!
+                nGrinder로 빠르게 테스트하고, 최종 발표는 JMeter HTML 리포트로!
+            </p>
+        </div>
+    </div>
+
+    <!-- Next Steps -->
+    <div class="bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg shadow-xl p-8 text-white text-center">
+        <h2 class="text-3xl font-bold mb-4">🎉 Lv.4 Expert 달성!</h2>
+        <p class="text-lg mb-6">JMeter까지 마스터했다면 이제 <strong>대기업 성능 테스트 전문가</strong> 수준입니다!</p>
+        <div class="flex justify-center space-x-4">
+            <a href="/qa-hands-on/cicd" class="bg-white text-purple-600 px-6 py-3 rounded-lg font-bold hover:bg-purple-100 transition">
+                <i class="fas fa-rocket mr-2"></i>다음: CI/CD 자동화
+            </a>
+            <a href="/qa-hands-on/final" class="bg-purple-700 text-white px-6 py-3 rounded-lg font-bold hover:bg-purple-800 transition">
+                <i class="fas fa-trophy mr-2"></i>실전 종합 미션
+            </a>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

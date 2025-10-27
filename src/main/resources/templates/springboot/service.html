@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/springboot-layout}">
+<head>
+    <title>Service 어노테이션</title>
+</head>
+<body>
+    <div layout:fragment="content">
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-3">
+                <i class="fas fa-cogs text-green-600 mr-3"></i>
+                Service 레이어
+            </h1>
+            <p class="text-lg text-gray-600">
+                비즈니스 로직을 처리하는 Service 계층의 어노테이션을 학습합니다
+            </p>
+        </div>
+
+        <!-- Example: Service Class -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-code text-blue-600 mr-2"></i>
+                예제: OrderService
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="code-block"><pre><span style="color: #7dd3fc">@Service</span>
+<span style="color: #7dd3fc">@RequiredArgsConstructor</span>
+<span style="color: #7dd3fc">@Transactional</span>(readOnly = <span style="color: #f472b6">true</span>)  <span style="color: #6b7280">// 기본: 읽기 전용</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">OrderService</span> {
+
+    <span style="color: #fbbf24">private final</span> OrderRepository orderRepository;
+    <span style="color: #fbbf24">private final</span> OrderItemRepository orderItemRepository;
+
+    <span style="color: #6b7280">// 1. 전체 조회 (읽기 전용 트랜잭션)</span>
+    <span style="color: #fbbf24">public</span> List&lt;Order&gt; <span style="color: #ffffff">findAll</span>() {
+        <span style="color: #fbbf24">return</span> orderRepository.findAll();
+    }
+
+    <span style="color: #6b7280">// 2. 단건 조회</span>
+    <span style="color: #fbbf24">public</span> Order <span style="color: #ffffff">findById</span>(Long id) {
+        <span style="color: #fbbf24">return</span> orderRepository.findById(id)
+            .orElseThrow(() -> <span style="color: #fbbf24">new</span> IllegalArgumentException(<span style="color: #86efac">"주문을 찾을 수 없습니다"</span>));
+    }
+
+    <span style="color: #6b7280">// 3. 생성 (쓰기 트랜잭션)</span>
+    <span style="color: #7dd3fc">@Transactional</span>  <span style="color: #6b7280">// readOnly = false (기본값)</span>
+    <span style="color: #fbbf24">public</span> Order <span style="color: #ffffff">create</span>(OrderRequest request) {
+        <span style="color: #6b7280">// 1. 주문 생성</span>
+        Order order = Order.builder()
+            .customerName(request.getCustomerName())
+            .orderDate(LocalDateTime.now())
+            .status(OrderStatus.PENDING)
+            .build();
+
+        <span style="color: #6b7280">// 2. 주문 아이템 추가</span>
+        <span style="color: #fbbf24">for</span> (OrderItemRequest itemReq : request.getItems()) {
+            OrderItem item = OrderItem.builder()
+                .productName(itemReq.getProductName())
+                .quantity(itemReq.getQuantity())
+                .price(itemReq.getPrice())
+                .build();
+            order.addItem(item);
+        }
+
+        <span style="color: #6b7280">// 3. 저장 (cascade로 자동 저장됨)</span>
+        <span style="color: #fbbf24">return</span> orderRepository.save(order);
+    }
+
+    <span style="color: #6b7280">// 4. 수정</span>
+    <span style="color: #7dd3fc">@Transactional</span>
+    <span style="color: #fbbf24">public</span> Order <span style="color: #ffffff">update</span>(Long id, OrderRequest request) {
+        Order order = findById(id);
+        order.setCustomerName(request.getCustomerName());
+        order.setStatus(request.getStatus());
+        <span style="color: #fbbf24">return</span> order; <span style="color: #6b7280">// 변경 감지로 자동 UPDATE</span>
+    }
+
+    <span style="color: #6b7280">// 5. 삭제</span>
+    <span style="color: #7dd3fc">@Transactional</span>
+    <span style="color: #fbbf24">public void</span> <span style="color: #ffffff">delete</span>(Long id) {
+        Order order = findById(id);
+        orderRepository.delete(order);
+    }
+
+    <span style="color: #6b7280">// 6. 검색</span>
+    <span style="color: #fbbf24">public</span> List&lt;Order&gt; <span style="color: #ffffff">findByCustomerName</span>(String name) {
+        <span style="color: #fbbf24">return</span> orderRepository.findByCustomerNameContaining(name);
+    }
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service Annotations Table -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-table text-green-600 mr-2"></i>
+                Service 어노테이션 정리
+            </h2>
+
+            <!-- Group 1: 기본 어노테이션 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm mr-2">그룹 1</span>
+                    기본 Service 어노테이션
+                </h3>
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 35%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-green-600">@Service</code></td>
+                            <td>서비스 계층 컴포넌트 선언<br><small class="text-gray-500">Spring Bean으로 자동 등록</small></td>
+                            <td><code>@Service public class OrderService { }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-green-600">@RequiredArgsConstructor</code></td>
+                            <td>final 필드 생성자 주입<br><small class="text-gray-500">Lombok, 의존성 주입 편리</small></td>
+                            <td><code>@RequiredArgsConstructor</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-green-600">@Autowired</code></td>
+                            <td>의존성 자동 주입<br><small class="text-gray-500">생성자 주입 권장 (생략 가능)</small></td>
+                            <td><code>@Autowired private OrderRepository repo;</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Group 2: 트랜잭션 관리 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm mr-2">그룹 2</span>
+                    트랜잭션 관리 어노테이션
+                </h3>
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 35%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-blue-600">@Transactional</code></td>
+                            <td>트랜잭션 범위 설정<br><small class="text-gray-500">클래스/메서드 레벨 모두 가능</small></td>
+                            <td><code>@Transactional public void save() { }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">readOnly = true</code></td>
+                            <td>읽기 전용 트랜잭션<br><small class="text-gray-500">조회 성능 최적화, 변경 방지</small></td>
+                            <td><code>@Transactional(readOnly = true)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">readOnly = false</code></td>
+                            <td>쓰기 트랜잭션 (기본값)<br><small class="text-gray-500">INSERT, UPDATE, DELETE</small></td>
+                            <td><code>@Transactional</code> (기본값)</td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">propagation</code></td>
+                            <td>트랜잭션 전파 속성<br><small class="text-gray-500">REQUIRED, REQUIRES_NEW 등</small></td>
+                            <td><code>propagation = Propagation.REQUIRES_NEW</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">isolation</code></td>
+                            <td>트랜잭션 격리 수준<br><small class="text-gray-500">READ_COMMITTED, REPEATABLE_READ 등</small></td>
+                            <td><code>isolation = Isolation.READ_COMMITTED</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">rollbackFor</code></td>
+                            <td>롤백 예외 지정<br><small class="text-gray-500">특정 예외 발생 시 롤백</small></td>
+                            <td><code>rollbackFor = Exception.class</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">timeout</code></td>
+                            <td>트랜잭션 타임아웃 (초)<br><small class="text-gray-500">지정 시간 초과 시 롤백</small></td>
+                            <td><code>timeout = 10</code> (10초)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Group 3: 캐싱 -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+                    <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">그룹 3</span>
+                    캐싱 어노테이션 (선택)
+                </h3>
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 35%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-purple-600">@Cacheable</code></td>
+                            <td>메서드 결과를 캐시에 저장<br><small class="text-gray-500">같은 파라미터면 캐시 반환</small></td>
+                            <td><code>@Cacheable("orders")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-purple-600">@CacheEvict</code></td>
+                            <td>캐시 삭제<br><small class="text-gray-500">데이터 변경 시 캐시 무효화</small></td>
+                            <td><code>@CacheEvict(value = "orders", allEntries = true)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-purple-600">@CachePut</code></td>
+                            <td>캐시 갱신<br><small class="text-gray-500">메서드 실행 후 결과를 캐시에 저장</small></td>
+                            <td><code>@CachePut(value = "orders", key = "#id")</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- @Transactional Deep Dive -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-database text-indigo-600 mr-2"></i>
+                @Transactional 심화
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">트랜잭션 전파 속성 (Propagation)</h3>
+
+                <table class="w-full annotation-table mb-6">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">속성</th>
+                            <th style="width: 70%">설명</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-indigo-600">REQUIRED</code> (기본)</td>
+                            <td>
+                                부모 트랜잭션이 있으면 참여, 없으면 새로 생성<br>
+                                <small class="text-gray-500">가장 많이 사용, 일반적인 상황</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-indigo-600">REQUIRES_NEW</code></td>
+                            <td>
+                                항상 새로운 트랜잭션 생성, 부모는 일시 정지<br>
+                                <small class="text-gray-500">독립적인 트랜잭션 필요 시 (로그 저장 등)</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-indigo-600">SUPPORTS</code></td>
+                            <td>
+                                부모 트랜잭션이 있으면 참여, 없어도 OK<br>
+                                <small class="text-gray-500">트랜잭션 없이도 실행 가능</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-indigo-600">MANDATORY</code></td>
+                            <td>
+                                부모 트랜잭션 필수, 없으면 예외 발생<br>
+                                <small class="text-gray-500">반드시 트랜잭션 내에서 호출되어야 함</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-indigo-600">NOT_SUPPORTED</code></td>
+                            <td>
+                                트랜잭션 없이 실행, 부모가 있으면 일시 정지<br>
+                                <small class="text-gray-500">트랜잭션이 불필요한 작업</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-indigo-600">NEVER</code></td>
+                            <td>
+                                트랜잭션 없이 실행, 부모가 있으면 예외 발생<br>
+                                <small class="text-gray-500">트랜잭션 금지</small>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded">
+                    <h4 class="font-bold text-indigo-800 mb-2">실무 예제</h4>
+                    <div class="code-block"><pre><span style="color: #7dd3fc">@Service</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">OrderService</span> {
+
+    <span style="color: #6b7280">// 일반적인 경우: REQUIRED (기본값)</span>
+    <span style="color: #7dd3fc">@Transactional</span>
+    <span style="color: #fbbf24">public void</span> <span style="color: #ffffff">createOrder</span>() {
+        orderRepository.save(order);
+        logService.saveLog(<span style="color: #86efac">"주문 생성"</span>); <span style="color: #6b7280">// 같은 트랜잭션</span>
+    }
+
+    <span style="color: #6b7280">// 독립적인 트랜잭션: REQUIRES_NEW</span>
+    <span style="color: #7dd3fc">@Transactional</span>
+    <span style="color: #fbbf24">public void</span> <span style="color: #ffffff">createOrderWithLog</span>() {
+        orderRepository.save(order);
+        logService.saveLogIndependent(); <span style="color: #6b7280">// 별도 트랜잭션</span>
+    }
+}
+
+<span style="color: #7dd3fc">@Service</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">LogService</span> {
+
+    <span style="color: #6b7280">// 주문이 실패해도 로그는 저장됨</span>
+    <span style="color: #7dd3fc">@Transactional</span>(propagation = Propagation.<span style="color: #fbbf24">REQUIRES_NEW</span>)
+    <span style="color: #fbbf24">public void</span> <span style="color: #ffffff">saveLogIndependent</span>() {
+        logRepository.save(log);
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practical Tips -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+                실무 팁
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                    <h3 class="font-bold text-green-800 mb-2">
+                        <i class="fas fa-check-circle mr-2"></i>권장사항
+                    </h3>
+                    <ul class="text-sm text-green-700 space-y-1">
+                        <li>• <strong>클래스에 readOnly = true:</strong> 조회 메서드가 많을 때</li>
+                        <li>• <strong>메서드에 @Transactional:</strong> 변경 메서드만 오버라이드</li>
+                        <li>• <strong>생성자 주입 사용:</strong> @RequiredArgsConstructor 활용</li>
+                        <li>• <strong>Service는 얇게:</strong> 복잡한 로직은 Entity에</li>
+                    </ul>
+                </div>
+
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                    <h3 class="font-bold text-red-800 mb-2">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>주의사항
+                    </h3>
+                    <ul class="text-sm text-red-700 space-y-1">
+                        <li>• <strong>private 메서드:</strong> @Transactional 동작 안 함</li>
+                        <li>• <strong>self-invocation:</strong> 같은 클래스 메서드 호출 시 AOP 미적용</li>
+                        <li>• <strong>예외 처리:</strong> RuntimeException만 자동 롤백</li>
+                        <li>• <strong>트랜잭션 크기:</strong> 너무 크면 성능 저하</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+                <h3 class="font-bold text-yellow-800 mb-2">
+                    <i class="fas fa-bug mr-2"></i>
+                    흔한 실수: self-invocation
+                </h3>
+                <div class="code-block"><pre><span style="color: #7dd3fc">@Service</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">OrderService</span> {
+
+    <span style="color: #6b7280">// ❌ 동작 안 함: 같은 클래스 내부 호출</span>
+    <span style="color: #fbbf24">public void</span> <span style="color: #ffffff">processOrder</span>() {
+        <span style="color: #fbbf24">this</span>.createOrder(); <span style="color: #6b7280">// @Transactional 무시됨!</span>
+    }
+
+    <span style="color: #7dd3fc">@Transactional</span>
+    <span style="color: #fbbf24">public void</span> <span style="color: #ffffff">createOrder</span>() {
+        orderRepository.save(order);
+    }
+}
+
+<span style="color: #6b7280">// ✅ 해결 방법: 별도 Service로 분리</span>
+<span style="color: #7dd3fc">@Service</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">OrderProcessService</span> {
+    <span style="color: #fbbf24">private final</span> OrderService orderService;
+
+    <span style="color: #fbbf24">public void</span> <span style="color: #ffffff">processOrder</span>() {
+        orderService.createOrder(); <span style="color: #6b7280">// 정상 동작</span>
+    }
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Step -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-purple-50 to-blue-50 border-l-4 border-purple-500 p-6 rounded-lg">
+                <h2 class="text-2xl font-bold text-purple-800 mb-4">
+                    <i class="fas fa-forward mr-2"></i>
+                    다음 단계
+                </h2>
+                <a href="/springboot/repository" class="block bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
+                    <h3 class="font-bold text-gray-800 mb-2">
+                        <i class="fas fa-database text-purple-600 mr-2"></i>
+                        Repository 어노테이션 학습하기
+                    </h3>
+                    <p class="text-sm text-gray-600">JPA Repository와 MyBatis의 데이터 액세스 어노테이션 비교</p>
+                </a>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>

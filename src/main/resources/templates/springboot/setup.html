@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/springboot-layout}">
+<head>
+    <title>프로젝트 설정</title>
+</head>
+<body>
+    <div layout:fragment="content">
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-3">
+                <i class="fas fa-cog text-green-600 mr-3"></i>
+                Spring Boot 프로젝트 생성
+            </h1>
+            <p class="text-lg text-gray-600">
+                start.spring.io에서 프로젝트를 생성하고 기본 구조를 이해합니다
+            </p>
+        </div>
+
+        <!-- Step 1: start.spring.io -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-rocket text-blue-600 mr-2"></i>
+                1. 프로젝트 생성 (start.spring.io)
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">접속 및 설정</h3>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                    <p class="text-blue-800">
+                        <strong>URL:</strong> <a href="https://start.spring.io" target="_blank" class="underline">https://start.spring.io</a>
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-gray-800 mb-3">Project Metadata</h4>
+                        <table class="w-full text-sm">
+                            <tr class="border-b">
+                                <td class="py-2 font-semibold">Project</td>
+                                <td class="py-2">Gradle - Groovy</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2 font-semibold">Language</td>
+                                <td class="py-2">Java</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2 font-semibold">Spring Boot</td>
+                                <td class="py-2">3.5.6</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2 font-semibold">Group</td>
+                                <td class="py-2">com.example</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2 font-semibold">Artifact</td>
+                                <td class="py-2">demo</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2 font-semibold">Packaging</td>
+                                <td class="py-2">Jar</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 font-semibold">Java</td>
+                                <td class="py-2">17</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-gray-800 mb-3">Dependencies (추천)</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                <strong>Spring Web</strong> - REST API 개발
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                <strong>Spring Data JPA</strong> - JPA 데이터 액세스
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                <strong>H2 Database</strong> - 내장 DB (개발용)
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                <strong>Lombok</strong> - 보일러플레이트 코드 제거
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-blue-600 mr-2"></i>
+                                <strong>Validation</strong> - 입력값 검증
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-blue-600 mr-2"></i>
+                                <strong>Spring Boot DevTools</strong> - 자동 재시작
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-green-50 border-l-4 border-green-500 p-4">
+                    <p class="text-green-800">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        <strong>Tip:</strong> "GENERATE" 버튼 클릭 → ZIP 파일 다운로드 → 압축 해제 → IntelliJ에서 열기
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 2: Project Structure -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-folder-tree text-purple-600 mr-2"></i>
+                2. 프로젝트 구조
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Directory Tree -->
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">디렉토리 구조</h3>
+                        <div class="code-block"><pre>demo/
+├── src/
+│   ├── main/
+│   │   ├── java/com/example/demo/
+│   │   │   ├── <span style="color: #fbbf24">DemoApplication.java</span>      // 메인 클래스
+│   │   │   ├── <span style="color: #86efac">controller/</span>               // 컨트롤러 레이어
+│   │   │   │   └── OrderController.java
+│   │   │   ├── <span style="color: #86efac">service/</span>                  // 서비스 레이어
+│   │   │   │   └── OrderService.java
+│   │   │   ├── <span style="color: #86efac">repository/</span>               // 레포지토리 레이어
+│   │   │   │   └── OrderRepository.java
+│   │   │   ├── <span style="color: #86efac">model/</span>                    // 도메인 모델 (Entity)
+│   │   │   │   ├── Order.java
+│   │   │   │   └── OrderItem.java
+│   │   │   └── <span style="color: #86efac">dto/</span>                      // 데이터 전송 객체
+│   │   │       └── OrderRequest.java
+│   │   └── resources/
+│   │       ├── <span style="color: #7dd3fc">application.properties</span>    // 설정 파일
+│   │       └── static/                   // 정적 파일
+│   └── test/                             // 테스트 코드
+│       └── java/com/example/demo/
+├── build.gradle                          // Gradle 설정
+└── README.md</pre>
+                        </div>
+                    </div>
+
+                    <!-- Layer Explanation -->
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">레이어별 역할</h3>
+
+                        <div class="space-y-4">
+                            <div class="border-l-4 border-blue-500 pl-4 py-2">
+                                <h4 class="font-bold text-blue-800 mb-1">
+                                    <i class="fas fa-layer-group mr-2"></i>Controller (컨트롤러)
+                                </h4>
+                                <p class="text-sm text-gray-700">
+                                    HTTP 요청 받기 → Service 호출 → 응답 반환<br>
+                                    <code class="bg-gray-100 px-2 py-1 rounded text-xs">@RestController, @Controller</code>
+                                </p>
+                            </div>
+
+                            <div class="border-l-4 border-green-500 pl-4 py-2">
+                                <h4 class="font-bold text-green-800 mb-1">
+                                    <i class="fas fa-cogs mr-2"></i>Service (서비스)
+                                </h4>
+                                <p class="text-sm text-gray-700">
+                                    비즈니스 로직 처리 → Repository 호출<br>
+                                    <code class="bg-gray-100 px-2 py-1 rounded text-xs">@Service</code>
+                                </p>
+                            </div>
+
+                            <div class="border-l-4 border-purple-500 pl-4 py-2">
+                                <h4 class="font-bold text-purple-800 mb-1">
+                                    <i class="fas fa-database mr-2"></i>Repository (레포지토리)
+                                </h4>
+                                <p class="text-sm text-gray-700">
+                                    DB 접근 (CRUD) → Entity 매핑<br>
+                                    <code class="bg-gray-100 px-2 py-1 rounded text-xs">@Repository, JpaRepository</code>
+                                </p>
+                            </div>
+
+                            <div class="border-l-4 border-orange-500 pl-4 py-2">
+                                <h4 class="font-bold text-orange-800 mb-1">
+                                    <i class="fas fa-cube mr-2"></i>Model/Entity (모델)
+                                </h4>
+                                <p class="text-sm text-gray-700">
+                                    DB 테이블과 매핑되는 클래스<br>
+                                    <code class="bg-gray-100 px-2 py-1 rounded text-xs">@Entity, @Table</code>
+                                </p>
+                            </div>
+
+                            <div class="border-l-4 border-yellow-500 pl-4 py-2">
+                                <h4 class="font-bold text-yellow-800 mb-1">
+                                    <i class="fas fa-file-alt mr-2"></i>DTO (데이터 전송 객체)
+                                </h4>
+                                <p class="text-sm text-gray-700">
+                                    클라이언트 ↔ 서버 데이터 전송용<br>
+                                    <code class="bg-gray-100 px-2 py-1 rounded text-xs">일반 POJO 클래스</code>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 3: Flow Diagram -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-project-diagram text-indigo-600 mr-2"></i>
+                3. 요청 처리 흐름
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <div class="flex items-center justify-center">
+                    <div class="text-center space-y-4">
+                        <!-- Client -->
+                        <div class="inline-block bg-gray-100 rounded-lg px-6 py-4 shadow">
+                            <i class="fas fa-user text-3xl text-gray-600 mb-2"></i>
+                            <p class="font-bold text-gray-800">Client (브라우저/앱)</p>
+                            <p class="text-xs text-gray-600">HTTP Request</p>
+                        </div>
+
+                        <div class="text-3xl text-gray-400">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+
+                        <!-- Controller -->
+                        <div class="inline-block bg-blue-100 rounded-lg px-6 py-4 shadow">
+                            <i class="fas fa-layer-group text-3xl text-blue-600 mb-2"></i>
+                            <p class="font-bold text-blue-800">Controller</p>
+                            <p class="text-xs text-blue-700">요청 받기 & 응답 반환</p>
+                            <p class="text-xs bg-white px-2 py-1 rounded mt-1"><code>@RestController</code></p>
+                        </div>
+
+                        <div class="text-3xl text-gray-400">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+
+                        <!-- Service -->
+                        <div class="inline-block bg-green-100 rounded-lg px-6 py-4 shadow">
+                            <i class="fas fa-cogs text-3xl text-green-600 mb-2"></i>
+                            <p class="font-bold text-green-800">Service</p>
+                            <p class="text-xs text-green-700">비즈니스 로직 처리</p>
+                            <p class="text-xs bg-white px-2 py-1 rounded mt-1"><code>@Service</code></p>
+                        </div>
+
+                        <div class="text-3xl text-gray-400">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+
+                        <!-- Repository -->
+                        <div class="inline-block bg-purple-100 rounded-lg px-6 py-4 shadow">
+                            <i class="fas fa-database text-3xl text-purple-600 mb-2"></i>
+                            <p class="font-bold text-purple-800">Repository</p>
+                            <p class="text-xs text-purple-700">DB 접근 (CRUD)</p>
+                            <p class="text-xs bg-white px-2 py-1 rounded mt-1"><code>JpaRepository</code></p>
+                        </div>
+
+                        <div class="text-3xl text-gray-400">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+
+                        <!-- Database -->
+                        <div class="inline-block bg-orange-100 rounded-lg px-6 py-4 shadow">
+                            <i class="fas fa-table text-3xl text-orange-600 mb-2"></i>
+                            <p class="font-bold text-orange-800">Database (H2/MySQL)</p>
+                            <p class="text-xs text-orange-700">실제 데이터 저장소</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-indigo-50 border-l-4 border-indigo-500 p-4">
+                    <p class="text-indigo-800 text-sm">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <strong>핵심 원칙:</strong> 각 레이어는 바로 아래 레이어만 호출합니다.
+                        Controller는 Repository를 직접 호출하지 않고 Service를 통해서만 접근합니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Steps -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500 p-6 rounded-lg">
+                <h2 class="text-2xl font-bold text-green-800 mb-4">
+                    <i class="fas fa-forward mr-2"></i>
+                    다음 단계
+                </h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <a href="/springboot/model" class="block bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
+                        <h3 class="font-bold text-gray-800 mb-2">
+                            <i class="fas fa-cube text-orange-600 mr-2"></i>
+                            Model/Entity 어노테이션
+                        </h3>
+                        <p class="text-sm text-gray-600">@Entity, @Table, @Id, @OneToMany 등 JPA 어노테이션 학습</p>
+                    </a>
+
+                    <a href="/springboot/controller" class="block bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
+                        <h3 class="font-bold text-gray-800 mb-2">
+                            <i class="fas fa-layer-group text-blue-600 mr-2"></i>
+                            Controller 어노테이션
+                        </h3>
+                        <p class="text-sm text-gray-600">@RestController, @GetMapping, @PostMapping 등</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>

@@ -35,6 +35,8 @@ public class SecurityConfig {
                         .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/lectures/**").permitAll()
+                        .requestMatchers("/springboot/**").permitAll()
+                        .requestMatchers("/qa-hands-on/**").permitAll()
                         .requestMatchers("/project/**").permitAll()
                         .requestMatchers("/guide/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()

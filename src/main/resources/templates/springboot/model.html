@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/springboot-layout}">
+<head>
+    <title>Model/Entity 어노테이션</title>
+</head>
+<body>
+    <div layout:fragment="content">
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-3">
+                <i class="fas fa-cube text-orange-600 mr-3"></i>
+                Model/Entity 레이어
+            </h1>
+            <p class="text-lg text-gray-600">
+                데이터베이스 테이블과 매핑되는 Entity 클래스의 JPA 어노테이션을 학습합니다
+            </p>
+        </div>
+
+        <!-- Example: Order Entity -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-code text-blue-600 mr-2"></i>
+                예제: Order 엔티티
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="code-block"><pre><span style="color: #7dd3fc">@Entity</span>
+<span style="color: #7dd3fc">@Table</span>(name = <span style="color: #86efac">"orders"</span>)
+<span style="color: #7dd3fc">@Getter</span> <span style="color: #7dd3fc">@Setter</span>
+<span style="color: #7dd3fc">@NoArgsConstructor</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">Order</span> {
+
+    <span style="color: #7dd3fc">@Id</span>
+    <span style="color: #7dd3fc">@GeneratedValue</span>(strategy = GenerationType.<span style="color: #fbbf24">IDENTITY</span>)
+    <span style="color: #fbbf24">private</span> Long id;
+
+    <span style="color: #7dd3fc">@Column</span>(nullable = <span style="color: #f472b6">false</span>, length = <span style="color: #fbbf24">100</span>)
+    <span style="color: #fbbf24">private</span> String customerName;
+
+    <span style="color: #7dd3fc">@Column</span>(name = <span style="color: #86efac">"order_date"</span>)
+    <span style="color: #fbbf24">private</span> LocalDateTime orderDate;
+
+    <span style="color: #7dd3fc">@Enumerated</span>(EnumType.<span style="color: #fbbf24">STRING</span>)
+    <span style="color: #fbbf24">private</span> OrderStatus status;
+
+    <span style="color: #7dd3fc">@OneToMany</span>(mappedBy = <span style="color: #86efac">"order"</span>, cascade = CascadeType.<span style="color: #fbbf24">ALL</span>, orphanRemoval = <span style="color: #f472b6">true</span>)
+    <span style="color: #fbbf24">private</span> List&lt;OrderItem&gt; items = <span style="color: #fbbf24">new</span> ArrayList&lt;&gt;();
+
+    <span style="color: #7dd3fc">@CreatedDate</span>
+    <span style="color: #fbbf24">private</span> LocalDateTime createdAt;
+
+    <span style="color: #7dd3fc">@LastModifiedDate</span>
+    <span style="color: #fbbf24">private</span> LocalDateTime updatedAt;
+
+    <span style="color: #6b7280">// 비즈니스 메서드</span>
+    <span style="color: #fbbf24">public void</span> <span style="color: #ffffff">addItem</span>(OrderItem item) {
+        items.add(item);
+        item.setOrder(<span style="color: #fbbf24">this</span>);
+    }
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Example: OrderItem Entity -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-code text-purple-600 mr-2"></i>
+                예제: OrderItem 엔티티
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="code-block"><pre><span style="color: #7dd3fc">@Entity</span>
+<span style="color: #7dd3fc">@Table</span>(name = <span style="color: #86efac">"order_items"</span>)
+<span style="color: #7dd3fc">@Getter</span> <span style="color: #7dd3fc">@Setter</span>
+<span style="color: #7dd3fc">@NoArgsConstructor</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">OrderItem</span> {
+
+    <span style="color: #7dd3fc">@Id</span>
+    <span style="color: #7dd3fc">@GeneratedValue</span>(strategy = GenerationType.<span style="color: #fbbf24">IDENTITY</span>)
+    <span style="color: #fbbf24">private</span> Long id;
+
+    <span style="color: #7dd3fc">@ManyToOne</span>(fetch = FetchType.<span style="color: #fbbf24">LAZY</span>)
+    <span style="color: #7dd3fc">@JoinColumn</span>(name = <span style="color: #86efac">"order_id"</span>, nullable = <span style="color: #f472b6">false</span>)
+    <span style="color: #fbbf24">private</span> Order order;
+
+    <span style="color: #7dd3fc">@Column</span>(nullable = <span style="color: #f472b6">false</span>)
+    <span style="color: #fbbf24">private</span> String productName;
+
+    <span style="color: #7dd3fc">@Column</span>(nullable = <span style="color: #f472b6">false</span>)
+    <span style="color: #fbbf24">private</span> Integer quantity;
+
+    <span style="color: #7dd3fc">@Column</span>(nullable = <span style="color: #f472b6">false</span>)
+    <span style="color: #fbbf24">private</span> BigDecimal price;
+
+    <span style="color: #6b7280">// 계산 메서드</span>
+    <span style="color: #fbbf24">public</span> BigDecimal <span style="color: #ffffff">getTotalPrice</span>() {
+        <span style="color: #fbbf24">return</span> price.multiply(BigDecimal.valueOf(quantity));
+    }
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- JPA Annotations Table -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-table text-green-600 mr-2"></i>
+                JPA 어노테이션 정리
+            </h2>
+
+            <!-- Group 1: 기본 어노테이션 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm mr-2">그룹 1</span>
+                    기본 엔티티 어노테이션
+                </h3>
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 40%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-blue-600">@Entity</code></td>
+                            <td>JPA 엔티티 클래스임을 선언<br><small class="text-gray-500">필수 어노테이션</small></td>
+                            <td><code>@Entity public class Order { }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">@Table</code></td>
+                            <td>매핑할 테이블 이름 지정<br><small class="text-gray-500">생략 시 클래스명이 테이블명</small></td>
+                            <td><code>@Table(name = "orders")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">@Id</code></td>
+                            <td>기본키(Primary Key) 필드<br><small class="text-gray-500">필수 어노테이션</small></td>
+                            <td><code>@Id private Long id;</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">@GeneratedValue</code></td>
+                            <td>기본키 자동 생성 전략<br><small class="text-gray-500">IDENTITY, SEQUENCE, AUTO</small></td>
+                            <td><code>@GeneratedValue(strategy = IDENTITY)</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Group 2: 컬럼 매핑 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm mr-2">그룹 2</span>
+                    컬럼 매핑 어노테이션
+                </h3>
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 40%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-green-600">@Column</code></td>
+                            <td>컬럼 상세 설정<br><small class="text-gray-500">name, nullable, length 등</small></td>
+                            <td><code>@Column(nullable = false, length = 100)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-green-600">@Enumerated</code></td>
+                            <td>Enum 타입 매핑<br><small class="text-gray-500">STRING 권장 (ORDINAL 위험)</small></td>
+                            <td><code>@Enumerated(EnumType.STRING)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-green-600">@Temporal</code></td>
+                            <td>날짜/시간 타입 매핑<br><small class="text-gray-500">Java 8 이후 LocalDateTime은 불필요</small></td>
+                            <td><code>@Temporal(TemporalType.TIMESTAMP)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-green-600">@Lob</code></td>
+                            <td>큰 데이터 저장 (BLOB, CLOB)<br><small class="text-gray-500">텍스트, 바이너리 대용량 데이터</small></td>
+                            <td><code>@Lob private String content;</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-green-600">@Transient</code></td>
+                            <td>DB 매핑 제외 필드<br><small class="text-gray-500">임시 계산용 필드</small></td>
+                            <td><code>@Transient private int temp;</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Group 3: 연관관계 매핑 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+                    <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">그룹 3</span>
+                    연관관계 매핑 어노테이션
+                </h3>
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 40%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-purple-600">@OneToMany</code></td>
+                            <td>일대다 관계 (1:N)<br><small class="text-gray-500">주문 1 : 주문아이템 N</small></td>
+                            <td><code>@OneToMany(mappedBy = "order")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-purple-600">@ManyToOne</code></td>
+                            <td>다대일 관계 (N:1)<br><small class="text-gray-500">주문아이템 N : 주문 1 (연관관계 주인)</small></td>
+                            <td><code>@ManyToOne(fetch = LAZY)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-purple-600">@OneToOne</code></td>
+                            <td>일대일 관계 (1:1)<br><small class="text-gray-500">회원 1 : 배송지 1</small></td>
+                            <td><code>@OneToOne(fetch = LAZY)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-purple-600">@ManyToMany</code></td>
+                            <td>다대다 관계 (N:M)<br><small class="text-gray-500">실무에서는 중간 테이블로 풀어서 사용</small></td>
+                            <td><code>@ManyToMany (사용 비추천)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-purple-600">@JoinColumn</code></td>
+                            <td>외래키 컬럼 지정<br><small class="text-gray-500">연관관계 주인 쪽에 사용</small></td>
+                            <td><code>@JoinColumn(name = "order_id")</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Group 4: 영속성 전이 & 페치 전략 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+                    <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm mr-2">그룹 4</span>
+                    영속성 전이 & 페치 전략
+                </h3>
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%">속성</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 40%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-orange-600">cascade</code></td>
+                            <td>부모 엔티티 변경 시 자식에 전이<br><small class="text-gray-500">ALL, PERSIST, REMOVE 등</small></td>
+                            <td><code>cascade = CascadeType.ALL</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-orange-600">orphanRemoval</code></td>
+                            <td>고아 객체 자동 삭제<br><small class="text-gray-500">부모와 연결 끊어지면 자동 DELETE</small></td>
+                            <td><code>orphanRemoval = true</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-orange-600">fetch = LAZY</code></td>
+                            <td>지연 로딩 (권장)<br><small class="text-gray-500">실제 사용 시점에 쿼리 실행</small></td>
+                            <td><code>@ManyToOne(fetch = LAZY)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-orange-600">fetch = EAGER</code></td>
+                            <td>즉시 로딩 (N+1 위험)<br><small class="text-gray-500">엔티티 조회 시 즉시 JOIN 쿼리</small></td>
+                            <td><code>@ManyToOne(fetch = EAGER)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-orange-600">mappedBy</code></td>
+                            <td>연관관계 주인 반대편 지정<br><small class="text-gray-500">읽기 전용, FK 관리 안 함</small></td>
+                            <td><code>@OneToMany(mappedBy = "order")</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Group 5: Lombok & Auditing -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+                    <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm mr-2">그룹 5</span>
+                    Lombok & Auditing 어노테이션
+                </h3>
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 40%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-yellow-600">@Getter @Setter</code></td>
+                            <td>Getter/Setter 자동 생성<br><small class="text-gray-500">Lombok 라이브러리</small></td>
+                            <td><code>@Getter @Setter</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-yellow-600">@NoArgsConstructor</code></td>
+                            <td>기본 생성자 자동 생성<br><small class="text-gray-500">JPA는 기본 생성자 필수</small></td>
+                            <td><code>@NoArgsConstructor</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-yellow-600">@AllArgsConstructor</code></td>
+                            <td>모든 필드 포함 생성자<br><small class="text-gray-500">Lombok</small></td>
+                            <td><code>@AllArgsConstructor</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-yellow-600">@Builder</code></td>
+                            <td>빌더 패턴 자동 생성<br><small class="text-gray-500">가독성 좋은 객체 생성</small></td>
+                            <td><code>Order.builder().name("홍길동").build()</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-yellow-600">@CreatedDate</code></td>
+                            <td>생성 시간 자동 기록<br><small class="text-gray-500">JPA Auditing 기능</small></td>
+                            <td><code>@CreatedDate private LocalDateTime createdAt;</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-yellow-600">@LastModifiedDate</code></td>
+                            <td>수정 시간 자동 기록<br><small class="text-gray-500">JPA Auditing 기능</small></td>
+                            <td><code>@LastModifiedDate private LocalDateTime updatedAt;</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Important Tips -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+                실무 팁
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                    <h3 class="font-bold text-red-800 mb-2">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>주의사항
+                    </h3>
+                    <ul class="text-sm text-red-700 space-y-1">
+                        <li>• <strong>EAGER 로딩 지양:</strong> N+1 문제 발생 → LAZY 사용</li>
+                        <li>• <strong>@ManyToMany 비추천:</strong> 중간 테이블로 풀어서 사용</li>
+                        <li>• <strong>Enum은 STRING:</strong> ORDINAL은 순서 변경 시 오류</li>
+                        <li>• <strong>양방향 관계 주의:</strong> 연관관계 주인만 FK 관리</li>
+                    </ul>
+                </div>
+
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                    <h3 class="font-bold text-green-800 mb-2">
+                        <i class="fas fa-check-circle mr-2"></i>권장사항
+                    </h3>
+                    <ul class="text-sm text-green-700 space-y-1">
+                        <li>• <strong>기본 생성자 필수:</strong> JPA는 리플렉션 사용</li>
+                        <li>• <strong>@Builder 활용:</strong> 가독성 좋은 객체 생성</li>
+                        <li>• <strong>Auditing 활용:</strong> createdAt, updatedAt 자동화</li>
+                        <li>• <strong>비즈니스 로직 위치:</strong> Entity에 도메인 메서드 추가</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Step -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-blue-500 p-6 rounded-lg">
+                <h2 class="text-2xl font-bold text-blue-800 mb-4">
+                    <i class="fas fa-forward mr-2"></i>
+                    다음 단계
+                </h2>
+                <a href="/springboot/controller" class="block bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
+                    <h3 class="font-bold text-gray-800 mb-2">
+                        <i class="fas fa-layer-group text-blue-600 mr-2"></i>
+                        Controller 어노테이션 학습하기
+                    </h3>
+                    <p class="text-sm text-gray-600">@RestController, @GetMapping, @PostMapping 등 HTTP 요청 처리 어노테이션</p>
+                </a>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>

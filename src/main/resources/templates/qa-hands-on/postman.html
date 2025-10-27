@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/qa-layout}">
+<head>
+    <title>Postman - Level 1</title>
+</head>
+<body>
+    <div layout:fragment="content">
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center mb-4">
+                <span class="level-badge level-1 text-lg mr-3">Lv.1 Beginner</span>
+                <h1 class="text-4xl font-bold text-gray-800">
+                    <i class="fas fa-paper-plane text-green-600 mr-3"></i>
+                    Postman으로 시작하는 API 테스트
+                </h1>
+            </div>
+            <p class="text-lg text-gray-600">
+                개발자의 70%가 사용하는 REST API 테스트 도구를 10분 안에 마스터하세요
+            </p>
+            <div class="flex space-x-3 mt-4 text-sm">
+                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">⏱️ 소요시간: 10분</span>
+                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">⭐ 중요도: 필수</span>
+                <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full">🎯 난이도: 쉬움</span>
+            </div>
+        </div>
+
+        <!-- 1. 왜 Postman인가? -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-question-circle text-blue-600 mr-2"></i>
+                1. 왜 Postman인가?
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border-l-4 border-blue-500">
+                    <h3 class="text-xl font-bold text-blue-800 mb-4">📊 통계로 보는 Postman</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center">
+                            <div class="w-32 font-semibold">사용자 수</div>
+                            <div class="flex-1 bg-blue-200 rounded-full h-6 relative">
+                                <div class="bg-blue-600 h-6 rounded-full" style="width: 70%"></div>
+                                <span class="absolute inset-0 flex items-center justify-center text-white font-bold text-xs">2,500만+</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-32 font-semibold">개발자 사용률</div>
+                            <div class="flex-1 bg-blue-200 rounded-full h-6 relative">
+                                <div class="bg-blue-600 h-6 rounded-full" style="width: 70%"></div>
+                                <span class="absolute inset-0 flex items-center justify-center text-white font-bold text-xs">70%</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-32 font-semibold">기업 채택률</div>
+                            <div class="flex-1 bg-blue-200 rounded-full h-6 relative">
+                                <div class="bg-blue-600 h-6 rounded-full" style="width: 85%"></div>
+                                <span class="absolute inset-0 flex items-center justify-center text-white font-bold text-xs">85%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg p-6 border-l-4 border-yellow-500">
+                    <h3 class="text-xl font-bold text-yellow-800 mb-4">💬 면접에서 이렇게 나옵니다</h3>
+                    <div class="space-y-3">
+                        <div class="bg-white rounded-lg p-3 shadow">
+                            <p class="font-semibold text-gray-800 mb-1">면접관: "API를 어떻게 테스트했나요?"</p>
+                            <p class="text-green-700 text-sm">✅ "Postman으로 Collection을 만들어 관리했습니다"</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 shadow">
+                            <p class="font-semibold text-gray-800 mb-1">면접관: "에러는 어떻게 확인했나요?"</p>
+                            <p class="text-green-700 text-sm">✅ "400, 401 등 에러 케이스도 모두 테스트했습니다"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 설치 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-download text-green-600 mr-2"></i>
+                2. 설치하기 (1분)
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="max-w-2xl mx-auto">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-desktop mr-2 text-blue-600"></i>
+                            데스크톱 애플리케이션 설치
+                        </h3>
+                        <div class="space-y-3">
+                            <a href="https://www.postman.com/downloads/" target="_blank"
+                               class="block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-center transition">
+                                <i class="fas fa-download mr-2"></i>
+                                Postman 다운로드
+                            </a>
+                            <div class="bg-blue-50 rounded p-3 text-sm text-blue-800">
+                                Windows, macOS, Linux 모두 지원됩니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-500 p-4">
+                    <p class="text-yellow-800">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        <strong>참고:</strong> 회원가입은 선택사항입니다. 로컬에서만 사용한다면 Skip하고 시작할 수 있습니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 핵심 개념 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-book text-purple-600 mr-2"></i>
+                3. 핵심 개념 (2분)
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <table class="w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left font-semibold text-gray-800">용어</th>
+                            <th class="px-6 py-3 text-left font-semibold text-gray-800">의미</th>
+                            <th class="px-6 py-3 text-left font-semibold text-gray-800">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-blue-600">Request</td>
+                            <td class="px-6 py-4 text-gray-700">서버에 보내는 요청</td>
+                            <td class="px-6 py-4 text-sm">
+                                <code class="bg-gray-100 px-2 py-1 rounded">GET /api/orders</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-green-600">Response</td>
+                            <td class="px-6 py-4 text-gray-700">서버에서 받는 응답</td>
+                            <td class="px-6 py-4 text-sm">
+                                <code class="bg-gray-100 px-2 py-1 rounded">200 OK + JSON 데이터</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-purple-600">Collection</td>
+                            <td class="px-6 py-4 text-gray-700">API 묶음 (폴더)</td>
+                            <td class="px-6 py-4 text-sm">
+                                "Order API" 폴더에 생성/조회/수정 모음
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-orange-600">Environment</td>
+                            <td class="px-6 py-4 text-gray-700">환경 변수 (서버 주소)</td>
+                            <td class="px-6 py-4 text-sm">
+                                localhost / 배포서버 전환
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 4. 실습 1: 첫 API 테스트 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-flask text-red-600 mr-2"></i>
+                4. 실습 1: 첫 API 테스트 (3분)
+            </h2>
+
+            <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-lg shadow-lg p-6 border-l-4 border-red-500 mb-6">
+                <h3 class="text-xl font-bold text-red-800 mb-2">
+                    <i class="fas fa-bullseye mr-2"></i>
+                    실습 목표
+                </h3>
+                <p class="text-red-700">
+                    Order 생성 API를 테스트하고, 응답 데이터를 확인합니다
+                </p>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Step 1 -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">1</div>
+                        <h3 class="text-xl font-bold text-gray-800">New Request 만들기</h3>
+                    </div>
+
+                    <div class="placeholder-image mb-4">
+                        <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                        <p class="text-gray-600 font-bold">📸 이미지 필요: postman-new-request.png</p>
+                        <details class="mt-3 text-left text-sm">
+                            <summary class="cursor-pointer text-blue-600 font-semibold">스크린샷 가이드</summary>
+                            <ol class="mt-2 space-y-1 text-gray-700">
+                                <li>1. Postman 실행</li>
+                                <li>2. 좌측 "New" 버튼 클릭</li>
+                                <li>3. "HTTP Request" 선택</li>
+                                <li>4. 화면 전체 캡처</li>
+                            </ol>
+                        </details>
+                    </div>
+
+                    <div class="bg-blue-50 rounded p-4">
+                        <p class="text-blue-800 text-sm">
+                            <strong>실행:</strong> 좌측 상단 "New" → "HTTP Request" 클릭
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">2</div>
+                        <h3 class="text-xl font-bold text-gray-800">요청 설정하기</h3>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block font-semibold text-gray-700 mb-2">HTTP Method</label>
+                            <div class="bg-gray-100 rounded p-3">
+                                <code class="text-green-600 font-bold">POST</code>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-gray-700 mb-2">URL</label>
+                            <div class="bg-gray-100 rounded p-3">
+                                <code class="text-blue-600">http://localhost:8080/api/orders</code>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-gray-700 mb-2">Headers</label>
+                            <div class="bg-gray-100 rounded p-3">
+                                <code class="text-purple-600">Content-Type: application/json</code>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-gray-700 mb-2">Body (JSON)</label>
+                            <div class="code-result"><pre>{
+  "customerName": "홍길동",
+  "items": [
+    {
+      "productName": "노트북",
+      "quantity": 1,
+      "price": 1500000
+    }
+  ]
+}</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 placeholder-image">
+                        <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                        <p class="text-gray-600 font-bold">📸 이미지 필요: postman-post-request.png</p>
+                        <details class="mt-3 text-left text-sm">
+                            <summary class="cursor-pointer text-blue-600 font-semibold">스크린샷 가이드</summary>
+                            <ol class="mt-2 space-y-1 text-gray-700">
+                                <li>1. POST 선택, URL 입력한 상태</li>
+                                <li>2. Body 탭 → raw → JSON 선택</li>
+                                <li>3. 위 JSON 입력 후 캡처</li>
+                            </ol>
+                        </details>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">3</div>
+                        <h3 class="text-xl font-bold text-gray-800">Send 클릭 & 결과 확인</h3>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg p-6 mb-4">
+                        <h4 class="font-bold text-green-800 mb-3">✅ 성공 조건</h4>
+                        <div class="grid md:grid-cols-3 gap-4 text-sm">
+                            <div class="bg-white rounded p-3 text-center">
+                                <div class="text-2xl mb-1">🟢</div>
+                                <div class="font-semibold">Status</div>
+                                <div class="text-green-700">200 OK</div>
+                            </div>
+                            <div class="bg-white rounded p-3 text-center">
+                                <div class="text-2xl mb-1">⚡</div>
+                                <div class="font-semibold">Time</div>
+                                <div class="text-green-700">&lt; 500ms</div>
+                            </div>
+                            <div class="bg-white rounded p-3 text-center">
+                                <div class="text-2xl mb-1">📦</div>
+                                <div class="font-semibold">Response</div>
+                                <div class="text-green-700">id 존재</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-2">예상 응답</label>
+                        <div class="code-result"><pre>{
+  "id": 1,
+  "customerName": "홍길동",
+  "orderDate": "2025-10-27T10:30:00",
+  "status": "PENDING",
+  "items": [
+    {
+      "id": 1,
+      "productName": "노트북",
+      "quantity": 1,
+      "price": 1500000
+    }
+  ]
+}</pre>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 placeholder-image">
+                        <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                        <p class="text-gray-600 font-bold">📸 이미지 필요: postman-response.png</p>
+                        <details class="mt-3 text-left text-sm">
+                            <summary class="cursor-pointer text-blue-600 font-semibold">스크린샷 가이드</summary>
+                            <ol class="mt-2 space-y-1 text-gray-700">
+                                <li>1. Send 버튼 클릭</li>
+                                <li>2. 하단 Response 영역 확인</li>
+                                <li>3. Status 200 OK + JSON 응답 보이도록 캡처</li>
+                            </ol>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 실습 2: Collection 만들기 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-folder text-yellow-600 mr-2"></i>
+                5. 실습 2: Collection 만들기 (2분)
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <p class="text-gray-700 mb-6">
+                    API를 폴더로 묶어서 관리하면 나중에 찾기 쉽고, 팀과 공유할 수 있습니다.
+                </p>
+
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-yellow-500">
+                        <div class="font-bold text-gray-800 mb-2">📁 Collection 이름</div>
+                        <code class="text-blue-600">Order API</code>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-yellow-500">
+                        <div class="font-bold text-gray-800 mb-2">📝 포함할 API (5개)</div>
+                        <ul class="space-y-1 text-sm text-gray-700">
+                            <li>1. POST /api/orders - 주문 생성</li>
+                            <li>2. GET /api/orders - 전체 조회</li>
+                            <li>3. GET /api/orders/{id} - 단건 조회</li>
+                            <li>4. PUT /api/orders/{id} - 수정</li>
+                            <li>5. DELETE /api/orders/{id} - 삭제</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-yellow-500">
+                        <div class="font-bold text-gray-800 mb-2">🌍 Environment 설정</div>
+                        <div class="grid md:grid-cols-2 gap-4 mt-3">
+                            <div>
+                                <div class="text-sm font-semibold text-gray-700 mb-1">변수명</div>
+                                <code class="text-purple-600">baseUrl</code>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-700 mb-1">값</div>
+                                <code class="text-blue-600">http://localhost:8080</code>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-sm text-gray-600">
+                            사용법: <code class="bg-gray-200 px-2 py-1 rounded">{{baseUrl}}/api/orders</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 placeholder-image">
+                    <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-600 font-bold">📸 이미지 필요: postman-collection.png</p>
+                    <details class="mt-3 text-left text-sm">
+                        <summary class="cursor-pointer text-blue-600 font-semibold">스크린샷 가이드</summary>
+                        <ol class="mt-2 space-y-1 text-gray-700">
+                            <li>1. 좌측 "Collections" 탭</li>
+                            <li>2. "Order API" 폴더에 5개 Request 저장된 상태</li>
+                            <li>3. Environment 설정 화면도 함께 캡처</li>
+                        </ol>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. 실습 3: 에러 테스트 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-exclamation-triangle text-orange-600 mr-2"></i>
+                6. 실습 3: 에러 테스트 (2분)
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <p class="text-gray-700 mb-6">
+                    정상 케이스만 테스트하면 안 됩니다! 에러 상황도 반드시 확인하세요.
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- 400 Bad Request -->
+                    <div class="border-2 border-orange-300 rounded-lg p-4">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-orange-500 text-white px-3 py-1 rounded font-bold text-sm mr-2">400</div>
+                            <h4 class="font-bold text-gray-800">Bad Request</h4>
+                        </div>
+                        <div class="text-sm text-gray-700 mb-3">
+                            잘못된 요청 데이터
+                        </div>
+                        <div class="bg-gray-50 rounded p-3 text-xs">
+                            <div class="font-semibold mb-1">테스트 방법:</div>
+                            <code class="text-red-600">"customerName": ""</code> (빈 문자열)
+                        </div>
+                        <div class="mt-2 code-result text-xs"><pre>{
+  "message": "고객명은 필수입니다",
+  "status": 400
+}</pre>
+                        </div>
+                    </div>
+
+                    <!-- 401 Unauthorized -->
+                    <div class="border-2 border-red-300 rounded-lg p-4">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-red-500 text-white px-3 py-1 rounded font-bold text-sm mr-2">401</div>
+                            <h4 class="font-bold text-gray-800">Unauthorized</h4>
+                        </div>
+                        <div class="text-sm text-gray-700 mb-3">
+                            인증 없이 접근
+                        </div>
+                        <div class="bg-gray-50 rounded p-3 text-xs">
+                            <div class="font-semibold mb-1">테스트 방법:</div>
+                            <code class="text-red-600">Authorization 헤더 제거</code>
+                        </div>
+                        <div class="mt-2 code-result text-xs"><pre>{
+  "message": "로그인이 필요합니다",
+  "status": 401
+}</pre>
+                        </div>
+                    </div>
+
+                    <!-- 404 Not Found -->
+                    <div class="border-2 border-yellow-300 rounded-lg p-4">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-yellow-500 text-white px-3 py-1 rounded font-bold text-sm mr-2">404</div>
+                            <h4 class="font-bold text-gray-800">Not Found</h4>
+                        </div>
+                        <div class="text-sm text-gray-700 mb-3">
+                            존재하지 않는 리소스
+                        </div>
+                        <div class="bg-gray-50 rounded p-3 text-xs">
+                            <div class="font-semibold mb-1">테스트 방법:</div>
+                            <code class="text-red-600">GET /api/orders/99999</code>
+                        </div>
+                        <div class="mt-2 code-result text-xs"><pre>{
+  "message": "주문을 찾을 수 없습니다",
+  "status": 404
+}</pre>
+                        </div>
+                    </div>
+
+                    <!-- 500 Internal Server Error -->
+                    <div class="border-2 border-purple-300 rounded-lg p-4">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-purple-500 text-white px-3 py-1 rounded font-bold text-sm mr-2">500</div>
+                            <h4 class="font-bold text-gray-800">Server Error</h4>
+                        </div>
+                        <div class="text-sm text-gray-700 mb-3">
+                            서버 내부 오류
+                        </div>
+                        <div class="bg-gray-50 rounded p-3 text-xs">
+                            <div class="font-semibold mb-1">테스트 방법:</div>
+                            <code class="text-red-600">서버 중지 후 요청</code>
+                        </div>
+                        <div class="mt-2 code-result text-xs"><pre>{
+  "message": "서버 오류가 발생했습니다",
+  "status": 500
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. 실무 Tip -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+                7. 실무 Tip 💡
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Tip 1 -->
+                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-6 border-l-4 border-blue-500">
+                    <h3 class="text-lg font-bold text-blue-800 mb-3">
+                        <span class="bg-blue-200 text-blue-800 rounded-full px-3 py-1 text-sm mr-2">Tip 1</span>
+                        Pre-request Script
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-3">
+                        로그인 토큰을 자동으로 갱신하는 스크립트
+                    </p>
+                    <div class="code-result text-xs"><pre>// Pre-request Script 탭
+pm.sendRequest({
+    url: '{{baseUrl}}/api/auth/login',
+    method: 'POST',
+    body: {
+        username: 'test',
+        password: '1234'
+    }
+}, function (err, res) {
+    pm.environment.set('token',
+        res.json().token);
+});</pre>
+                    </div>
+                </div>
+
+                <!-- Tip 2 -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border-l-4 border-green-500">
+                    <h3 class="text-lg font-bold text-green-800 mb-3">
+                        <span class="bg-green-200 text-green-800 rounded-full px-3 py-1 text-sm mr-2">Tip 2</span>
+                        Tests 탭 자동 검증
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-3">
+                        응답이 올바른지 자동으로 확인
+                    </p>
+                    <div class="code-result text-xs"><pre>// Tests 탭
+pm.test("Status is 200", function () {
+    pm.response.to.have.status(200);
+});
+
+pm.test("Has id field", function () {
+    var json = pm.response.json();
+    pm.expect(json.id).to.exist;
+});</pre>
+                    </div>
+                </div>
+
+                <!-- Tip 3 -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 border-l-4 border-purple-500">
+                    <h3 class="text-lg font-bold text-purple-800 mb-3">
+                        <span class="bg-purple-200 text-purple-800 rounded-full px-3 py-1 text-sm mr-2">Tip 3</span>
+                        Collection Runner
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-3">
+                        모든 API를 한 번에 실행
+                    </p>
+                    <div class="bg-white rounded p-3 text-sm">
+                        <ol class="space-y-1 text-gray-700">
+                            <li>1. Collection 선택</li>
+                            <li>2. "Run" 버튼 클릭</li>
+                            <li>3. 전체 API 자동 실행</li>
+                            <li>4. 통과/실패 확인</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Tip 4 -->
+                <div class="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-lg p-6 border-l-4 border-orange-500">
+                    <h3 class="text-lg font-bold text-orange-800 mb-3">
+                        <span class="bg-orange-200 text-orange-800 rounded-full px-3 py-1 text-sm mr-2">Tip 4</span>
+                        Export & Share
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-3">
+                        팀원과 Collection 공유하기
+                    </p>
+                    <div class="bg-white rounded p-3 text-sm">
+                        <ol class="space-y-1 text-gray-700">
+                            <li>1. Collection 우클릭</li>
+                            <li>2. "Export" 선택</li>
+                            <li>3. JSON 파일 저장</li>
+                            <li>4. Git에 커밋하여 공유</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 발표 활용법 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-presentation text-indigo-600 mr-2"></i>
+                8. 발표에서 이렇게 활용하세요 🎤
+            </h2>
+
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg shadow-lg p-6">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-bold text-indigo-800 mb-3">✅ 이렇게 말하세요</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                <span>"Postman으로 <strong>Collection을 만들어</strong> 5개 API를 체계적으로 관리했습니다"</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                <span>"정상 케이스뿐만 아니라 <strong>400, 401, 404 에러</strong>도 모두 테스트했습니다"</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                <span>"Environment 변수로 <strong>로컬/배포서버를 쉽게 전환</strong>할 수 있게 구성했습니다"</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-red-800 mb-3">❌ 이렇게 말하지 마세요</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start">
+                                <i class="fas fa-times text-red-600 mr-2 mt-1"></i>
+                                <span>"그냥 브라우저에서 테스트했어요"</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-times text-red-600 mr-2 mt-1"></i>
+                                <span>"에러는 안 나와서 안 봤어요"</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-times text-red-600 mr-2 mt-1"></i>
+                                <span>"Postman? 그게 뭔지 몰라요"</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Step -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg shadow-xl p-8 text-center">
+                <div class="text-6xl mb-4">🎉</div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                    Level 1 완료! 축하합니다!
+                </h2>
+                <p class="text-gray-700 mb-6">
+                    이제 수동 테스트는 완벽하게 마스터했습니다.<br>
+                    다음은 <strong>자동화 테스트</strong>로 레벨업하세요!
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <a href="/qa-hands-on/junit"
+                       class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg transition shadow-lg">
+                        <span class="level-badge level-2 mr-2">Lv.2</span>
+                        JUnit으로 자동화하기 →
+                    </a>
+                    <a href="/qa-hands-on/overview"
+                       class="bg-white hover:bg-gray-100 text-purple-600 font-bold py-3 px-8 rounded-lg transition shadow-lg border-2 border-purple-600">
+                        <i class="fas fa-home mr-2"></i>
+                        Overview로 돌아가기
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>

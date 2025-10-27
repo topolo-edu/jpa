@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/qa-layout}">
+<head>
+    <title>JUnit - Level 2</title>
+</head>
+<body>
+    <div layout:fragment="content">
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center mb-4">
+                <span class="level-badge level-2 text-lg mr-3">Step 2</span>
+                <h1 class="text-4xl font-bold text-gray-800">
+                    <i class="fas fa-vial text-blue-600 mr-3"></i>
+                    JUnit 자동화 테스트
+                </h1>
+            </div>
+            <p class="text-lg text-gray-600">
+                Entity, Service, Repository, Controller 전체 레이어를 테스트합니다.
+            </p>
+            <div class="flex space-x-3 mt-4 text-sm">
+                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">소요시간: 40분</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full">목표: 커버리지 60% 이상</span>
+            </div>
+        </div>
+
+        <!-- 1. Postman vs JUnit 차이 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-layer-group text-blue-600 mr-2"></i>
+                1. Postman vs JUnit: 테스트 범위의 차이
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border border-gray-300 px-4 py-3 text-left">구분</th>
+                                <th class="border border-gray-300 px-4 py-3 text-left">Postman</th>
+                                <th class="border border-gray-300 px-4 py-3 text-left">JUnit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-3 font-semibold">테스트 범위</td>
+                                <td class="border border-gray-300 px-4 py-3">
+                                    <span class="text-blue-700 font-semibold">Controller 계층만</span><br>
+                                    <span class="text-sm text-gray-600">API 엔드포인트</span>
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3">
+                                    <span class="text-green-700 font-semibold">전체 레이어</span><br>
+                                    <span class="text-sm text-gray-600">Entity, Service, Repository, Controller</span>
+                                </td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border border-gray-300 px-4 py-3 font-semibold">실행 방법</td>
+                                <td class="border border-gray-300 px-4 py-3">수동 (클릭)</td>
+                                <td class="border border-gray-300 px-4 py-3">자동 (명령어 한 줄)</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-3 font-semibold">주요 목적</td>
+                                <td class="border border-gray-300 px-4 py-3">HTTP 요청/응답 검증</td>
+                                <td class="border border-gray-300 px-4 py-3">비즈니스 로직 + 통합 테스트</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="border border-gray-300 px-4 py-3 font-semibold">테스트 예시</td>
+                                <td class="border border-gray-300 px-4 py-3">
+                                    <code class="text-xs bg-gray-200 px-2 py-1 rounded">POST /api/orders</code><br>
+                                    <span class="text-xs text-gray-600">상태 코드 200 확인</span>
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3">
+                                    <code class="text-xs bg-gray-200 px-2 py-1 rounded">Order.addItem()</code><br>
+                                    <span class="text-xs text-gray-600">양방향 관계 설정 검증</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-5 rounded-r-lg">
+                <h3 class="font-semibold text-blue-900 mb-3">핵심 차이점</h3>
+                <ul class="space-y-2 text-blue-800">
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                        <span><strong>Postman</strong>: API가 외부에서 호출될 때 잘 동작하는지 확인 (Controller만)</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                        <span><strong>JUnit</strong>: Entity 비즈니스 로직, Service 처리 과정, Repository 쿼리까지 모든 계층 검증</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                        <span>둘 다 필요합니다. Postman으로 API를 확인하고, JUnit으로 내부 로직을 보장합니다.</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 2. 설치 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-download text-green-600 mr-2"></i>
+                2. 설치하기
+            </h2>
+
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg shadow-lg p-8 text-center border-l-4 border-green-500">
+                <div class="text-6xl mb-4">✅</div>
+                <h3 class="text-2xl font-bold text-green-800 mb-2">설치 불필요!</h3>
+                <p class="text-green-700">
+                    Spring Boot 프로젝트를 생성하면 <strong>JUnit이 자동으로 포함</strong>되어 있습니다
+                </p>
+                <div class="mt-4 bg-white rounded-lg p-4 inline-block">
+                    <div class="text-sm text-gray-600 mb-2">build.gradle 확인</div>
+                    <code class="text-blue-600">testImplementation 'org.springframework.boot:spring-boot-starter-test'</code>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 핵심 개념 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-book text-purple-600 mr-2"></i>
+                3. 핵심 개념 (3분)
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">주요 어노테이션</h3>
+                <table class="w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left font-semibold text-gray-800">어노테이션</th>
+                            <th class="px-6 py-3 text-left font-semibold text-gray-800">의미</th>
+                            <th class="px-6 py-3 text-left font-semibold text-gray-800">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-blue-600">@Test</td>
+                            <td class="px-6 py-4 text-gray-700">테스트 메서드 선언</td>
+                            <td class="px-6 py-4 text-sm">
+                                <code class="bg-gray-100 px-2 py-1 rounded">@Test void test() { }</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-green-600">@DisplayName</td>
+                            <td class="px-6 py-4 text-gray-700">테스트 이름 (한글 가능)</td>
+                            <td class="px-6 py-4 text-sm">
+                                <code class="bg-gray-100 px-2 py-1 rounded">@DisplayName("주문 생성 성공")</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-purple-600">@BeforeEach</td>
+                            <td class="px-6 py-4 text-gray-700">각 테스트 전에 실행</td>
+                            <td class="px-6 py-4 text-sm">
+                                테스트 데이터 초기화
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-orange-600">@SpringBootTest</td>
+                            <td class="px-6 py-4 text-gray-700">Spring 통합 테스트</td>
+                            <td class="px-6 py-4 text-sm">
+                                실제 Spring 컨테이너 사용
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-red-600">@Transactional</td>
+                            <td class="px-6 py-4 text-gray-700">테스트 후 자동 롤백</td>
+                            <td class="px-6 py-4 text-sm">
+                                DB 상태 초기화
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 4. 실습 1: 첫 단위 테스트 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-flask text-red-600 mr-2"></i>
+                4. 실습 1: 첫 단위 테스트 (5분)
+            </h2>
+
+            <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-lg shadow-lg p-6 border-l-4 border-red-500 mb-6">
+                <h3 class="text-xl font-bold text-red-800 mb-2">
+                    <i class="fas fa-bullseye mr-2"></i>
+                    실습 목표
+                </h3>
+                <p class="text-red-700">
+                    Order 엔티티의 비즈니스 로직을 테스트합니다 (Service 아님!)
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-gray-800">
+                        <i class="fas fa-file-code mr-2 text-blue-600"></i>
+                        OrderTest.java
+                    </h3>
+                    <span class="text-sm text-gray-500">src/test/java/.../model/OrderTest.java</span>
+                </div>
+
+                <div class="code-result mb-4"><pre><span style="color: #7dd3fc">import</span> org.junit.jupiter.api.Test;
+<span style="color: #7dd3fc">import</span> org.junit.jupiter.api.DisplayName;
+<span style="color: #7dd3fc">import static</span> org.assertj.core.api.Assertions.*;
+
+<span style="color: #fbbf24">class</span> <span style="color: #ffffff">OrderTest</span> {
+
+    <span style="color: #7dd3fc">@Test</span>
+    <span style="color: #7dd3fc">@DisplayName</span>(<span style="color: #86efac">"주문에 아이템 추가 성공"</span>)
+    <span style="color: #fbbf24">void</span> <span style="color: #ffffff">addItem_Success</span>() {
+        <span style="color: #6b7280">// given (준비)</span>
+        Order order = <span style="color: #fbbf24">new</span> Order(<span style="color: #86efac">"홍길동"</span>);
+        OrderItem item = <span style="color: #fbbf24">new</span> OrderItem(<span style="color: #86efac">"노트북"</span>, <span style="color: #fbbf24">1</span>, <span style="color: #fbbf24">1500000</span>);
+
+        <span style="color: #6b7280">// when (실행)</span>
+        order.addItem(item);
+
+        <span style="color: #6b7280">// then (검증)</span>
+        <span style="color: #7dd3fc">assertThat</span>(order.getItems()).hasSize(<span style="color: #fbbf24">1</span>);
+        <span style="color: #7dd3fc">assertThat</span>(item.getOrder()).isEqualTo(order);
+    }
+
+    <span style="color: #7dd3fc">@Test</span>
+    <span style="color: #7dd3fc">@DisplayName</span>(<span style="color: #86efac">"총 금액 계산"</span>)
+    <span style="color: #fbbf24">void</span> <span style="color: #ffffff">calculateTotalPrice</span>() {
+        <span style="color: #6b7280">// given</span>
+        Order order = <span style="color: #fbbf24">new</span> Order(<span style="color: #86efac">"홍길동"</span>);
+        order.addItem(<span style="color: #fbbf24">new</span> OrderItem(<span style="color: #86efac">"노트북"</span>, <span style="color: #fbbf24">2</span>, <span style="color: #fbbf24">1500000</span>));
+        order.addItem(<span style="color: #fbbf24">new</span> OrderItem(<span style="color: #86efac">"마우스"</span>, <span style="color: #fbbf24">1</span>, <span style="color: #fbbf24">50000</span>));
+
+        <span style="color: #6b7280">// when</span>
+        BigDecimal total = order.getTotalPrice();
+
+        <span style="color: #6b7280">// then</span>
+        <span style="color: #7dd3fc">assertThat</span>(total).isEqualByComparingTo(<span style="color: #fbbf24">new</span> BigDecimal(<span style="color: #86efac">"3050000"</span>));
+    }
+
+    <span style="color: #7dd3fc">@Test</span>
+    <span style="color: #7dd3fc">@DisplayName</span>(<span style="color: #86efac">"주문 취소 시 상태 변경"</span>)
+    <span style="color: #fbbf24">void</span> <span style="color: #ffffff">cancel_Success</span>() {
+        <span style="color: #6b7280">// given</span>
+        Order order = <span style="color: #fbbf24">new</span> Order(<span style="color: #86efac">"홍길동"</span>);
+        order.setStatus(OrderStatus.<span style="color: #fbbf24">PENDING</span>);
+
+        <span style="color: #6b7280">// when</span>
+        order.cancel();
+
+        <span style="color: #6b7280">// then</span>
+        <span style="color: #7dd3fc">assertThat</span>(order.getStatus()).isEqualTo(OrderStatus.<span style="color: #fbbf24">CANCELLED</span>);
+    }
+}</pre>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
+                    <h4 class="font-bold text-blue-800 mb-2">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        Given-When-Then 패턴
+                    </h4>
+                    <ul class="text-sm text-blue-700 space-y-1">
+                        <li><strong>Given:</strong> 테스트 데이터 준비</li>
+                        <li><strong>When:</strong> 테스트할 동작 실행</li>
+                        <li><strong>Then:</strong> 결과 검증</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-play-circle mr-2 text-green-600"></i>
+                    실행 방법
+                </h3>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">방법 1: IntelliJ</h4>
+                        <div class="placeholder-image">
+                            <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                            <p class="text-gray-600 font-bold">📸 이미지: intellij-run-test.png</p>
+                            <details class="mt-3 text-left text-sm">
+                                <summary class="cursor-pointer text-blue-600 font-semibold">스크린샷 가이드</summary>
+                                <ol class="mt-2 space-y-1 text-gray-700">
+                                    <li>1. OrderTest.java 열기</li>
+                                    <li>2. 클래스명 옆 초록색 화살표</li>
+                                    <li>3. 클릭 후 "Run 'OrderTest'" 선택</li>
+                                    <li>4. 하단 결과 창 캡처</li>
+                                </ol>
+                            </details>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">방법 2: 터미널</h4>
+                        <div class="code-result mb-3"><pre><span style="color: #6b7280"># 모든 테스트 실행</span>
+./gradlew test
+
+<span style="color: #6b7280"># 특정 테스트만</span>
+./gradlew test --tests OrderTest</pre>
+                        </div>
+                        <div class="bg-green-50 rounded p-3 text-sm text-green-800">
+                            <strong>✅ 성공 시:</strong><br>
+                            <code>BUILD SUCCESSFUL</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 실습 2: MockMvc 통합 테스트 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-flask text-purple-600 mr-2"></i>
+                5. 실습 2: MockMvc 통합 테스트 (10분)
+            </h2>
+
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg shadow-lg p-6 border-l-4 border-purple-500 mb-6">
+                <h3 class="text-xl font-bold text-purple-800 mb-2">
+                    <i class="fas fa-bullseye mr-2"></i>
+                    실습 목표
+                </h3>
+                <p class="text-purple-700">
+                    실제 HTTP 요청처럼 Controller API를 테스트합니다
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-gray-800">
+                        <i class="fas fa-file-code mr-2 text-purple-600"></i>
+                        OrderApiTest.java
+                    </h3>
+                    <span class="text-sm text-gray-500">src/test/java/.../controller/OrderApiTest.java</span>
+                </div>
+
+                <div class="code-result"><pre><span style="color: #7dd3fc">import</span> org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+<span style="color: #7dd3fc">import</span> org.springframework.boot.test.context.SpringBootTest;
+<span style="color: #7dd3fc">import</span> org.springframework.test.web.servlet.MockMvc;
+<span style="color: #7dd3fc">import static</span> org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+<span style="color: #7dd3fc">import static</span> org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+<span style="color: #7dd3fc">@SpringBootTest</span>
+<span style="color: #7dd3fc">@AutoConfigureMockMvc</span>
+<span style="color: #7dd3fc">@Transactional</span>
+<span style="color: #fbbf24">class</span> <span style="color: #ffffff">OrderApiTest</span> {
+
+    <span style="color: #7dd3fc">@Autowired</span>
+    <span style="color: #fbbf24">private</span> MockMvc mockMvc;
+
+    <span style="color: #7dd3fc">@Autowired</span>
+    <span style="color: #fbbf24">private</span> ObjectMapper objectMapper;
+
+    <span style="color: #7dd3fc">@Test</span>
+    <span style="color: #7dd3fc">@DisplayName</span>(<span style="color: #86efac">"주문 생성 API 성공"</span>)
+    <span style="color: #fbbf24">void</span> <span style="color: #ffffff">createOrder_Success</span>() <span style="color: #fbbf24">throws</span> Exception {
+        <span style="color: #6b7280">// given</span>
+        OrderRequest request = <span style="color: #fbbf24">new</span> OrderRequest(<span style="color: #86efac">"홍길동"</span>);
+
+        <span style="color: #6b7280">// when & then</span>
+        mockMvc.perform(post(<span style="color: #86efac">"/api/orders"</span>)
+                .contentType(MediaType.<span style="color: #fbbf24">APPLICATION_JSON</span>)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath(<span style="color: #86efac">"$.id"</span>).exists())
+            .andExpect(jsonPath(<span style="color: #86efac">"$.customerName"</span>).value(<span style="color: #86efac">"홍길동"</span>))
+            .andExpect(jsonPath(<span style="color: #86efac">"$.status"</span>).value(<span style="color: #86efac">"PENDING"</span>));
+    }
+
+    <span style="color: #7dd3fc">@Test</span>
+    <span style="color: #7dd3fc">@DisplayName</span>(<span style="color: #86efac">"주문 조회 API 성공"</span>)
+    <span style="color: #fbbf24">void</span> <span style="color: #ffffff">getOrder_Success</span>() <span style="color: #fbbf24">throws</span> Exception {
+        <span style="color: #6b7280">// given: 주문 1개 미리 생성</span>
+        Long orderId = <span style="color: #fbbf24">1L</span>;
+
+        <span style="color: #6b7280">// when & then</span>
+        mockMvc.perform(get(<span style="color: #86efac">"/api/orders/{id}"</span>, orderId))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath(<span style="color: #86efac">"$.id"</span>).value(orderId));
+    }
+
+    <span style="color: #7dd3fc">@Test</span>
+    <span style="color: #7dd3fc">@DisplayName</span>(<span style="color: #86efac">"잘못된 요청 시 400 에러"</span>)
+    <span style="color: #fbbf24">void</span> <span style="color: #ffffff">createOrder_Fail_BadRequest</span>() <span style="color: #fbbf24">throws</span> Exception {
+        <span style="color: #6b7280">// given: customerName 빈 값</span>
+        OrderRequest request = <span style="color: #fbbf24">new</span> OrderRequest(<span style="color: #86efac">""</span>);
+
+        <span style="color: #6b7280">// when & then</span>
+        mockMvc.perform(post(<span style="color: #86efac">"/api/orders"</span>)
+                .contentType(MediaType.<span style="color: #fbbf24">APPLICATION_JSON</span>)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
+    }
+}</pre>
+                </div>
+            </div>
+
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4">
+                <h4 class="font-bold text-yellow-800 mb-2">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    MockMvc란?
+                </h4>
+                <p class="text-sm text-yellow-700">
+                    실제 서버를 띄우지 않고도 <strong>HTTP 요청/응답을 테스트</strong>할 수 있는 도구입니다.<br>
+                    Postman처럼 동작하지만, 코드로 자동화된 버전!
+                </p>
+            </div>
+        </section>
+
+        <!-- 6. 실습 3: 커버리지 확인 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-chart-pie text-orange-600 mr-2"></i>
+                6. 실습 3: 커버리지 확인 (5분)
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <p class="text-gray-700 mb-6">
+                    <strong>커버리지</strong>: 전체 코드 중 테스트가 실행된 비율 (목표: 60% 이상)
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">IntelliJ에서 확인</h4>
+                        <div class="bg-gray-50 rounded p-4 mb-3">
+                            <ol class="text-sm text-gray-700 space-y-2">
+                                <li>1. 테스트 클래스 우클릭</li>
+                                <li>2. "Run 'OrderTest' with Coverage" 선택</li>
+                                <li>3. 우측 Coverage 탭 확인</li>
+                            </ol>
+                        </div>
+                        <div class="placeholder-image">
+                            <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                            <p class="text-gray-600 font-bold">📸 이미지: coverage-result.png</p>
+                            <details class="mt-3 text-left text-sm">
+                                <summary class="cursor-pointer text-blue-600 font-semibold">스크린샷 가이드</summary>
+                                <p class="mt-2 text-gray-700">커버리지 결과 창 (녹색/빨간색 바) 캡처</p>
+                            </details>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">해석 방법</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <div class="w-32 text-sm font-semibold">80% 이상</div>
+                                <div class="flex-1 bg-green-200 rounded-full h-6 flex items-center justify-center">
+                                    <span class="text-green-800 font-bold text-sm">우수 🏆</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-32 text-sm font-semibold">60-80%</div>
+                                <div class="flex-1 bg-blue-200 rounded-full h-6 flex items-center justify-center">
+                                    <span class="text-blue-800 font-bold text-sm">양호 ✅</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-32 text-sm font-semibold">40-60%</div>
+                                <div class="flex-1 bg-yellow-200 rounded-full h-6 flex items-center justify-center">
+                                    <span class="text-yellow-800 font-bold text-sm">보통 ⚠️</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-32 text-sm font-semibold">40% 미만</div>
+                                <div class="flex-1 bg-red-200 rounded-full h-6 flex items-center justify-center">
+                                    <span class="text-red-800 font-bold text-sm">부족 ❌</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
+                    <p class="text-blue-800 text-sm">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        <strong>Tip:</strong> 7일 프로젝트라면 60% 이상만 달성해도 충분합니다!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. 실무 Tip -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+                7. 실무 Tip 💡
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Tip 1 -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border-l-4 border-green-500">
+                    <h3 class="text-lg font-bold text-green-800 mb-3">
+                        <span class="bg-green-200 text-green-800 rounded-full px-3 py-1 text-sm mr-2">Tip 1</span>
+                        테스트 우선순위
+                    </h3>
+                    <div class="space-y-2 text-sm text-gray-700">
+                        <div class="flex items-start">
+                            <div class="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold mr-2 flex-shrink-0 text-xs">1</div>
+                            <span><strong>Entity 비즈니스 로직</strong> - 가장 중요!</span>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold mr-2 flex-shrink-0 text-xs">2</div>
+                            <span><strong>핵심 API 2-3개</strong> - 주요 기능만</span>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold mr-2 flex-shrink-0 text-xs">3</div>
+                            <span><strong>복잡한 쿼리</strong> - N+1 검증 등</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tip 2 -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border-l-4 border-blue-500">
+                    <h3 class="text-lg font-bold text-blue-800 mb-3">
+                        <span class="bg-blue-200 text-blue-800 rounded-full px-3 py-1 text-sm mr-2">Tip 2</span>
+                        @Transactional 활용
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-3">
+                        테스트 클래스에 붙이면 각 테스트 후 <strong>자동 롤백</strong>
+                    </p>
+                    <div class="code-result text-xs"><pre><span style="color: #7dd3fc">@SpringBootTest</span>
+<span style="color: #7dd3fc">@Transactional</span>  <span style="color: #6b7280">// 이거 하나면 OK!</span>
+<span style="color: #fbbf24">class</span> <span style="color: #ffffff">OrderApiTest</span> {
+    <span style="color: #6b7280">// DB 상태 걱정 없음</span>
+}</pre>
+                    </div>
+                </div>
+
+                <!-- Tip 3 -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 border-l-4 border-purple-500">
+                    <h3 class="text-lg font-bold text-purple-800 mb-3">
+                        <span class="bg-purple-200 text-purple-800 rounded-full px-3 py-1 text-sm mr-2">Tip 3</span>
+                        테스트 데이터 분리
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-3">
+                        테스트용 DB 설정 파일 별도 관리
+                    </p>
+                    <div class="bg-white rounded p-3 text-xs">
+                        <code class="text-gray-700">
+                            src/test/resources/application-test.properties
+                        </code>
+                        <div class="mt-2 code-result"><pre>spring.datasource.url=jdbc:h2:mem:testdb
+spring.jpa.hibernate.ddl-auto=create-drop</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tip 4 -->
+                <div class="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-lg p-6 border-l-4 border-orange-500">
+                    <h3 class="text-lg font-bold text-orange-800 mb-3">
+                        <span class="bg-orange-200 text-orange-800 rounded-full px-3 py-1 text-sm mr-2">Tip 4</span>
+                        Service는 테스트 안 해도 됨
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-3">
+                        7일 프로젝트에서는 <strong>Entity + API만</strong> 테스트!
+                    </p>
+                    <div class="bg-white rounded p-3 text-sm text-gray-700">
+                        <div class="mb-1">✅ 테스트 해야 할 것:</div>
+                        <ul class="space-y-1 ml-4">
+                            <li>• Order.addItem() - 비즈니스 로직</li>
+                            <li>• POST /api/orders - API 통합</li>
+                        </ul>
+                        <div class="mt-3 mb-1">❌ 테스트 안 해도 되는 것:</div>
+                        <ul class="space-y-1 ml-4">
+                            <li>• OrderService - 단순 CRUD</li>
+                            <li>• Getter/Setter - 의미 없음</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. GitHub Actions 연동 (보너스) -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-rocket text-indigo-600 mr-2"></i>
+                8. GitHub Actions 연동 (보너스)
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <p class="text-gray-700 mb-6">
+                    코드를 Push할 때마다 <strong>자동으로 테스트 실행</strong>하기
+                </p>
+
+                <div class="mb-6">
+                    <h4 class="font-semibold text-gray-700 mb-3">.github/workflows/test.yml</h4>
+                    <div class="code-result"><pre><span style="color: #7dd3fc">name:</span> <span style="color: #86efac">Test</span>
+
+<span style="color: #7dd3fc">on:</span>
+  <span style="color: #7dd3fc">push:</span>
+    <span style="color: #7dd3fc">branches:</span> [ <span style="color: #86efac">main</span> ]
+  <span style="color: #7dd3fc">pull_request:</span>
+    <span style="color: #7dd3fc">branches:</span> [ <span style="color: #86efac">main</span> ]
+
+<span style="color: #7dd3fc">jobs:</span>
+  <span style="color: #7dd3fc">test:</span>
+    <span style="color: #7dd3fc">runs-on:</span> <span style="color: #86efac">ubuntu-latest</span>
+
+    <span style="color: #7dd3fc">steps:</span>
+    - <span style="color: #7dd3fc">uses:</span> <span style="color: #86efac">actions/checkout@v2</span>
+
+    - <span style="color: #7dd3fc">name:</span> <span style="color: #86efac">Set up JDK 17</span>
+      <span style="color: #7dd3fc">uses:</span> <span style="color: #86efac">actions/setup-java@v2</span>
+      <span style="color: #7dd3fc">with:</span>
+        <span style="color: #7dd3fc">java-version:</span> <span style="color: #86efac">'17'</span>
+
+    - <span style="color: #7dd3fc">name:</span> <span style="color: #86efac">Run tests</span>
+      <span style="color: #7dd3fc">run:</span> <span style="color: #86efac">./gradlew test</span></pre>
+                    </div>
+                </div>
+
+                <div class="placeholder-image">
+                    <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-600 font-bold">📸 이미지: github-actions-result.png</p>
+                    <details class="mt-3 text-left text-sm">
+                        <summary class="cursor-pointer text-blue-600 font-semibold">스크린샷 가이드</summary>
+                        <ol class="mt-2 space-y-1 text-gray-700">
+                            <li>1. GitHub 저장소 → Actions 탭</li>
+                            <li>2. 녹색 체크 표시 (통과) 화면</li>
+                            <li>3. 워크플로우 실행 결과 캡처</li>
+                        </ol>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- 발표 활용법 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-presentation text-indigo-600 mr-2"></i>
+                9. 발표에서 이렇게 활용하세요 🎤
+            </h2>
+
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg shadow-lg p-6">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-bold text-indigo-800 mb-3">✅ 이렇게 말하세요</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                <span>"JUnit으로 <strong>Entity 비즈니스 로직 3개</strong>를 테스트했습니다"</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                <span>"MockMvc로 <strong>API 통합 테스트</strong>도 작성했습니다"</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                <span>"<strong>커버리지 65%</strong>를 달성했습니다"</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                                <span>"GitHub Actions로 <strong>Push할 때마다 자동 테스트</strong>합니다"</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-red-800 mb-3">❌ 이렇게 말하지 마세요</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start">
+                                <i class="fas fa-times text-red-600 mr-2 mt-1"></i>
+                                <span>"테스트는 안 짰어요"</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-times text-red-600 mr-2 mt-1"></i>
+                                <span>"Postman으로만 테스트했어요"</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-times text-red-600 mr-2 mt-1"></i>
+                                <span>"Service 테스트 100개 짰어요" (의미 없음)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Step -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg shadow-xl p-8 text-center">
+                <div class="text-6xl mb-4">🚀</div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                    Level 2 완료! 자동화 마스터!
+                </h2>
+                <p class="text-gray-700 mb-6">
+                    이제 수동 테스트는 그만! 자동화로 효율성 30배 향상!<br>
+                    다음은 <strong>성능 테스트</strong>로 포트폴리오를 차별화하세요!
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <a href="/qa-hands-on/ngrinder"
+                       class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg transition shadow-lg">
+                        <span class="level-badge level-3 mr-2">Lv.3</span>
+                        nGrinder 성능 테스트 →
+                    </a>
+                    <a href="/qa-hands-on/overview"
+                       class="bg-white hover:bg-gray-100 text-purple-600 font-bold py-3 px-8 rounded-lg transition shadow-lg border-2 border-purple-600">
+                        <i class="fas fa-home mr-2"></i>
+                        Overview로 돌아가기
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>

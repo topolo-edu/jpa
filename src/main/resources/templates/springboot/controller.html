@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/springboot-layout}">
+<head>
+    <title>Controller 어노테이션</title>
+</head>
+<body>
+    <div layout:fragment="content">
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-3">
+                <i class="fas fa-layer-group text-blue-600 mr-3"></i>
+                Controller 레이어
+            </h1>
+            <p class="text-lg text-gray-600">
+                HTTP 요청을 받아 처리하고 응답을 반환하는 Controller의 어노테이션을 학습합니다
+            </p>
+        </div>
+
+        <!-- @Controller vs @RestController -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-info-circle text-purple-600 mr-2"></i>
+                @Controller vs @RestController
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- @Controller -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-blue-500">
+                    <h3 class="text-xl font-bold text-blue-800 mb-4">
+                        <i class="fas fa-file-code mr-2"></i>@Controller
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-4">
+                        <strong>뷰(View) 템플릿을 반환</strong>하는 전통적인 MVC 컨트롤러<br>
+                        Thymeleaf, JSP 등 HTML 페이지 렌더링
+                    </p>
+                    <div class="code-block"><pre><span style="color: #7dd3fc">@Controller</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">OrderController</span> {
+
+    <span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/orders"</span>)
+    <span style="color: #fbbf24">public</span> String <span style="color: #ffffff">list</span>(Model model) {
+        model.addAttribute(<span style="color: #86efac">"orders"</span>, orders);
+        <span style="color: #fbbf24">return</span> <span style="color: #86efac">"order/list"</span>; <span style="color: #6b7280">// HTML 뷰 이름</span>
+    }
+}</pre>
+                    </div>
+                    <div class="mt-4 bg-blue-50 p-3 rounded text-xs text-blue-700">
+                        <strong>용도:</strong> 서버 사이드 렌더링 (SSR), 웹 페이지 반환
+                    </div>
+                </div>
+
+                <!-- @RestController -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-green-500">
+                    <h3 class="text-xl font-bold text-green-800 mb-4">
+                        <i class="fas fa-exchange-alt mr-2"></i>@RestController
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-4">
+                        <strong>JSON/XML 데이터를 반환</strong>하는 REST API 컨트롤러<br>
+                        @Controller + @ResponseBody 합친 것
+                    </p>
+                    <div class="code-block"><pre><span style="color: #7dd3fc">@RestController</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">OrderApiController</span> {
+
+    <span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/api/orders"</span>)
+    <span style="color: #fbbf24">public</span> List&lt;Order&gt; <span style="color: #ffffff">list</span>() {
+        <span style="color: #fbbf24">return</span> orders; <span style="color: #6b7280">// 자동으로 JSON 변환</span>
+    }
+}</pre>
+                    </div>
+                    <div class="mt-4 bg-green-50 p-3 rounded text-xs text-green-700">
+                        <strong>용도:</strong> REST API, JSON 응답 (React, Vue 등 프론트엔드)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Example: @RestController -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-code text-green-600 mr-2"></i>
+                예제: REST API 컨트롤러
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="code-block"><pre><span style="color: #7dd3fc">@RestController</span>
+<span style="color: #7dd3fc">@RequestMapping</span>(<span style="color: #86efac">"/api/orders"</span>)
+<span style="color: #7dd3fc">@RequiredArgsConstructor</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">OrderController</span> {
+
+    <span style="color: #fbbf24">private final</span> OrderService orderService;
+
+    <span style="color: #6b7280">// 1. 전체 조회 (GET /api/orders)</span>
+    <span style="color: #7dd3fc">@GetMapping</span>
+    <span style="color: #fbbf24">public</span> List&lt;Order&gt; <span style="color: #ffffff">getAllOrders</span>() {
+        <span style="color: #fbbf24">return</span> orderService.findAll();
+    }
+
+    <span style="color: #6b7280">// 2. 단건 조회 (GET /api/orders/1)</span>
+    <span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/{id}"</span>)
+    <span style="color: #fbbf24">public</span> Order <span style="color: #ffffff">getOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+        <span style="color: #fbbf24">return</span> orderService.findById(id);
+    }
+
+    <span style="color: #6b7280">// 3. 생성 (POST /api/orders)</span>
+    <span style="color: #7dd3fc">@PostMapping</span>
+    <span style="color: #fbbf24">public</span> Order <span style="color: #ffffff">createOrder</span>(<span style="color: #7dd3fc">@RequestBody</span> <span style="color: #7dd3fc">@Valid</span> OrderRequest request) {
+        <span style="color: #fbbf24">return</span> orderService.create(request);
+    }
+
+    <span style="color: #6b7280">// 4. 수정 (PUT /api/orders/1)</span>
+    <span style="color: #7dd3fc">@PutMapping</span>(<span style="color: #86efac">"/{id}"</span>)
+    <span style="color: #fbbf24">public</span> Order <span style="color: #ffffff">updateOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id,
+                                  <span style="color: #7dd3fc">@RequestBody</span> OrderRequest request) {
+        <span style="color: #fbbf24">return</span> orderService.update(id, request);
+    }
+
+    <span style="color: #6b7280">// 5. 삭제 (DELETE /api/orders/1)</span>
+    <span style="color: #7dd3fc">@DeleteMapping</span>(<span style="color: #86efac">"/{id}"</span>)
+    <span style="color: #fbbf24">public void</span> <span style="color: #ffffff">deleteOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+        orderService.delete(id);
+    }
+
+    <span style="color: #6b7280">// 6. 검색 (GET /api/orders/search?name=홍길동)</span>
+    <span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/search"</span>)
+    <span style="color: #fbbf24">public</span> List&lt;Order&gt; <span style="color: #ffffff">searchOrders</span>(<span style="color: #7dd3fc">@RequestParam</span> String name) {
+        <span style="color: #fbbf24">return</span> orderService.findByCustomerName(name);
+    }
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controller Annotations Table -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-table text-blue-600 mr-2"></i>
+                Controller 어노테이션 정리
+            </h2>
+
+            <!-- Group 1: 클래스 레벨 어노테이션 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm mr-2">그룹 1</span>
+                    클래스 레벨 어노테이션
+                </h3>
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 35%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-blue-600">@RestController</code></td>
+                            <td>REST API 컨트롤러<br><small class="text-gray-500">JSON 응답 자동 변환</small></td>
+                            <td><code>@RestController</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">@Controller</code></td>
+                            <td>View 템플릿 컨트롤러<br><small class="text-gray-500">HTML 페이지 반환</small></td>
+                            <td><code>@Controller</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">@RequestMapping</code></td>
+                            <td>공통 URL 경로 매핑<br><small class="text-gray-500">클래스에 붙이면 모든 메서드에 적용</small></td>
+                            <td><code>@RequestMapping("/api/orders")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-blue-600">@RequiredArgsConstructor</code></td>
+                            <td>의존성 주입 생성자 자동 생성<br><small class="text-gray-500">Lombok, final 필드용</small></td>
+                            <td><code>@RequiredArgsConstructor</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Group 2: HTTP 메서드 매핑 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm mr-2">그룹 2</span>
+                    HTTP 메서드 매핑 어노테이션
+                </h3>
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 35%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-green-600">@GetMapping</code></td>
+                            <td>조회 요청 (GET)<br><small class="text-gray-500">데이터 조회, 읽기 전용</small></td>
+                            <td><code>@GetMapping("/orders")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-green-600">@PostMapping</code></td>
+                            <td>생성 요청 (POST)<br><small class="text-gray-500">새 데이터 생성</small></td>
+                            <td><code>@PostMapping("/orders")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-green-600">@PutMapping</code></td>
+                            <td>수정 요청 (PUT)<br><small class="text-gray-500">전체 데이터 수정</small></td>
+                            <td><code>@PutMapping("/orders/{id}")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-green-600">@PatchMapping</code></td>
+                            <td>부분 수정 (PATCH)<br><small class="text-gray-500">일부 필드만 수정</small></td>
+                            <td><code>@PatchMapping("/orders/{id}")</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-green-600">@DeleteMapping</code></td>
+                            <td>삭제 요청 (DELETE)<br><small class="text-gray-500">데이터 삭제</small></td>
+                            <td><code>@DeleteMapping("/orders/{id}")</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Group 3: 파라미터 바인딩 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+                    <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm mr-2">그룹 3</span>
+                    파라미터 바인딩 어노테이션
+                </h3>
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 35%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-purple-600">@PathVariable</code></td>
+                            <td>URL 경로의 변수 추출<br><small class="text-gray-500">/orders/{id} → id 값 가져오기</small></td>
+                            <td><code>@PathVariable Long id</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-purple-600">@RequestParam</code></td>
+                            <td>쿼리 파라미터 추출<br><small class="text-gray-500">/search?name=홍길동 → name 값</small></td>
+                            <td><code>@RequestParam String name</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-purple-600">@RequestBody</code></td>
+                            <td>HTTP Body의 JSON을 객체로 변환<br><small class="text-gray-500">POST/PUT 요청의 데이터</small></td>
+                            <td><code>@RequestBody OrderRequest req</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-purple-600">@ModelAttribute</code></td>
+                            <td>폼 데이터를 객체로 바인딩<br><small class="text-gray-500">HTML form 전송 데이터</small></td>
+                            <td><code>@ModelAttribute OrderForm form</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Group 4: 응답 처리 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+                    <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm mr-2">그룹 4</span>
+                    응답 처리 어노테이션
+                </h3>
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 35%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-orange-600">@ResponseBody</code></td>
+                            <td>응답을 JSON으로 변환<br><small class="text-gray-500">@RestController는 자동 적용</small></td>
+                            <td><code>@ResponseBody</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-orange-600">@ResponseStatus</code></td>
+                            <td>HTTP 상태 코드 지정<br><small class="text-gray-500">201 Created, 204 No Content 등</small></td>
+                            <td><code>@ResponseStatus(HttpStatus.CREATED)</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-orange-600">ResponseEntity</code></td>
+                            <td>상태코드 + 헤더 + 바디 포함 응답<br><small class="text-gray-500">유연한 응답 커스터마이징</small></td>
+                            <td><code>return ResponseEntity.ok(order);</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Group 5: 유효성 검증 -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+                    <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm mr-2">그룹 5</span>
+                    유효성 검증 어노테이션
+                </h3>
+                <table class="w-full annotation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">어노테이션</th>
+                            <th style="width: 40%">설명</th>
+                            <th style="width: 35%">예시</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="text-yellow-600">@Valid</code></td>
+                            <td>객체 유효성 검증 활성화<br><small class="text-gray-500">DTO 클래스의 @NotNull 등 검증</small></td>
+                            <td><code>@Valid @RequestBody OrderRequest</code></td>
+                        </tr>
+                        <tr>
+                            <td><code class="text-yellow-600">@Validated</code></td>
+                            <td>그룹별 유효성 검증<br><small class="text-gray-500">Spring 제공, 그룹 지정 가능</small></td>
+                            <td><code>@Validated(CreateGroup.class)</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- @Controller에서 추가/변경되는 부분 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-exchange-alt text-indigo-600 mr-2"></i>
+                @Controller에서 추가/변경되는 부분
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- @RestController -->
+                    <div>
+                        <h3 class="text-lg font-bold text-green-800 mb-3">
+                            <i class="fas fa-check-circle mr-2"></i>@RestController
+                        </h3>
+                        <div class="code-block mb-4"><pre><span style="color: #7dd3fc">@RestController</span>
+<span style="color: #7dd3fc">@RequestMapping</span>(<span style="color: #86efac">"/api/orders"</span>)
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">OrderApiController</span> {
+
+    <span style="color: #7dd3fc">@GetMapping</span>
+    <span style="color: #fbbf24">public</span> List&lt;Order&gt; <span style="color: #ffffff">list</span>() {
+        <span style="color: #fbbf24">return</span> orders;
+        <span style="color: #6b7280">// 자동으로 JSON 변환</span>
+    }
+}</pre>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded text-sm text-green-700">
+                            <strong>특징:</strong>
+                            <ul class="mt-2 space-y-1">
+                                <li>• 반환값이 자동으로 JSON/XML 변환</li>
+                                <li>• @ResponseBody 불필요</li>
+                                <li>• REST API 전용</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- @Controller -->
+                    <div>
+                        <h3 class="text-lg font-bold text-blue-800 mb-3">
+                            <i class="fas fa-file-code mr-2"></i>@Controller
+                        </h3>
+                        <div class="code-block mb-4"><pre><span style="color: #7dd3fc">@Controller</span>
+<span style="color: #7dd3fc">@RequestMapping</span>(<span style="color: #86efac">"/orders"</span>)
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">OrderController</span> {
+
+    <span style="color: #7dd3fc">@GetMapping</span>
+    <span style="color: #fbbf24">public</span> String <span style="color: #ffffff">list</span>(Model model) {
+        model.addAttribute(<span style="color: #86efac">"orders"</span>, orders);
+        <span style="color: #fbbf24">return</span> <span style="color: #86efac">"order/list"</span>;
+        <span style="color: #6b7280">// HTML 뷰 이름 반환</span>
+    }
+}</pre>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded text-sm text-blue-700">
+                            <strong>특징:</strong>
+                            <ul class="mt-2 space-y-1">
+                                <li>• String 반환 = 뷰 템플릿 이름</li>
+                                <li>• Model에 데이터 담아서 전달</li>
+                                <li>• 서버 사이드 렌더링 (SSR)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+                    <h4 class="font-bold text-yellow-800 mb-2">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        @Controller에서 JSON 응답하려면?
+                    </h4>
+                    <div class="code-block"><pre><span style="color: #7dd3fc">@Controller</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">OrderController</span> {
+
+    <span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/api/orders"</span>)
+    <span style="color: #7dd3fc">@ResponseBody</span>  <span style="color: #6b7280">// 이 어노테이션 추가!</span>
+    <span style="color: #fbbf24">public</span> List&lt;Order&gt; <span style="color: #ffffff">getOrders</span>() {
+        <span style="color: #fbbf24">return</span> orders; <span style="color: #6b7280">// JSON으로 변환됨</span>
+    }
+}</pre>
+                    </div>
+                    <p class="text-sm text-yellow-700 mt-2">
+                        <strong>@ResponseBody</strong>를 메서드에 추가하면 JSON 응답 가능!<br>
+                        하지만 API가 많으면 <strong>@RestController</strong> 사용이 편리합니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practical Tips -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+                실무 팁
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                    <h3 class="font-bold text-green-800 mb-2">
+                        <i class="fas fa-check-circle mr-2"></i>권장사항
+                    </h3>
+                    <ul class="text-sm text-green-700 space-y-1">
+                        <li>• <strong>RESTful URL 설계:</strong> /api/orders, /api/orders/{id}</li>
+                        <li>• <strong>DTO 사용:</strong> Entity 직접 반환 지양</li>
+                        <li>• <strong>@Valid 활용:</strong> 입력값 검증 필수</li>
+                        <li>• <strong>ResponseEntity:</strong> 상태코드 명시적 반환</li>
+                    </ul>
+                </div>
+
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                    <h3 class="font-bold text-red-800 mb-2">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>주의사항
+                    </h3>
+                    <ul class="text-sm text-red-700 space-y-1">
+                        <li>• <strong>Entity 직접 반환 금지:</strong> 순환참조, 보안 문제</li>
+                        <li>• <strong>예외 처리:</strong> @ControllerAdvice로 전역 처리</li>
+                        <li>• <strong>CORS 설정:</strong> 프론트엔드 분리 시 필수</li>
+                        <li>• <strong>버전 관리:</strong> /api/v1/orders 형태 권장</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Step -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-green-50 to-purple-50 border-l-4 border-green-500 p-6 rounded-lg">
+                <h2 class="text-2xl font-bold text-green-800 mb-4">
+                    <i class="fas fa-forward mr-2"></i>
+                    다음 단계
+                </h2>
+                <a href="/springboot/service" class="block bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
+                    <h3 class="font-bold text-gray-800 mb-2">
+                        <i class="fas fa-cogs text-green-600 mr-2"></i>
+                        Service 어노테이션 학습하기
+                    </h3>
+                    <p class="text-sm text-gray-600">@Service, @Transactional 등 비즈니스 로직 계층 어노테이션</p>
+                </a>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>

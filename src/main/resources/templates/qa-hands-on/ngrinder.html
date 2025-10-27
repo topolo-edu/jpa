@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/qa-layout}">
+<head>
+    <title>nGrinder - Level 3</title>
+</head>
+<body>
+    <div layout:fragment="content">
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center mb-4">
+                <span class="level-badge level-3 text-lg mr-3">Lv.3 Advanced</span>
+                <h1 class="text-4xl font-bold text-gray-800">
+                    <i class="fas fa-chart-line text-yellow-600 mr-3"></i>
+                    nGrinder로 성능 테스트하기
+                </h1>
+            </div>
+            <p class="text-lg text-gray-600">
+                100명이 동시에 접속하면 서버가 버틸까? 성능 테스트로 포트폴리오 차별화!
+            </p>
+            <div class="flex space-x-3 mt-4 text-sm">
+                <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">⏱️ 소요시간: 1시간</span>
+                <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full">⭐ 중요도: 강력 추천</span>
+                <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full">🎯 난이도: 중상</span>
+            </div>
+        </div>
+
+        <!-- 1. 왜 성능 테스트? -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-question-circle text-blue-600 mr-2"></i>
+                1. 왜 성능 테스트인가?
+            </h2>
+
+            <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-lg shadow-lg p-6 border-l-4 border-red-500 mb-6">
+                <h3 class="text-xl font-bold text-red-800 mb-4">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    실제 사례: 새벽 3시의 악몽
+                </h3>
+                <div class="bg-white rounded-lg p-4 text-gray-700">
+                    <p class="mb-3">
+                        "개발자님, 서버 죽었어요!" 📞<br>
+                        <span class="text-red-600 font-bold">상황:</span> 이벤트로 갑자기 100명 접속 → 서버 다운 → 긴급 수정
+                    </p>
+                    <p class="text-sm text-gray-600">
+                        성능 테스트를 미리 했다면? <strong class="text-green-600">문제를 사전에 발견</strong>하고 대비했을 것입니다.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Before -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-gray-400">
+                    <div class="text-center mb-4">
+                        <div class="text-5xl mb-2">🤷</div>
+                        <h3 class="text-xl font-bold text-gray-800">성능 테스트 없이</h3>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-times text-red-600 mr-2 mt-1"></i>
+                            <span>"괜찮겠지..." 막연한 기대</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-times text-red-600 mr-2 mt-1"></i>
+                            <span>운영 중 문제 발견</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-times text-red-600 mr-2 mt-1"></i>
+                            <span>긴급 수정 & 야근</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- After -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-green-500">
+                    <div class="text-center mb-4">
+                        <div class="text-5xl mb-2">✅</div>
+                        <h3 class="text-xl font-bold text-green-800">성능 테스트 후</h3>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                            <span>"TPS 500 확인됨" 객관적 데이터</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                            <span>병목 지점 사전 발견</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-2 mt-1"></i>
+                            <span>안정적인 서비스</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Portfolio -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-purple-500">
+                    <div class="text-center mb-4">
+                        <div class="text-5xl mb-2">🏆</div>
+                        <h3 class="text-xl font-bold text-purple-800">포트폴리오</h3>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-star text-purple-600 mr-2 mt-1"></i>
+                            <span>타 지원자와 차별화</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-star text-purple-600 mr-2 mt-1"></i>
+                            <span>면접 어필 포인트</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-star text-purple-600 mr-2 mt-1"></i>
+                            <span>"실무 경험 있음"</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. nGrinder vs JMeter -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-balance-scale text-indigo-600 mr-2"></i>
+                2. nGrinder vs JMeter
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-gradient-to-r from-blue-100 to-purple-100">
+                        <tr>
+                            <th class="px-6 py-4 text-left font-bold text-gray-800">항목</th>
+                            <th class="px-6 py-4 text-left font-bold text-green-800">
+                                <i class="fas fa-trophy mr-2"></i>nGrinder (추천)
+                            </th>
+                            <th class="px-6 py-4 text-left font-bold text-blue-800">JMeter</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-gray-700">설치</td>
+                            <td class="px-6 py-4">
+                                <span class="text-green-600">✅ Docker 한 줄</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-orange-600">⚠️ 복잡함</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-gray-700">UI</td>
+                            <td class="px-6 py-4">
+                                <span class="text-green-600">✅ 웹 기반 (브라우저)</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-blue-600">데스크톱 앱</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-gray-700">한국어</td>
+                            <td class="px-6 py-4">
+                                <span class="text-green-600">✅ 완벽 지원</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-red-600">❌ 영어만</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-gray-700">개발사</td>
+                            <td class="px-6 py-4">
+                                <span class="text-green-600">네이버 (국내)</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-blue-600">Apache (해외)</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-semibold text-gray-700">학습 난이도</td>
+                            <td class="px-6 py-4">
+                                <span class="text-green-600">✅ 쉬움</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-orange-600">⚠️ 어려움</span>
+                            </td>
+                        </tr>
+                        <tr class="bg-green-50">
+                            <td class="px-6 py-4 font-bold text-gray-800">추천</td>
+                            <td class="px-6 py-4">
+                                <span class="text-green-600 font-bold">✅ 7일 프로젝트 최적</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-gray-600">시간 여유시</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 3. 설치 (Docker) -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-download text-green-600 mr-2"></i>
+                3. 설치하기 (5분)
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p class="text-blue-800">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <strong>사전 요구사항:</strong> Docker가 설치되어 있어야 합니다
+                    </p>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Step 1 -->
+                    <div>
+                        <div class="flex items-center mb-3">
+                            <div class="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">1</div>
+                            <h3 class="text-lg font-bold text-gray-800">docker-compose.yml 파일 생성</h3>
+                        </div>
+                        <div class="code-result"><pre><span style="color: #7dd3fc">version:</span> <span style="color: #86efac">'3'</span>
+<span style="color: #7dd3fc">services:</span>
+  <span style="color: #7dd3fc">controller:</span>
+    <span style="color: #7dd3fc">image:</span> <span style="color: #86efac">ngrinder/controller:latest</span>
+    <span style="color: #7dd3fc">ports:</span>
+      - <span style="color: #86efac">"8300:80"</span>
+    <span style="color: #7dd3fc">volumes:</span>
+      - <span style="color: #86efac">./ngrinder-controller:/opt/ngrinder-controller</span>
+
+  <span style="color: #7dd3fc">agent:</span>
+    <span style="color: #7dd3fc">image:</span> <span style="color: #86efac">ngrinder/agent:latest</span>
+    <span style="color: #7dd3fc">environment:</span>
+      - <span style="color: #86efac">CONTROLLER_ADDR=controller:80</span>
+    <span style="color: #7dd3fc">depends_on:</span>
+      - <span style="color: #86efac">controller</span></pre>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div>
+                        <div class="flex items-center mb-3">
+                            <div class="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">2</div>
+                            <h3 class="text-lg font-bold text-gray-800">Docker Compose 실행</h3>
+                        </div>
+                        <div class="code-result"><pre><span style="color: #6b7280"># nGrinder 시작</span>
+docker-compose up -d
+
+<span style="color: #6b7280"># 로그 확인</span>
+docker-compose logs -f controller</pre>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div>
+                        <div class="flex items-center mb-3">
+                            <div class="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">3</div>
+                            <h3 class="text-lg font-bold text-gray-800">브라우저에서 접속</h3>
+                        </div>
+                        <div class="bg-gray-100 rounded p-4 mb-3">
+                            <div class="text-sm text-gray-600 mb-2">URL</div>
+                            <code class="text-blue-600 text-lg">http://localhost:8300</code>
+                        </div>
+                        <div class="bg-green-50 rounded p-4">
+                            <div class="text-sm text-green-800 mb-2">
+                                <strong>기본 로그인 정보</strong>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 text-sm">
+                                <div>
+                                    <span class="text-gray-600">ID:</span>
+                                    <code class="bg-white px-2 py-1 rounded ml-2">admin</code>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">PW:</span>
+                                    <code class="bg-white px-2 py-1 rounded ml-2">admin</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 placeholder-image">
+                    <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-600 font-bold">📸 이미지 필요: ngrinder-login.png</p>
+                    <details class="mt-3 text-left text-sm">
+                        <summary class="cursor-pointer text-blue-600 font-semibold">스크린샷 가이드</summary>
+                        <ol class="mt-2 space-y-1 text-gray-700">
+                            <li>1. http://localhost:8300 접속</li>
+                            <li>2. 로그인 화면 캡처</li>
+                            <li>3. admin/admin 입력 후 메인 화면 캡처</li>
+                        </ol>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 실습 1: 첫 성능 테스트 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-flask text-red-600 mr-2"></i>
+                4. 실습 1: 첫 성능 테스트 (15분)
+            </h2>
+
+            <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-lg shadow-lg p-6 border-l-4 border-red-500 mb-6">
+                <h3 class="text-xl font-bold text-red-800 mb-2">
+                    <i class="fas fa-bullseye mr-2"></i>
+                    실습 목표
+                </h3>
+                <p class="text-red-700">
+                    Order 생성 API에 100명이 동시 접속했을 때 성능을 측정합니다
+                </p>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Step 1: 스크립트 작성 -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">1</div>
+                        <h3 class="text-xl font-bold text-gray-800">테스트 스크립트 작성</h3>
+                    </div>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                        <p class="text-blue-800 text-sm">
+                            <strong>경로:</strong> 상단 메뉴 "Script" → "Create a script" → "Groovy" 선택
+                        </p>
+                    </div>
+
+                    <div class="code-result mb-4"><pre><span style="color: #7dd3fc">import</span> static net.grinder.script.Grinder.grinder
+<span style="color: #7dd3fc">import</span> static org.junit.Assert.*
+<span style="color: #7dd3fc">import</span> static org.hamcrest.Matchers.*
+<span style="color: #7dd3fc">import</span> net.grinder.plugin.http.HTTPRequest
+<span style="color: #7dd3fc">import</span> net.grinder.script.GTest
+<span style="color: #7dd3fc">import</span> net.grinder.scriptengine.groovy.junit.GrinderRunner
+<span style="color: #7dd3fc">import</span> net.grinder.scriptengine.groovy.junit.annotation.BeforeThread
+<span style="color: #7dd3fc">import</span> net.grinder.scriptengine.groovy.junit.annotation.BeforeProcess
+<span style="color: #7dd3fc">import</span> org.junit.Before
+<span style="color: #7dd3fc">import</span> org.junit.Test
+<span style="color: #7dd3fc">import</span> org.junit.runner.RunWith
+
+<span style="color: #7dd3fc">@RunWith</span>(GrinderRunner)
+<span style="color: #fbbf24">class</span> <span style="color: #ffffff">OrderTest</span> {
+
+    <span style="color: #fbbf24">public static</span> GTest test
+    <span style="color: #fbbf24">public static</span> HTTPRequest request
+
+    <span style="color: #7dd3fc">@BeforeProcess</span>
+    <span style="color: #fbbf24">public static void</span> <span style="color: #ffffff">beforeProcess</span>() {
+        test = <span style="color: #fbbf24">new</span> GTest(<span style="color: #fbbf24">1</span>, <span style="color: #86efac">"Order API Test"</span>)
+        request = <span style="color: #fbbf24">new</span> HTTPRequest()
+        test.record(request)
+    }
+
+    <span style="color: #7dd3fc">@BeforeThread</span>
+    <span style="color: #fbbf24">public void</span> <span style="color: #ffffff">beforeThread</span>() {
+        grinder.statistics.delayReports = <span style="color: #f472b6">true</span>
+    }
+
+    <span style="color: #7dd3fc">@Test</span>
+    <span style="color: #fbbf24">public void</span> <span style="color: #ffffff">test</span>() {
+        <span style="color: #6b7280">// POST 요청 - 주문 생성</span>
+        <span style="color: #fbbf24">def</span> body = <span style="color: #86efac">"""{"customerName":"홍길동","items":[{"productName":"노트북","quantity":1,"price":1500000}]}"""</span>
+        <span style="color: #fbbf24">def</span> headers = [
+            (<span style="color: #86efac">"Content-Type"</span>): <span style="color: #86efac">"application/json"</span>
+        ]
+
+        <span style="color: #fbbf24">def</span> response = request.POST(<span style="color: #86efac">"http://host.docker.internal:8080/api/orders"</span>,
+                                        body.getBytes(), headers)
+
+        <span style="color: #6b7280">// 응답 검증</span>
+        <span style="color: #7dd3fc">assertThat</span>(response.statusCode, <span style="color: #7dd3fc">is</span>(<span style="color: #fbbf24">200</span>))
+    }
+}</pre>
+                    </div>
+
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4">
+                        <p class="text-yellow-800 text-sm">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            <strong>주의:</strong> <code>localhost</code> 대신 <code>host.docker.internal</code> 사용!<br>
+                            Docker 컨테이너에서 호스트 접근 시 필요
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 2: 테스트 생성 -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">2</div>
+                        <h3 class="text-xl font-bold text-gray-800">Performance Test 생성</h3>
+                    </div>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                        <p class="text-blue-800 text-sm">
+                            <strong>경로:</strong> 상단 메뉴 "Performance Test" → "Create Test"
+                        </p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-3">기본 설정</h4>
+                            <div class="space-y-3 text-sm">
+                                <div class="bg-gray-50 rounded p-3">
+                                    <div class="text-gray-600 mb-1">Test Name</div>
+                                    <code class="text-blue-600">Order API Load Test</code>
+                                </div>
+                                <div class="bg-gray-50 rounded p-3">
+                                    <div class="text-gray-600 mb-1">Script</div>
+                                    <code class="text-blue-600">OrderTest.groovy</code>
+                                </div>
+                                <div class="bg-gray-50 rounded p-3">
+                                    <div class="text-gray-600 mb-1">Agent</div>
+                                    <code class="text-blue-600">1</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-3">부하 설정</h4>
+                            <div class="space-y-3 text-sm">
+                                <div class="bg-gray-50 rounded p-3">
+                                    <div class="text-gray-600 mb-1">Vuser (가상 사용자)</div>
+                                    <code class="text-green-600 font-bold text-lg">100</code>
+                                </div>
+                                <div class="bg-gray-50 rounded p-3">
+                                    <div class="text-gray-600 mb-1">Duration (실행 시간)</div>
+                                    <code class="text-green-600 font-bold text-lg">1분 (60초)</code>
+                                </div>
+                                <div class="bg-gray-50 rounded p-3">
+                                    <div class="text-gray-600 mb-1">Ramp-Up (점진 증가)</div>
+                                    <code class="text-blue-600">Enable</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 placeholder-image">
+                        <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                        <p class="text-gray-600 font-bold">📸 이미지 필요: ngrinder-test-config.png</p>
+                        <details class="mt-3 text-left text-sm">
+                            <summary class="cursor-pointer text-blue-600 font-semibold">스크린샷 가이드</summary>
+                            <ol class="mt-2 space-y-1 text-gray-700">
+                                <li>1. Create Test 화면</li>
+                                <li>2. Vuser 100, Duration 60초 설정</li>
+                                <li>3. 설정 완료 화면 캡처</li>
+                            </ol>
+                        </details>
+                    </div>
+                </div>
+
+                <!-- Step 3: 테스트 실행 -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">3</div>
+                        <h3 class="text-xl font-bold text-gray-800">테스트 실행 & 결과 확인</h3>
+                    </div>
+
+                    <div class="bg-green-50 rounded-lg p-4 mb-4">
+                        <p class="text-green-800 font-semibold mb-2">
+                            <i class="fas fa-play-circle mr-2"></i>
+                            "Save and Start" 버튼 클릭!
+                        </p>
+                        <p class="text-sm text-green-700">
+                            약 1-2분 소요 (Agent 준비 + 테스트 실행)
+                        </p>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6">
+                        <h4 class="font-bold text-gray-800 mb-4">✅ 확인할 지표</h4>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <div class="text-3xl mb-2">📊</div>
+                                <div class="font-bold text-gray-800">TPS</div>
+                                <div class="text-sm text-gray-600">초당 처리 트랜잭션</div>
+                                <div class="mt-2">
+                                    <span class="text-green-600 font-bold">목표: 300+</span>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <div class="text-3xl mb-2">⏱️</div>
+                                <div class="font-bold text-gray-800">평균 응답시간</div>
+                                <div class="text-sm text-gray-600">Mean Test Time</div>
+                                <div class="mt-2">
+                                    <span class="text-green-600 font-bold">목표: &lt;300ms</span>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <div class="text-3xl mb-2">❌</div>
+                                <div class="font-bold text-gray-800">에러율</div>
+                                <div class="text-sm text-gray-600">Error Rate</div>
+                                <div class="mt-2">
+                                    <span class="text-green-600 font-bold">목표: 0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 placeholder-image">
+                        <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                        <p class="text-gray-600 font-bold">📸 이미지 필요: ngrinder-result-graph.png</p>
+                        <details class="mt-3 text-left text-sm">
+                            <summary class="cursor-pointer text-blue-600 font-semibold">스크린샷 가이드</summary>
+                            <ol class="mt-2 space-y-1 text-gray-700">
+                                <li>1. 테스트 완료 후 Detailed Report 클릭</li>
+                                <li>2. TPS 그래프, 평균 응답시간 보이도록</li>
+                                <li>3. 전체 화면 캡처</li>
+                            </ol>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 실습 2: N+1 문제 Before/After -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-chart-bar text-green-600 mr-2"></i>
+                5. 실습 2: N+1 문제 개선 Before/After (20분)
+            </h2>
+
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg shadow-lg p-6 border-l-4 border-green-500 mb-6">
+                <h3 class="text-xl font-bold text-green-800 mb-2">
+                    <i class="fas fa-bullseye mr-2"></i>
+                    실습 목표
+                </h3>
+                <p class="text-green-700">
+                    N+1 쿼리 문제를 Fetch Join으로 해결하고, 성능 개선 효과를 측정합니다
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <!-- Before: N+1 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-red-500">
+                    <div class="text-center mb-4">
+                        <div class="text-5xl mb-2">🐢</div>
+                        <h3 class="text-xl font-bold text-red-800">Before: N+1 문제</h3>
+                    </div>
+
+                    <div class="code-result text-xs mb-4"><pre><span style="color: #6b7280">// OrderRepository.java</span>
+<span style="color: #7dd3fc">@Query</span>(<span style="color: #86efac">"SELECT o FROM Order o"</span>)
+List&lt;Order&gt; <span style="color: #ffffff">findAll</span>();
+
+<span style="color: #6b7280">// 1번 쿼리: Order 전체 조회</span>
+<span style="color: #6b7280">// + N번 쿼리: 각 Order의 items 조회</span>
+<span style="color: #6b7280">// 총 1 + N번 쿼리 실행! 😱</span></pre>
+                    </div>
+
+                    <div class="bg-red-50 rounded p-4">
+                        <h4 class="font-bold text-red-800 mb-2">예상 결과</h4>
+                        <ul class="text-sm text-red-700 space-y-1">
+                            <li>• TPS: <strong>50</strong></li>
+                            <li>• 평균 응답시간: <strong>2000ms</strong></li>
+                            <li>• 쿼리 수: <strong>1 + N개</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- After: Fetch Join -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-green-500">
+                    <div class="text-center mb-4">
+                        <div class="text-5xl mb-2">🚀</div>
+                        <h3 class="text-xl font-bold text-green-800">After: Fetch Join</h3>
+                    </div>
+
+                    <div class="code-result text-xs mb-4"><pre><span style="color: #6b7280">// OrderRepository.java</span>
+<span style="color: #7dd3fc">@Query</span>(<span style="color: #86efac">"SELECT o FROM Order o "</span> +
+       <span style="color: #86efac">"JOIN FETCH o.items"</span>)
+List&lt;Order&gt; <span style="color: #ffffff">findAllWithItems</span>();
+
+<span style="color: #6b7280">// 1번 쿼리로 모두 조회!</span>
+<span style="color: #6b7280">// LEFT JOIN 사용 ✅</span></pre>
+                    </div>
+
+                    <div class="bg-green-50 rounded p-4">
+                        <h4 class="font-bold text-green-800 mb-2">예상 결과</h4>
+                        <ul class="text-sm text-green-700 space-y-1">
+                            <li>• TPS: <strong>500</strong> ⬆️ 10배</li>
+                            <li>• 평균 응답시간: <strong>150ms</strong> ⬇️ 13배</li>
+                            <li>• 쿼리 수: <strong>1개</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h4 class="font-bold text-gray-800 mb-4">
+                    <i class="fas fa-chart-line mr-2 text-purple-600"></i>
+                    비교 그래프 (예시)
+                </h4>
+
+                <div class="placeholder-image">
+                    <i class="fas fa-image text-6xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-600 font-bold">📸 이미지 필요: ngrinder-before-after-comparison.png</p>
+                    <details class="mt-3 text-left text-sm">
+                        <summary class="cursor-pointer text-blue-600 font-semibold">스크린샷 가이드</summary>
+                        <ol class="mt-2 space-y-1 text-gray-700">
+                            <li>1. Before 테스트 실행 → 결과 저장</li>
+                            <li>2. After 테스트 실행 → 결과 저장</li>
+                            <li>3. Performance Test 목록에서 Compare 기능 사용</li>
+                            <li>4. TPS, 응답시간 비교 그래프 캡처</li>
+                        </ol>
+                    </details>
+                </div>
+
+                <div class="mt-6 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg p-6 text-center">
+                    <div class="text-4xl mb-3">🏆</div>
+                    <h4 class="text-2xl font-bold text-gray-800 mb-2">성능 개선 93%!</h4>
+                    <p class="text-gray-700">
+                        이런 결과를 발표 자료에 넣으면 <strong>엄청난 어필 포인트</strong>입니다!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. 실무 Tip -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+                6. 실무 Tip 💡
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Tip 1 -->
+                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-6 border-l-4 border-blue-500">
+                    <h3 class="text-lg font-bold text-blue-800 mb-3">
+                        <span class="bg-blue-200 text-blue-800 rounded-full px-3 py-1 text-sm mr-2">Tip 1</span>
+                        Ramp-Up 활용
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-3">
+                        갑자기 100명이 아니라 <strong>점진적으로 증가</strong>시키기
+                    </p>
+                    <div class="bg-white rounded p-3 text-sm">
+                        <div class="flex items-center justify-between mb-2">
+                            <span>0초</span>
+                            <span>→</span>
+                            <span>30초</span>
+                            <span>→</span>
+                            <span>60초</span>
+                        </div>
+                        <div class="flex items-center justify-between text-blue-600 font-bold">
+                            <span>0명</span>
+                            <span>→</span>
+                            <span>50명</span>
+                            <span>→</span>
+                            <span>100명</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-blue-700 mt-2">
+                        실제 사용자 접속 패턴과 유사
+                    </p>
+                </div>
+
+                <!-- Tip 2 -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border-l-4 border-green-500">
+                    <h3 class="text-lg font-bold text-green-800 mb-3">
+                        <span class="bg-green-200 text-green-800 rounded-full px-3 py-1 text-sm mr-2">Tip 2</span>
+                        Think Time 설정
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-3">
+                        사용자가 페이지 보는 시간 <strong>대기 시간 추가</strong>
+                    </p>
+                    <div class="code-result text-xs"><pre><span style="color: #7dd3fc">@Test</span>
+<span style="color: #fbbf24">public void</span> <span style="color: #ffffff">test</span>() {
+    request.GET(<span style="color: #86efac">"..."</span>)
+
+    <span style="color: #6b7280">// 3초 대기 (사용자가 결과 보는 시간)</span>
+    grinder.sleep(<span style="color: #fbbf24">3000</span>)
+
+    request.POST(<span style="color: #86efac">"..."</span>)
+}</pre>
+                    </div>
+                </div>
+
+                <!-- Tip 3 -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 border-l-4 border-purple-500">
+                    <h3 class="text-lg font-bold text-purple-800 mb-3">
+                        <span class="bg-purple-200 text-purple-800 rounded-full px-3 py-1 text-sm mr-2">Tip 3</span>
+                        Agent 여러 대 사용
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-3">
+                        더 큰 부하를 주고 싶다면 Agent 추가
+                    </p>
+                    <div class="bg-white rounded p-3 text-sm">
+                        <ul class="space-y-1 text-gray-700">
+                            <li>• Agent 1대: 최대 ~1000 Vuser</li>
+                            <li>• Agent 3대: 최대 ~3000 Vuser</li>
+                        </ul>
+                    </div>
+                    <div class="mt-2 text-xs text-purple-700">
+                        docker-compose.yml에서 agent 복제
+                    </div>
+                </div>
+
+                <!-- Tip 4 -->
+                <div class="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-lg p-6 border-l-4 border-orange-500">
+                    <h3 class="text-lg font-bold text-orange-800 mb-3">
+                        <span class="bg-orange-200 text-orange-800 rounded-full px-3 py-1 text-sm mr-2">Tip 4</span>
+                        리포트 저장
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-3">
+                        테스트 결과를 <strong>CSV/이미지로 다운로드</strong>
+                    </p>
+                    <div class="bg-white rounded p-3 text-sm">
+                        <ol class="space-y-1 text-gray-700">
+                            <li>1. Detailed Report 열기</li>
+                            <li>2. "Download CSV" 클릭</li>
+                            <li>3. 그래프 우클릭 → 이미지 저장</li>
+                            <li>4. PPT에 삽입</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. 발표 활용법 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-presentation text-indigo-600 mr-2"></i>
+                7. 발표에서 이렇게 활용하세요 🎤
+            </h2>
+
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg shadow-lg p-6">
+                <div class="mb-6">
+                    <h3 class="font-bold text-indigo-800 mb-3">✅ 완벽한 멘트 예시</h3>
+                    <div class="bg-white rounded-lg p-4 text-gray-700">
+                        <p class="mb-3">
+                            "저는 <strong>nGrinder로 성능 테스트</strong>를 진행했습니다."
+                        </p>
+                        <p class="mb-3">
+                            "100명이 동시 접속했을 때 처음에는 <strong class="text-red-600">TPS 50, 평균 응답시간 2초</strong>였습니다."
+                        </p>
+                        <p class="mb-3">
+                            "N+1 쿼리 문제를 발견하고 <strong class="text-blue-600">Fetch Join</strong>을 적용했더니..."
+                        </p>
+                        <p class="text-green-600 font-bold text-lg">
+                            "TPS 500, 평균 응답시간 150ms로 <strong>성능이 93% 개선</strong>되었습니다! 📊"
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg p-4">
+                    <h4 class="font-bold text-gray-800 mb-3">💼 면접에서 이렇게 말하세요</h4>
+                    <div class="space-y-2 text-sm text-gray-700">
+                        <div class="flex items-start">
+                            <div class="bg-purple-200 rounded px-2 py-1 text-purple-800 font-bold text-xs mr-2 flex-shrink-0">Q</div>
+                            <span class="font-semibold">"성능 테스트 해봤나요?"</span>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-green-200 rounded px-2 py-1 text-green-800 font-bold text-xs mr-2 flex-shrink-0">A</div>
+                            <span>"네, <strong>nGrinder로 100명 동시접속 시나리오</strong>를 테스트했고, <strong>병목 지점을 발견</strong>해서 개선했습니다. TPS는 500까지 나왔습니다."</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Step -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg shadow-xl p-8 text-center">
+                <div class="text-6xl mb-4">🎖️</div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                    Level 3 완료! 성능 테스트 마스터!
+                </h2>
+                <p class="text-gray-700 mb-6">
+                    이제 포트폴리오가 타 지원자와 완전히 차별화되었습니다!<br>
+                    더 나아가고 싶다면 <strong>JMeter + CI/CD</strong>도 도전해보세요!
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <a href="/qa-hands-on/jmeter"
+                       class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg transition shadow-lg">
+                        <span class="level-badge level-4 mr-2">Lv.4</span>
+                        JMeter + CI/CD 도전 →
+                    </a>
+                    <a href="/qa-hands-on/final"
+                       class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-lg transition shadow-lg">
+                        <i class="fas fa-trophy mr-2"></i>
+                        실전 종합 실습
+                    </a>
+                    <a href="/qa-hands-on/overview"
+                       class="bg-white hover:bg-gray-100 text-purple-600 font-bold py-3 px-8 rounded-lg transition shadow-lg border-2 border-purple-600">
+                        <i class="fas fa-home mr-2"></i>
+                        Overview
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
