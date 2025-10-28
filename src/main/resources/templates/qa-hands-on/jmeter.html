@@ -650,69 +650,53 @@ vars.put("randomPrice", String.valueOf(price));</code></pre>
     </div>
 
     <!-- Presentation Tips -->
-    <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg shadow-xl p-6 mb-8 text-white">
-        <h2 class="text-2xl font-bold mb-6 flex items-center">
-            <i class="fas fa-microphone-alt mr-3"></i>
-            발표 가이드: JMeter 리포트로 임팩트 주기
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center text-gray-800">
+            <i class="fas fa-presentation text-indigo-600 mr-3"></i>
+            발표 시 참고사항
         </h2>
 
-        <div class="bg-white bg-opacity-20 rounded-lg p-5 mb-4">
-            <h3 class="font-bold text-lg mb-3">📊 완벽한 발표 시나리오</h3>
-            <div class="space-y-3 text-sm">
-                <div class="bg-white bg-opacity-10 p-3 rounded">
-                    <p class="font-semibold mb-1">1️⃣ 문제 제기 (10초)</p>
-                    <p class="italic">"현재 주문 API가 동시에 100명이 접속하면 어떻게 될까요? 성능 테스트를 해봤습니다."</p>
+        <div class="bg-gray-50 rounded-lg p-5 mb-6">
+            <h3 class="font-semibold text-gray-900 mb-4">발표 구성 예시</h3>
+            <div class="space-y-3 text-sm text-gray-700">
+                <div class="border-l-4 border-indigo-400 pl-4 py-2">
+                    <p class="font-semibold mb-1 text-gray-800">1. 문제 인식</p>
+                    <p>현재 주문 API의 성능을 측정하기 위해 테스트를 진행했습니다.</p>
                 </div>
-                <div class="bg-white bg-opacity-10 p-3 rounded">
-                    <p class="font-semibold mb-1">2️⃣ Before 결과 공유 (20초)</p>
-                    <p class="italic">"N+1 문제가 있는 상태에서는 평균 응답 시간이 <strong>2초</strong>, TPS는 <strong>50</strong>에 불과했습니다.<br>
-                    (nGrinder 그래프 또는 JMeter HTML 리포트 보여주기)"</p>
+                <div class="border-l-4 border-indigo-400 pl-4 py-2">
+                    <p class="font-semibold mb-1 text-gray-800">2. Before 결과</p>
+                    <p>N+1 문제로 인해 평균 응답 시간 2초, TPS 50 수준이었습니다.</p>
                 </div>
-                <div class="bg-white bg-opacity-10 p-3 rounded">
-                    <p class="font-semibold mb-1">3️⃣ 해결 방법 (15초)</p>
-                    <p class="italic">"Fetch Join으로 쿼리를 1개로 줄였습니다. (코드 슬라이드)"</p>
+                <div class="border-l-4 border-indigo-400 pl-4 py-2">
+                    <p class="font-semibold mb-1 text-gray-800">3. 개선 방법</p>
+                    <p>Fetch Join을 적용하여 쿼리를 최적화했습니다.</p>
                 </div>
-                <div class="bg-white bg-opacity-10 p-3 rounded">
-                    <p class="font-semibold mb-1">4️⃣ After 결과 (20초)</p>
-                    <p class="italic">"개선 후 평균 응답 시간 <strong>150ms</strong>, TPS <strong>500</strong>으로 <strong>10배 향상</strong>되었습니다!<br>
-                    (JMeter HTML 대시보드 보여주기 - 이게 핵심!)"</p>
+                <div class="border-l-4 border-indigo-400 pl-4 py-2">
+                    <p class="font-semibold mb-1 text-gray-800">4. After 결과</p>
+                    <p>평균 응답 시간 150ms, TPS 500으로 개선되었습니다.</p>
                 </div>
-                <div class="bg-white bg-opacity-10 p-3 rounded">
-                    <p class="font-semibold mb-1">5️⃣ 마무리 (10초)</p>
-                    <p class="italic">"실제 대기업에서 사용하는 Apache JMeter로 검증했습니다."</p>
+                <div class="border-l-4 border-indigo-400 pl-4 py-2">
+                    <p class="font-semibold mb-1 text-gray-800">5. 도구 선정 이유</p>
+                    <p>JMeter HTML 대시보드를 통해 결과를 시각화했습니다.</p>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white bg-opacity-20 rounded-lg p-4">
-            <h3 class="font-bold mb-2 flex items-center">
-                <i class="fas fa-exclamation-triangle mr-2"></i>면접에서 자주 나오는 질문
-            </h3>
-            <div class="space-y-2 text-sm">
-                <details class="bg-white bg-opacity-10 p-3 rounded cursor-pointer">
-                    <summary class="font-semibold">Q1: JMeter와 nGrinder 차이가 뭔가요?</summary>
-                    <p class="mt-2 pl-4 border-l-2 border-white">
-                        A: nGrinder는 웹 기반이라 설치가 쉽고 한글 지원이 완벽합니다.
-                        JMeter는 GUI 기반이지만 플러그인 생태계가 방대하고 글로벌 표준이라 대기업에서 선호합니다.
-                        저는 빠른 테스트는 nGrinder, 정식 리포트는 JMeter HTML 대시보드를 사용합니다.
-                    </p>
-                </details>
-                <details class="bg-white bg-opacity-10 p-3 rounded cursor-pointer">
-                    <summary class="font-semibold">Q2: GUI 모드와 CLI 모드 차이는?</summary>
-                    <p class="mt-2 pl-4 border-l-2 border-white">
-                        A: GUI 모드는 테스트 시나리오를 만들 때 사용하고,
-                        실제 성능 테스트는 CLI 모드(-n 옵션)로 실행해야 정확합니다.
-                        GUI는 자체적으로 리소스를 많이 먹기 때문입니다.
-                    </p>
-                </details>
-                <details class="bg-white bg-opacity-10 p-3 rounded cursor-pointer">
-                    <summary class="font-semibold">Q3: TPS 목표치는 어떻게 정하나요?</summary>
-                    <p class="mt-2 pl-4 border-l-2 border-white">
-                        A: 비즈니스 요구사항에 따라 다릅니다.
-                        예를 들어 1초에 100명이 주문할 수 있어야 한다면 TPS 100이 목표입니다.
-                        이번 프로젝트에서는 TPS 500을 달성했고, 이는 초당 500건의 주문 처리가 가능하다는 의미입니다.
-                    </p>
-                </details>
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+            <h3 class="font-semibold text-blue-900 mb-3">예상 질문</h3>
+            <div class="space-y-3 text-sm text-blue-800">
+                <div>
+                    <p class="font-semibold mb-1">Q: JMeter와 nGrinder 차이는?</p>
+                    <p class="pl-4">A: nGrinder는 웹 기반으로 설치가 간편하고, JMeter는 플러그인 생태계가 풍부합니다. 프로젝트 특성에 따라 선택하여 사용합니다.</p>
+                </div>
+                <div>
+                    <p class="font-semibold mb-1">Q: GUI 모드와 CLI 모드 차이는?</p>
+                    <p class="pl-4">A: GUI 모드는 시나리오 작성용이고, CLI 모드는 실제 성능 테스트용입니다. GUI는 리소스를 많이 사용하기 때문입니다.</p>
+                </div>
+                <div>
+                    <p class="font-semibold mb-1">Q: TPS 목표치 설정 기준은?</p>
+                    <p class="pl-4">A: 비즈니스 요구사항에 따라 결정됩니다. 예를 들어 초당 100건의 주문 처리가 필요하다면 TPS 100을 목표로 설정합니다.</p>
+                </div>
             </div>
         </div>
     </div>

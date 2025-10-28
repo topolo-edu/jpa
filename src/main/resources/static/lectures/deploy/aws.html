@@ -140,15 +140,15 @@
             <h2 class="text-2xl font-bold text-slate-800 mb-6">단계별 가이드</h2>
             
             <div class="space-y-8">
-                <!-- AWS 이론 -->
+                <!-- Step 1: AWS 이론 -->
                 <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
                     <div class="flex items-start mb-4">
-                        <div class="step-number">1</div>
+                        <div class="step-number" style="background: #3b82f6;">1</div>
                         <div class="flex-1">
                             <h3 class="text-xl font-semibold text-slate-800 mb-2">AWS 이론</h3>
-                            <p class="text-slate-600 mb-4">클라우드 환경과 AWS 서비스 이해</p>
+                            <p class="text-slate-600 mb-4">클라우드 환경, IaaS/PaaS/SaaS, AWS 용어 정의, 과금 방식</p>
                             <div class="flex space-x-4">
-                                <a href="aws/aws-theory.html" class="inline-block bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition-colors">
+                                <a href="aws/aws-theory.html" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
                                     상세 가이드 →
                                 </a>
                             </div>
@@ -156,15 +156,15 @@
                     </div>
                 </div>
 
-                <!-- AWS 서버 셋팅 -->
+                <!-- Step 2: 회원가입 및 초기 설정 -->
                 <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
                     <div class="flex items-start mb-4">
-                        <div class="step-number">2</div>
+                        <div class="step-number" style="background: #22c55e;">2</div>
                         <div class="flex-1">
-                            <h3 class="text-xl font-semibold text-slate-800 mb-2">서버 셋팅</h3>
-                            <p class="text-slate-600 mb-4">EC2, RDS, VPC, 보안 그룹 설정</p>
+                            <h3 class="text-xl font-semibold text-slate-800 mb-2">회원가입 및 초기 설정</h3>
+                            <p class="text-slate-600 mb-4">AWS 계정 생성, IAM 사용자 생성, AWS CLI 설치 및 연결 테스트</p>
                             <div class="flex space-x-4">
-                                <a href="aws/step4-aws.html" class="inline-block bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition-colors">
+                                <a href="aws/step1-signup.html" class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
                                     상세 가이드 →
                                 </a>
                             </div>
@@ -172,13 +172,45 @@
                     </div>
                 </div>
 
-                <!-- CI/CD 배포 -->
+                <!-- Step 3: 서버 셋팅 -->
                 <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
                     <div class="flex items-start mb-4">
-                        <div class="step-number">3</div>
+                        <div class="step-number" style="background: #f97316;">3</div>
                         <div class="flex-1">
-                            <h3 class="text-xl font-semibold text-slate-800 mb-2">CI/CD 배포</h3>
-                            <p class="text-slate-600 mb-4">GitHub Actions를 활용한 자동 배포</p>
+                            <h3 class="text-xl font-semibold text-slate-800 mb-2">서버 셋팅 (EC2, RDS, S3)</h3>
+                            <p class="text-slate-600 mb-4">EC2 인스턴스 생성, RDS 데이터베이스 구축, S3 버킷 설정 및 연결</p>
+                            <div class="flex space-x-4">
+                                <a href="aws/step2-server-setup.html" class="inline-block bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition-colors">
+                                    상세 가이드 →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: 수동 배포 -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="step-number" style="background: #8b5cf6;">4</div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold text-slate-800 mb-2">수동 배포</h3>
+                            <p class="text-slate-600 mb-4">JAR 배포, Docker 배포, Docker Compose 배포</p>
+                            <div class="flex space-x-4">
+                                <a href="aws/step3-manual-deploy.html" class="inline-block bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+                                    상세 가이드 →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: CI/CD 자동 배포 -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="step-number" style="background: #ef4444;">5</div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold text-slate-800 mb-2">CI/CD 자동 배포</h3>
+                            <p class="text-slate-600 mb-4">GitHub Actions를 활용한 자동 빌드 및 배포</p>
                             <div class="flex space-x-4">
                                 <a href="aws/step5-cicd.html" class="inline-block bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors">
                                     상세 가이드 →

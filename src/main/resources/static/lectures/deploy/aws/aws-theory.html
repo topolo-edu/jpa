@@ -77,16 +77,16 @@
     <!-- Main Content -->
     <main class="max-w-6xl mx-auto px-6 py-8">
         
-        <!-- 클라우드 vs 로컬 -->
+        <!-- 온프레미스 vs 클라우드 -->
         <section class="mb-12">
-            <h2 class="text-3xl font-bold text-slate-800 mb-6">☁️ 클라우드 vs 로컬 환경</h2>
-            
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">☁️ 온프레미스 vs 클라우드 환경</h2>
+
             <div class="bg-blue-50 border-l-4 border-blue-400 p-6 rounded-lg mb-8">
                 <p class="text-blue-800 text-lg font-semibold mb-2">
                     💡 클라우드는 <strong>"인터넷을 통해 제공되는 컴퓨팅 서비스"</strong>입니다!
                 </p>
                 <p class="text-blue-700">
-                    로컬 PC의 리소스를 사용하는 대신, AWS의 서버를 빌려서 사용하는 개념입니다.
+                    자체 서버실이나 데이터센터에서 직접 운영하는 대신, AWS 같은 클라우드 제공자의 인프라를 빌려서 사용하는 개념입니다.
                 </p>
             </div>
 
@@ -94,58 +94,388 @@
                 <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
                     <div class="text-center mb-4">
                         <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-2xl">🏠</span>
+                            <span class="text-2xl">🏢</span>
                         </div>
-                        <h3 class="text-2xl font-semibold text-slate-800 mb-2">로컬 환경</h3>
-                        <p class="text-slate-600">개발자의 PC에서 실행</p>
+                        <h3 class="text-2xl font-semibold text-slate-800 mb-2">온프레미스 (On-Premise)</h3>
+                        <p class="text-slate-600">자체 서버실 또는 데이터센터 운영</p>
+                        <p class="text-sm text-slate-500 mt-2">💡 <em>Premise = 건물/부지, On-Premise = 회사 건물 내에 직접 설치</em></p>
                     </div>
-                    
+
                     <div class="space-y-3">
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 bg-blue-400 rounded-full mr-3"></span>
-                            <span class="text-slate-600">제한된 하드웨어 리소스</span>
+                        <div class="flex items-start">
+                            <span class="w-2 h-2 bg-blue-400 rounded-full mr-3 mt-2"></span>
+                            <span class="text-slate-600"><strong>초기 투자 비용 높음</strong>: 서버, 네트워크 장비 구매</span>
                         </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 bg-blue-400 rounded-full mr-3"></span>
-                            <span class="text-slate-600">개발 및 테스트 용도</span>
+                        <div class="flex items-start">
+                            <span class="w-2 h-2 bg-blue-400 rounded-full mr-3 mt-2"></span>
+                            <span class="text-slate-600"><strong>관리 인력 필요</strong>: 시스템 관리자, 네트워크 엔지니어</span>
                         </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 bg-blue-400 rounded-full mr-3"></span>
-                            <span class="text-slate-600">비용 없음 (하드웨어 구매 제외)</span>
+                        <div class="flex items-start">
+                            <span class="w-2 h-2 bg-blue-400 rounded-full mr-3 mt-2"></span>
+                            <span class="text-slate-600"><strong>확장 어려움</strong>: 하드웨어 증설에 시간/비용 소요</span>
                         </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 bg-blue-400 rounded-full mr-3"></span>
-                            <span class="text-slate-600">제한된 접근성</span>
+                        <div class="flex items-start">
+                            <span class="w-2 h-2 bg-blue-400 rounded-full mr-3 mt-2"></span>
+                            <span class="text-slate-600"><strong>완전한 제어권</strong>: 보안, 네트워크 완벽 통제</span>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="w-2 h-2 bg-blue-400 rounded-full mr-3 mt-2"></span>
+                            <span class="text-slate-600"><strong>장애 대응 책임</strong>: 모든 장애 직접 해결</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
                     <div class="text-center mb-4">
                         <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <span class="text-2xl">☁️</span>
                         </div>
-                        <h3 class="text-2xl font-semibold text-slate-800 mb-2">클라우드 환경</h3>
-                        <p class="text-slate-600">AWS 서버에서 실행</p>
+                        <h3 class="text-2xl font-semibold text-slate-800 mb-2">클라우드 (Cloud)</h3>
+                        <p class="text-slate-600">AWS, GCP, Azure 등의 인프라 임대</p>
                     </div>
-                    
+
                     <div class="space-y-3">
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 bg-orange-400 rounded-full mr-3"></span>
-                            <span class="text-slate-600">거의 무제한 리소스</span>
+                        <div class="flex items-start">
+                            <span class="w-2 h-2 bg-orange-400 rounded-full mr-3 mt-2"></span>
+                            <span class="text-slate-600"><strong>초기 비용 없음</strong>: 사용한 만큼만 지불</span>
                         </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 bg-orange-400 rounded-full mr-3"></span>
-                            <span class="text-slate-600">프로덕션 배포</span>
+                        <div class="flex items-start">
+                            <span class="w-2 h-2 bg-orange-400 rounded-full mr-3 mt-2"></span>
+                            <span class="text-slate-600"><strong>관리 부담 감소</strong>: 인프라 관리는 클라우드 제공자가 담당</span>
                         </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 bg-orange-400 rounded-full mr-3"></span>
-                            <span class="text-slate-600">사용한 만큼 비용 지불</span>
+                        <div class="flex items-start">
+                            <span class="w-2 h-2 bg-orange-400 rounded-full mr-3 mt-2"></span>
+                            <span class="text-slate-600"><strong>빠른 확장</strong>: 클릭 몇 번으로 서버 증설</span>
                         </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 bg-orange-400 rounded-full mr-3"></span>
-                            <span class="text-slate-600">전 세계 어디서나 접근</span>
+                        <div class="flex items-start">
+                            <span class="w-2 h-2 bg-orange-400 rounded-full mr-3 mt-2"></span>
+                            <span class="text-slate-600"><strong>전 세계 배포</strong>: 여러 리전에 쉽게 배포 가능</span>
                         </div>
+                        <div class="flex items-start">
+                            <span class="w-2 h-2 bg-orange-400 rounded-full mr-3 mt-2"></span>
+                            <span class="text-slate-600"><strong>고가용성</strong>: 자동 백업, 장애 복구 지원</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 비교 표 추가 -->
+            <div class="mt-8 bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                <h3 class="text-xl font-semibold text-slate-800 mb-4">상세 비교</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm comparison-table">
+                        <thead>
+                            <tr>
+                                <th class="text-left py-4 px-6">구분</th>
+                                <th class="text-left py-4 px-6">온프레미스</th>
+                                <th class="text-left py-4 px-6">클라우드</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-600">
+                            <tr>
+                                <td class="py-4 px-6 font-medium">초기 비용</td>
+                                <td class="py-4 px-6">높음 (수천만원~수억원)</td>
+                                <td class="py-4 px-6">없음 (종량제)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-medium">운영 비용</td>
+                                <td class="py-4 px-6">인건비, 전기세, 유지보수</td>
+                                <td class="py-4 px-6">사용량 기반 요금</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-medium">확장성</td>
+                                <td class="py-4 px-6">느림 (장비 구매 및 설치)</td>
+                                <td class="py-4 px-6">빠름 (즉시 확장)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-medium">관리 책임</td>
+                                <td class="py-4 px-6">전체 (하드웨어~애플리케이션)</td>
+                                <td class="py-4 px-6">애플리케이션만</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-medium">장애 대응</td>
+                                <td class="py-4 px-6">직접 해결 (24시간 대기)</td>
+                                <td class="py-4 px-6">자동 복구 지원</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-medium">보안 통제</td>
+                                <td class="py-4 px-6">완전한 통제</td>
+                                <td class="py-4 px-6">일부 제한 (공유 책임 모델)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-medium">적합한 경우</td>
+                                <td class="py-4 px-6">규제 산업, 민감한 데이터</td>
+                                <td class="py-4 px-6">스타트업, 빠른 성장 기업</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 클라우드 서비스 제공 형태 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">☁️ 클라우드 서비스 제공 형태 (IaaS, PaaS, SaaS)</h2>
+
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-6 rounded-lg mb-8">
+                <p class="text-blue-800 text-lg font-semibold mb-2">
+                    💡 클라우드는 제공 방식에 따라 3가지로 구분됩니다
+                </p>
+                <p class="text-blue-700">
+                    개발자 입장에서 <strong>"내가 직접 해야 하는 일"</strong>이 얼마나 많은지에 따라 IaaS, PaaS, SaaS로 나뉩니다.
+                </p>
+            </div>
+
+            <!-- 3가지 서비스 형태 카드 -->
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <!-- IaaS -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-2 border-orange-300">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-3xl">🏗️</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-orange-700 mb-1">IaaS</h3>
+                        <p class="text-sm text-slate-500">Infrastructure as a Service</p>
+                        <p class="text-xs text-slate-600 mt-2 font-semibold">인프라를 서비스로</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-slate-700 mb-2">📋 정의</h4>
+                        <p class="text-sm text-slate-600">가상 서버, 스토리지, 네트워크만 제공. <strong>OS부터 애플리케이션까지 모두 직접 설치/관리</strong></p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-slate-700 mb-2">👨‍💻 개발자가 해야 할 일</h4>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>✅ OS 선택 및 설정 (Ubuntu, Amazon Linux 등)</li>
+                            <li>✅ Java, Node.js 등 런타임 설치</li>
+                            <li>✅ 웹 서버(Nginx) 설치/설정</li>
+                            <li>✅ 데이터베이스 설치/설정</li>
+                            <li>✅ 보안 설정 (방화벽, 인증서)</li>
+                            <li>✅ 배포 스크립트 작성</li>
+                            <li>✅ 서버 모니터링 및 유지보수</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-orange-50 p-3 rounded text-sm">
+                        <strong class="text-orange-700">대표 서비스:</strong>
+                        <p class="text-slate-600 mt-1">AWS EC2, Google Compute Engine, Azure VM</p>
+                    </div>
+                </div>
+
+                <!-- PaaS -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-2 border-blue-300">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-3xl">🚀</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-blue-700 mb-1">PaaS</h3>
+                        <p class="text-sm text-slate-500">Platform as a Service</p>
+                        <p class="text-xs text-slate-600 mt-2 font-semibold">플랫폼을 서비스로</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-slate-700 mb-2">📋 정의</h4>
+                        <p class="text-sm text-slate-600">개발/실행 환경까지 제공. <strong>코드만 작성해서 올리면 자동으로 배포</strong>됩니다.</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-slate-700 mb-2">👨‍💻 개발자가 해야 할 일</h4>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>✅ 코드 작성</li>
+                            <li>✅ 의존성 명시 (package.json, pom.xml)</li>
+                            <li>✅ Git push 또는 파일 업로드</li>
+                            <li>❌ <del>서버 설정</del> (플랫폼이 자동 처리)</li>
+                            <li>❌ <del>런타임 설치</del> (플랫폼이 자동 처리)</li>
+                            <li>❌ <del>배포 스크립트</del> (플랫폼이 자동 처리)</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-blue-50 p-3 rounded text-sm">
+                        <strong class="text-blue-700">대표 서비스:</strong>
+                        <p class="text-slate-600 mt-1">Vercel, Heroku, AWS Elastic Beanstalk, Railway, Render</p>
+                    </div>
+                </div>
+
+                <!-- SaaS -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-2 border-green-300">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-3xl">📱</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-green-700 mb-1">SaaS</h3>
+                        <p class="text-sm text-slate-500">Software as a Service</p>
+                        <p class="text-xs text-slate-600 mt-2 font-semibold">소프트웨어를 서비스로</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-slate-700 mb-2">📋 정의</h4>
+                        <p class="text-sm text-slate-600">완성된 소프트웨어를 바로 사용. <strong>개발 없이 웹/앱으로 접속해서 즉시 사용</strong></p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-slate-700 mb-2">👨‍💻 개발자/사용자가 해야 할 일</h4>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>✅ 회원가입/로그인</li>
+                            <li>✅ 서비스 사용 (클릭, 입력)</li>
+                            <li>✅ 필요시 설정 변경</li>
+                            <li>❌ <del>개발</del> (이미 완성됨)</li>
+                            <li>❌ <del>서버 관리</del> (제공자가 관리)</li>
+                            <li>❌ <del>배포</del> (제공자가 관리)</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-green-50 p-3 rounded text-sm">
+                        <strong class="text-green-700">대표 서비스:</strong>
+                        <p class="text-slate-600 mt-1">Google Workspace, Slack, Notion, Figma, Dropbox</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 관리 범위 비교 테이블 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border border-slate-200 mb-8">
+                <div class="bg-gradient-to-r from-slate-700 to-slate-600 p-4">
+                    <h3 class="text-xl font-bold text-white text-center">📊 누가 무엇을 관리하는가?</h3>
+                </div>
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="text-left py-4 px-6 font-semibold">관리 항목</th>
+                            <th class="text-center py-4 px-4 font-semibold">온프레미스</th>
+                            <th class="text-center py-4 px-4 font-semibold bg-orange-50">IaaS</th>
+                            <th class="text-center py-4 px-4 font-semibold bg-blue-50">PaaS</th>
+                            <th class="text-center py-4 px-4 font-semibold bg-green-50">SaaS</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-600">
+                        <tr>
+                            <td class="py-3 px-6 font-medium">애플리케이션</td>
+                            <td class="py-3 px-4 text-center bg-red-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-orange-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-blue-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-green-50">☁️ 제공</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-6 font-medium">데이터</td>
+                            <td class="py-3 px-4 text-center bg-red-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-orange-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-blue-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-green-50">☁️ 제공</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-6 font-medium">런타임 (Java, Node.js)</td>
+                            <td class="py-3 px-4 text-center bg-red-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-orange-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-blue-50">☁️ 제공</td>
+                            <td class="py-3 px-4 text-center bg-green-50">☁️ 제공</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-6 font-medium">미들웨어 (웹서버, DB)</td>
+                            <td class="py-3 px-4 text-center bg-red-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-orange-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-blue-50">☁️ 제공</td>
+                            <td class="py-3 px-4 text-center bg-green-50">☁️ 제공</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-6 font-medium">운영체제 (OS)</td>
+                            <td class="py-3 px-4 text-center bg-red-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-orange-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-blue-50">☁️ 제공</td>
+                            <td class="py-3 px-4 text-center bg-green-50">☁️ 제공</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-6 font-medium">가상화</td>
+                            <td class="py-3 px-4 text-center bg-red-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-orange-50">☁️ 제공</td>
+                            <td class="py-3 px-4 text-center bg-blue-50">☁️ 제공</td>
+                            <td class="py-3 px-4 text-center bg-green-50">☁️ 제공</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-6 font-medium">서버 (하드웨어)</td>
+                            <td class="py-3 px-4 text-center bg-red-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-orange-50">☁️ 제공</td>
+                            <td class="py-3 px-4 text-center bg-blue-50">☁️ 제공</td>
+                            <td class="py-3 px-4 text-center bg-green-50">☁️ 제공</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-6 font-medium">스토리지</td>
+                            <td class="py-3 px-4 text-center bg-red-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-orange-50">☁️ 제공</td>
+                            <td class="py-3 px-4 text-center bg-blue-50">☁️ 제공</td>
+                            <td class="py-3 px-4 text-center bg-green-50">☁️ 제공</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-6 font-medium">네트워크</td>
+                            <td class="py-3 px-4 text-center bg-red-50">👨‍💻 직접</td>
+                            <td class="py-3 px-4 text-center bg-orange-50">☁️ 제공</td>
+                            <td class="py-3 px-4 text-center bg-blue-50">☁️ 제공</td>
+                            <td class="py-3 px-4 text-center bg-green-50">☁️ 제공</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 이 강의에서는 -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg shadow-md p-6 border-2 border-orange-300">
+                    <h3 class="text-xl font-bold text-orange-800 mb-4 flex items-center">
+                        <span class="text-2xl mr-2">🎓</span> 이 강의에서 사용하는 방식
+                    </h3>
+                    <div class="space-y-3">
+                        <p class="text-slate-700"><strong class="text-orange-700">IaaS (AWS EC2)</strong>를 사용합니다!</p>
+                        <div class="bg-white p-4 rounded-lg">
+                            <p class="text-sm font-semibold text-slate-700 mb-2">왜 IaaS를 배우나요?</p>
+                            <ul class="text-sm text-slate-600 space-y-1">
+                                <li>✅ 서버 구축부터 배포까지 <strong>전체 흐름</strong>을 이해</li>
+                                <li>✅ OS, 네트워크, 보안 등 <strong>인프라 개념</strong> 학습</li>
+                                <li>✅ PaaS/SaaS를 쓰더라도 문제 발생 시 <strong>근본 원인 파악</strong> 가능</li>
+                                <li>✅ 실무에서 레거시 시스템 유지보수에 필요</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-md p-6 border-2 border-blue-300">
+                    <h3 class="text-xl font-bold text-blue-800 mb-4 flex items-center">
+                        <span class="text-2xl mr-2">📈</span> 최근 트렌드
+                    </h3>
+                    <div class="space-y-3">
+                        <p class="text-slate-700">요즘은 <strong class="text-blue-700">PaaS</strong>가 대세!</p>
+                        <div class="bg-white p-4 rounded-lg">
+                            <p class="text-sm font-semibold text-slate-700 mb-2">PaaS가 인기 있는 이유</p>
+                            <ul class="text-sm text-slate-600 space-y-1">
+                                <li>✅ 코드만 push하면 자동 배포 (git push → 배포 완료)</li>
+                                <li>✅ 서버 설정/관리 불필요 → <strong>개발에만 집중</strong></li>
+                                <li>✅ 자동 스케일링 (트래픽 증가 시 자동 확장)</li>
+                                <li>✅ 무료/저렴한 시작 비용 (Vercel, Railway 등)</li>
+                            </ul>
+                        </div>
+                        <div class="bg-blue-600 text-white p-3 rounded text-sm">
+                            <strong>💡 실무 팁:</strong> 빠른 프로토타입은 PaaS, 복잡한 커스터마이징이나 대규모 시스템은 IaaS + 일부 PaaS 혼합 사용
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PaaS 대표 예시 -->
+            <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">🚀 요즘 인기 있는 PaaS 서비스들</h3>
+                <div class="grid md:grid-cols-4 gap-4 text-sm">
+                    <div class="border border-slate-200 rounded-lg p-4">
+                        <p class="font-semibold text-slate-700 mb-1">Vercel</p>
+                        <p class="text-xs text-slate-500">Next.js 특화, 프론트엔드 배포 1위</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-4">
+                        <p class="font-semibold text-slate-700 mb-1">Railway</p>
+                        <p class="text-xs text-slate-500">백엔드 배포, DB 포함, 간단한 UI</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-4">
+                        <p class="font-semibold text-slate-700 mb-1">Render</p>
+                        <p class="text-xs text-slate-500">무료 플랜, Docker 지원</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-4">
+                        <p class="font-semibold text-slate-700 mb-1">Supabase</p>
+                        <p class="text-xs text-slate-500">Firebase 대체, DB+인증+스토리지</p>
                     </div>
                 </div>
             </div>
@@ -153,7 +483,7 @@
 
         <!-- AWS 서비스 비교 -->
         <section class="mb-12">
-            <h2 class="text-3xl font-bold text-slate-800 mb-6">🔍 AWS 서비스 vs 로컬 대응</h2>
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">🔍 AWS 서비스와 로컬 환경 비교</h2>
             
             <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200 mb-6">
                 <div class="overflow-x-auto">
@@ -200,6 +530,309 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </section>
+
+        <!-- AWS 용어 정의 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">📖 AWS 용어 정의</h2>
+
+            <div class="bg-gradient-to-r from-slate-50 to-blue-50 rounded-lg p-6 mb-8 border border-slate-200">
+                <div class="grid md:grid-cols-2 gap-x-8 gap-y-2 text-sm text-slate-700">
+                    <p>💡 <strong>Elastic (엘라스틱)</strong> = 탄력적인, 늘었다 줄었다 할 수 있는</p>
+                    <p>💡 <strong>Instance (인스턴스)</strong> = 실행 중인 가상 서버/DB 하나</p>
+                    <p>💡 <strong>Provisioning (프로비저닝)</strong> = 리소스를 준비하고 할당하는 과정</p>
+                    <p>💡 <strong>Endpoint (엔드포인트)</strong> = 접속 주소/URL</p>
+                    <p>💡 <strong>Snapshot (스냅샷)</strong> = 특정 시점의 데이터 백업</p>
+                    <p>💡 <strong>Throttling (쓰로틀링)</strong> = API 호출 횟수 제한</p>
+                    <p>💡 <strong>Region (리전)</strong> = AWS 데이터센터 위치 (서울, 도쿄 등)</p>
+                    <p>💡 <strong>Availability Zone (AZ)</strong> = 리전 내 독립된 데이터센터</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- EC2 -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                            <span class="text-2xl">🖥️</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">EC2</h3>
+                            <p class="text-sm text-slate-500">Elastic Compute Cloud</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-3">가상 서버(Virtual Machine)를 제공하는 서비스. 리눅스나 윈도우가 설치된 컴퓨터를 빌려서 사용하는 개념입니다.</p>
+                    <div class="bg-gray-50 p-3 rounded text-sm text-slate-600">
+                        <strong>예시:</strong> Ubuntu 20.04가 설치된 t2.micro 인스턴스
+                    </div>
+                </div>
+
+                <!-- RDS -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                            <span class="text-2xl">🗄️</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">RDS</h3>
+                            <p class="text-sm text-slate-500">Relational Database Service</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-3">관계형 데이터베이스를 쉽게 관리할 수 있는 서비스. MySQL, MariaDB, PostgreSQL 등을 자동으로 백업하고 관리해줍니다.</p>
+                    <div class="bg-gray-50 p-3 rounded text-sm text-slate-600">
+                        <strong>예시:</strong> MariaDB 10.6.8 인스턴스 (자동 백업 포함)
+                    </div>
+                </div>
+
+                <!-- S3 -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                            <span class="text-2xl">📁</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">S3</h3>
+                            <p class="text-sm text-slate-500">Simple Storage Service</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-3">무제한 파일 저장소. 이미지, 동영상, 문서 등을 인터넷을 통해 저장하고 불러올 수 있습니다.</p>
+                    <div class="bg-gray-50 p-3 rounded text-sm text-slate-600">
+                        <strong>예시:</strong> 버킷(jpa-app-files)에 이미지 업로드
+                    </div>
+                </div>
+
+                <!-- VPC -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                            <span class="text-2xl">🌐</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">VPC</h3>
+                            <p class="text-sm text-slate-500">Virtual Private Cloud</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-3">가상 네트워크 환경. 마치 회사의 사설 네트워크처럼 AWS 내에서 격리된 네트워크를 만들 수 있습니다.</p>
+                    <div class="bg-gray-50 p-3 rounded text-sm text-slate-600">
+                        <strong>예시:</strong> 10.0.0.0/16 IP 대역으로 네트워크 생성
+                    </div>
+                </div>
+
+                <!-- AMI -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mr-4">
+                            <span class="text-2xl">💿</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">AMI</h3>
+                            <p class="text-sm text-slate-500">Amazon Machine Image</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-3">EC2 인스턴스를 만들 때 사용하는 운영체제 템플릿. 윈도우 설치 CD와 비슷한 개념입니다.</p>
+                    <div class="bg-gray-50 p-3 rounded text-sm text-slate-600">
+                        <strong>예시:</strong> Ubuntu 20.04 LTS AMI
+                    </div>
+                </div>
+
+                <!-- 보안 그룹 -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                            <span class="text-2xl">🔒</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">보안 그룹</h3>
+                            <p class="text-sm text-slate-500">Security Group</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-3">인스턴스의 방화벽 역할. 어떤 포트(22, 80, 443 등)를 열고 닫을지 설정합니다.</p>
+                    <div class="bg-gray-50 p-3 rounded text-sm text-slate-600">
+                        <strong>예시:</strong> SSH(22), HTTP(80), HTTPS(443) 포트 허용
+                    </div>
+                </div>
+
+                <!-- IAM -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mr-4">
+                            <span class="text-2xl">👤</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">IAM</h3>
+                            <p class="text-sm text-slate-500">Identity and Access Management</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-3">AWS 계정 및 권한 관리 서비스. 사용자를 만들고, 어떤 AWS 서비스에 접근할 수 있는지 제어합니다.</p>
+                    <div class="bg-gray-50 p-3 rounded text-sm text-slate-600">
+                        <strong>예시:</strong> "jpa-developer" 사용자 생성, EC2 전체 권한 부여
+                    </div>
+                </div>
+
+                <!-- 키 페어 -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center mr-4">
+                            <span class="text-2xl">🔑</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">키 페어</h3>
+                            <p class="text-sm text-slate-500">Key Pair</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-3">EC2 인스턴스에 SSH로 접속하기 위한 암호화 키. .pem 파일 형태로 다운로드되며, 비밀번호 대신 사용합니다.</p>
+                    <div class="bg-gray-50 p-3 rounded text-sm text-slate-600">
+                        <strong>예시:</strong> jpa-keypair.pem 파일로 EC2 접속
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 과금 방식 -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">📊 AWS 과금 방식</h2>
+
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-6 rounded-lg mb-8">
+                <p class="text-blue-800 text-lg font-semibold mb-2">
+                    💡 AWS는 다양한 과금 방식을 제공합니다
+                </p>
+                <p class="text-blue-700">
+                    사용 패턴과 예산에 따라 적절한 방식을 선택하면 비용을 크게 절감할 수 있습니다.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <!-- 온디맨드 -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                            <span class="text-2xl">💳</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">온디맨드</h3>
+                            <p class="text-sm text-slate-500">On-Demand</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-3">필요할 때 즉시 사용하고, 사용한 만큼만 비용을 지불하는 방식입니다. 장기 약정 없이 <strong>초 단위</strong>로 과금됩니다.</p>
+                    <div class="bg-gray-50 p-3 rounded text-sm text-slate-600 mb-3">
+                        <strong>특징:</strong>
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li>약정 없음, 언제든 시작/중단 가능</li>
+                            <li>초 단위 과금 (최소 60초)</li>
+                            <li>가장 유연하지만 비용은 가장 높음</li>
+                        </ul>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded text-sm text-blue-700">
+                        <strong>💡 어원:</strong> On-Demand = "요구가 있을 때", "필요할 때 즉시"
+                    </div>
+                </div>
+
+                <!-- 예약 인스턴스 -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                            <span class="text-2xl">📅</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">예약 인스턴스</h3>
+                            <p class="text-sm text-slate-500">Reserved Instance (RI)</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-3">1년 또는 3년 장기 약정으로 인스턴스를 예약하면 온디맨드 대비 <strong>최대 75% 할인</strong>을 받을 수 있습니다.</p>
+                    <div class="bg-gray-50 p-3 rounded text-sm text-slate-600">
+                        <strong>특징:</strong>
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li>1년/3년 약정 (3년이 할인율 더 높음)</li>
+                            <li>온디맨드 대비 최대 75% 할인</li>
+                            <li>안정적인 서비스에 적합</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 스팟 인스턴스 -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                            <span class="text-2xl">🎯</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">스팟 인스턴스</h3>
+                            <p class="text-sm text-slate-500">Spot Instance</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-3">AWS의 남는 EC2 용량을 경매 방식으로 사용하는 방식입니다. <strong>최대 90% 할인</strong>이지만 언제든 중단될 수 있습니다.</p>
+                    <div class="bg-gray-50 p-3 rounded text-sm text-slate-600">
+                        <strong>특징:</strong>
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li>온디맨드 대비 최대 90% 할인</li>
+                            <li>AWS가 용량이 필요하면 2분 전 통보 후 중단</li>
+                            <li>배치 작업, 데이터 분석 등에 적합</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 프리티어 -->
+                <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                    <div class="flex items-start mb-4">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                            <span class="text-2xl">🎁</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">프리티어</h3>
+                            <p class="text-sm text-slate-500">Free Tier</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-3">AWS 계정 생성 후 <strong>12개월간</strong> 일정량을 무료로 사용할 수 있는 혜택입니다. 이 강의에서 활용합니다!</p>
+                    <div class="bg-gray-50 p-3 rounded text-sm text-slate-600">
+                        <strong>주요 무료 항목:</strong>
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li>EC2 t2.micro: 월 750시간</li>
+                            <li>RDS db.t3.micro: 월 750시간</li>
+                            <li>S3: 5GB 스토리지</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 비교 테이블 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border border-slate-200">
+                <table class="w-full text-sm comparison-table">
+                    <thead>
+                        <tr>
+                            <th class="text-left py-4 px-6">과금 방식</th>
+                            <th class="text-left py-4 px-6">할인율</th>
+                            <th class="text-left py-4 px-6">약정</th>
+                            <th class="text-left py-4 px-6">적합한 경우</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-600">
+                        <tr>
+                            <td class="py-4 px-6 font-medium">온디맨드</td>
+                            <td class="py-4 px-6">없음 (정가)</td>
+                            <td class="py-4 px-6">없음</td>
+                            <td class="py-4 px-6">테스트, 단기 사용, 예측 불가능한 워크로드</td>
+                        </tr>
+                        <tr>
+                            <td class="py-4 px-6 font-medium">예약 인스턴스</td>
+                            <td class="py-4 px-6">최대 75%</td>
+                            <td class="py-4 px-6">1년 또는 3년</td>
+                            <td class="py-4 px-6">안정적이고 예측 가능한 서비스 (운영 DB, 웹 서버)</td>
+                        </tr>
+                        <tr>
+                            <td class="py-4 px-6 font-medium">스팟 인스턴스</td>
+                            <td class="py-4 px-6">최대 90%</td>
+                            <td class="py-4 px-6">없음</td>
+                            <td class="py-4 px-6">중단 가능한 작업 (배치, 빅데이터 분석)</td>
+                        </tr>
+                        <tr>
+                            <td class="py-4 px-6 font-medium">프리티어</td>
+                            <td class="py-4 px-6">100% (무료)</td>
+                            <td class="py-4 px-6">12개월 제한</td>
+                            <td class="py-4 px-6">학습, 실습, 개인 프로젝트</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
 
@@ -740,33 +1373,154 @@ public class FileController {
             </div>
         </section>
 
-        <!-- 비용 최적화 -->
+        <!-- 실습 전략 -->
         <section class="mb-12">
-            <h2 class="text-3xl font-bold text-slate-800 mb-6">💰 비용 최적화 전략</h2>
-            
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">🎓 실습 전략</h2>
+
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-6 rounded-lg mb-8">
+                <p class="text-blue-800 text-lg font-semibold mb-2">
+                    이 강의에서는 EC2, RDS, S3 프리티어를 활용하여 실습합니다.
+                </p>
+                <p class="text-blue-700">
+                    실제 운영 환경을 경험하면서도 프리티어 한도 내에서 비용을 최소화할 수 있습니다.
+                </p>
+            </div>
+
             <div class="grid md:grid-cols-2 gap-6">
-                <div class="bg-green-50 border border-green-200 rounded-lg p-6">
-                    <h3 class="text-xl font-semibold text-green-800 mb-4">💡 비용 절약 방법</h3>
-                    <ul class="text-green-700 space-y-2">
-                        <li>• <strong>t2.micro</strong> 인스턴스 사용 (프리티어)</li>
-                        <li>• <strong>RDS</strong> 대신 EC2에 MariaDB 설치</li>
-                        <li>• <strong>S3</strong> 대신 EC2에 MinIO 설치</li>
-                        <li>• <strong>ALB</strong> 대신 Nginx 사용</li>
-                        <li>• <strong>스팟 인스턴스</strong> 활용</li>
-                        <li>• <strong>Auto Scaling</strong>으로 필요시에만 확장</li>
-                    </ul>
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-400">
+                    <h3 class="text-xl font-semibold text-slate-800 mb-4">✅ 이 강의에서 사용하는 서비스</h3>
+
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                <span class="text-xl">🖥️</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-700">EC2 (t2.micro)</h4>
+                                <p class="text-sm text-slate-600">프리티어: 월 750시간 무료</p>
+                                <p class="text-xs text-green-600 mt-1">애플리케이션 서버로 사용</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                <span class="text-xl">🗄️</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-700">RDS (db.t3.micro)</h4>
+                                <p class="text-sm text-slate-600">프리티어: 월 750시간 무료</p>
+                                <p class="text-xs text-green-600 mt-1">MariaDB 데이터베이스</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                <span class="text-xl">📁</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-700">S3</h4>
+                                <p class="text-sm text-slate-600">프리티어: 5GB 저장 무료</p>
+                                <p class="text-xs text-green-600 mt-1">이미지 및 파일 저장소</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                <span class="text-xl">🌐</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-700">VPC</h4>
+                                <p class="text-sm text-slate-600">완전 무료</p>
+                                <p class="text-xs text-green-600 mt-1">네트워크 격리</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <h3 class="text-xl font-semibold text-blue-800 mb-4">🎯 실무 권장사항</h3>
-                    <ul class="text-blue-700 space-y-2">
-                        <li>• <strong>RDS</strong> 사용 (백업, 모니터링)</li>
-                        <li>• <strong>S3</strong> 사용 (확장성, 내구성)</li>
-                        <li>• <strong>ALB</strong> 사용 (고가용성)</li>
-                        <li>• <strong>CloudWatch</strong> 모니터링</li>
-                        <li>• <strong>Multi-AZ</strong> 구성</li>
-                        <li>• <strong>IAM</strong> 보안 정책</li>
-                    </ul>
+
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-400">
+                    <h3 class="text-xl font-semibold text-slate-800 mb-4">📚 실습의 이점</h3>
+
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-blue-300 pl-4 py-2">
+                            <h4 class="font-semibold text-slate-700 mb-1">실제 운영 환경 경험</h4>
+                            <p class="text-sm text-slate-600">EC2에 직접 배포하고 RDS를 연결하면서 실무와 동일한 아키텍처를 구축합니다.</p>
+                        </div>
+
+                        <div class="border-l-4 border-blue-300 pl-4 py-2">
+                            <h4 class="font-semibold text-slate-700 mb-1">관리형 서비스 이해</h4>
+                            <p class="text-sm text-slate-600">RDS의 자동 백업, S3의 고가용성 등 클라우드의 핵심 기능을 직접 체험합니다.</p>
+                        </div>
+
+                        <div class="border-l-4 border-blue-300 pl-4 py-2">
+                            <h4 class="font-semibold text-slate-700 mb-1">확장 가능한 구조</h4>
+                            <p class="text-sm text-slate-600">프리티어로 시작하지만, 필요시 인스턴스 타입만 변경하면 바로 확장 가능한 구조입니다.</p>
+                        </div>
+
+                        <div class="border-l-4 border-blue-300 pl-4 py-2">
+                            <h4 class="font-semibold text-slate-700 mb-1">포트폴리오에 활용</h4>
+                            <p class="text-sm text-slate-600">AWS를 활용한 실제 배포 경험을 면접에서 어필할 수 있습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 주의사항 -->
+            <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-yellow-800 mb-3">⚠️ 프리티어 주의사항</h3>
+                <ul class="text-yellow-700 space-y-2">
+                    <li>• <strong>프리티어 기간:</strong> AWS 계정 생성 후 <strong>12개월</strong>간 무료 사용 가능</li>
+                    <li>• <strong>사용 시간 제한:</strong> EC2와 RDS는 각각 월 750시간까지 무료 (1개 인스턴스 24시간 가동 = 약 720시간)</li>
+                    <li>• <strong>인스턴스 타입:</strong> EC2는 <strong>t2.micro</strong>, RDS는 <strong>db.t3.micro</strong>만 프리티어 대상</li>
+                    <li>• <strong>실습 후 종료:</strong> 실습이 끝나면 인스턴스를 <strong>반드시 중지 또는 삭제</strong>하여 과금 방지</li>
+                    <li>• <strong>비용 알림 설정:</strong> AWS Budgets에서 비용 알림을 설정하면 예상치 못한 과금을 방지할 수 있습니다</li>
+                </ul>
+            </div>
+
+            <!-- 비교: 실습 vs 실무 -->
+            <div class="mt-6 bg-white rounded-lg shadow-md p-6 border border-slate-200">
+                <h3 class="text-xl font-semibold text-slate-800 mb-4">🔍 실습 환경 vs 실무 환경</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm comparison-table">
+                        <thead>
+                            <tr>
+                                <th class="text-left py-4 px-6">구성 요소</th>
+                                <th class="text-left py-4 px-6">이 강의 (실습)</th>
+                                <th class="text-left py-4 px-6">실무 환경</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-600">
+                            <tr>
+                                <td class="py-4 px-6 font-medium">EC2</td>
+                                <td class="py-4 px-6">t2.micro (1개)</td>
+                                <td class="py-4 px-6">t3.medium 이상 (여러 개 + Auto Scaling)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-medium">RDS</td>
+                                <td class="py-4 px-6">db.t3.micro (Single-AZ)</td>
+                                <td class="py-4 px-6">db.t3.medium 이상 (Multi-AZ)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-medium">S3</td>
+                                <td class="py-4 px-6">5GB 이하 사용</td>
+                                <td class="py-4 px-6">필요한 만큼 무제한 사용</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-medium">로드 밸런서</td>
+                                <td class="py-4 px-6">미사용 (단일 EC2)</td>
+                                <td class="py-4 px-6">ALB 사용 (고가용성)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-medium">도메인</td>
+                                <td class="py-4 px-6">선택사항 (IP 주소로 접근)</td>
+                                <td class="py-4 px-6">Route 53 + 도메인 필수</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 px-6 font-medium">모니터링</td>
+                                <td class="py-4 px-6">기본 CloudWatch</td>
+                                <td class="py-4 px-6">CloudWatch + 알림 + 로그 분석</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>

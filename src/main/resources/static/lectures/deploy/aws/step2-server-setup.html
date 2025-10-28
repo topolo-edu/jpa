@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS 서버 셋팅</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <style>
+        .code-block {
+            background: #1e293b;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        .step-number {
+            background: #3b82f6;
+            color: white;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .image-placeholder {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px dashed #4c51bf;
+            border-radius: 0.5rem;
+            padding: 3rem;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50">
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
+        <!-- 헤더 -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h1 class="text-4xl font-bold text-slate-800 mb-4">🖥️ AWS 서버 셋팅</h1>
+            <p class="text-slate-600 text-lg">EC2, RDS, S3를 생성하고 서로 연결하여 실습 환경을 구축합니다.</p>
+        </div>
+
+        <!-- 개요 -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-orange-500 to-red-600 rounded-lg shadow-lg p-6 text-white mb-6">
+                <h2 class="text-2xl font-bold mb-4">📋 이 단계에서 할 일</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <h3 class="font-bold mb-2">🖥️ EC2 (가상 서버)</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>• Ubuntu 기반 t2.micro 생성</li>
+                            <li>• 키페어: goormjpa.pem 발급</li>
+                            <li>• SSH 접속 테스트</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <h3 class="font-bold mb-2">🗄️ RDS (데이터베이스)</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>• MariaDB 생성 (EC2 연결)</li>
+                            <li>• EC2에서 연결 테스트</li>
+                            <li>• 외부 접근 설정 (본인 IP)</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <h3 class="font-bold mb-2">📁 S3 (파일 저장소)</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>• 버킷 생성</li>
+                            <li>• IAM 역할로 EC2 연결</li>
+                            <li>• 업로드 테스트</li>
+                            <li>• 퍼블릭 액세스 설정</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <h3 class="font-bold mb-2">🔗 연결 확인</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>• EC2 ↔ RDS 연결</li>
+                            <li>• EC2 ↔ S3 연결</li>
+                            <li>• 로컬 PC ↔ RDS 연결</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 1: EC2 인스턴스 생성 -->
+        <section class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-8 border-l-4 border-orange-500">
+                <div class="flex items-center mb-6">
+                    <div class="step-number" style="background: #f97316;">1</div>
+                    <h2 class="text-3xl font-bold text-slate-800">EC2 인스턴스 생성</h2>
+                </div>
+
+                <div class="mb-6">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                        <h3 class="text-blue-900 font-bold mb-2">💡 EC2란?</h3>
+                        <p class="text-blue-800 text-sm">
+                            Elastic Compute Cloud의 약자로, <strong>가상 서버</strong>를 제공하는 서비스입니다. 우리의 Spring Boot 애플리케이션이 실행될 서버입니다.
+                        </p>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-slate-700 mb-3">EC2 생성 설정값</h3>
+
+                    <div class="bg-slate-50 rounded-lg p-4 mb-6">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-300">
+                                    <th class="text-left py-2 font-semibold">속성</th>
+                                    <th class="text-left py-2 font-semibold">설정값</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">이름 및 태그</td>
+                                    <td class="py-2 font-mono">goormjpa</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">애플리케이션 및 OS 이미지</td>
+                                    <td class="py-2">Ubuntu</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">인스턴스 유형</td>
+                                    <td class="py-2">t2.micro (프리티어)</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">키페어 이름</td>
+                                    <td class="py-2 font-mono">goormjpa</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">키페어 유형</td>
+                                    <td class="py-2">RSA</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">프라이빗 키 파일 형식</td>
+                                    <td class="py-2">.pem</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">방화벽 (보안 그룹)</td>
+                                    <td class="py-2">새 보안 그룹 생성</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">스토리지 (볼륨)</td>
+                                    <td class="py-2">8 GiB (기본값)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-slate-700 mb-3">콘솔에서 생성하기</h3>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">1️⃣ EC2 서비스로 이동</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>AWS Console 검색창에 <strong>"EC2"</strong> 입력</li>
+                                <li>EC2 대시보드로 이동</li>
+                                <li><strong>"인스턴스 시작"</strong> 버튼 클릭</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: EC2 대시보드
+                                <br><small>(ec2-dashboard.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">2️⃣ 이름 및 태그</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>이름: <code class="bg-slate-200 px-2 py-1 rounded">goormjpa</code></li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: 인스턴스 이름 입력
+                                <br><small>(ec2-name.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">3️⃣ 애플리케이션 및 OS 이미지 (AMI)</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li><strong>Ubuntu</strong> 선택</li>
+                                <li>Ubuntu Server 24.04 LTS (또는 최신 LTS 버전)</li>
+                                <li>아키텍처: <strong>64비트 (x86)</strong></li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: Ubuntu AMI 선택
+                                <br><small>(ec2-ami-ubuntu.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">4️⃣ 인스턴스 유형</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li><strong>t2.micro</strong> 선택 (프리티어 사용 가능)</li>
+                                <li>vCPU: 1개, 메모리: 1 GiB</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: t2.micro 선택
+                                <br><small>(ec2-instance-type.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">5️⃣ 키 페어 (로그인)</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-2 mb-3">
+                                <li><strong>"새 키 페어 생성"</strong> 클릭</li>
+                                <li>키 페어 이름: <code class="bg-slate-200 px-2 py-1 rounded">goormjpa</code></li>
+                                <li>키 페어 유형: <strong>RSA</strong></li>
+                                <li>프라이빗 키 파일 형식: <strong>.pem</strong></li>
+                                <li><strong>"키 페어 생성"</strong> 클릭</li>
+                            </ul>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-3">
+                                <p class="text-yellow-800 text-sm">
+                                    <strong>⚠️ 중요:</strong> <code>goormjpa.pem</code> 파일이 자동으로 다운로드됩니다. 이 파일은 EC2 접속에 필요하므로 <strong>안전한 곳에 보관</strong>하세요!
+                                </p>
+                            </div>
+                            <div class="image-placeholder">
+                                📸 이미지: 키 페어 생성
+                                <br><small>(ec2-keypair-create.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">6️⃣ 네트워크 설정</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-2">
+                                <li><strong>"새 보안 그룹 생성"</strong> 선택 (기본값)</li>
+                                <li>보안 그룹 이름: <code class="bg-slate-200 px-2 py-1 rounded">launch-wizard-goormjpa</code> (자동)</li>
+                                <li>SSH 트래픽 허용: ✅ 체크 (기본적으로 체크됨)</li>
+                                <li>소스 유형: <strong>내 IP</strong> (권장) 또는 <strong>위치 무관 (0.0.0.0/0)</strong></li>
+                            </ul>
+                            <div class="bg-blue-50 border-l-4 border-blue-400 p-3 mt-3">
+                                <p class="text-blue-800 text-sm">
+                                    💡 나중에 8080 포트도 추가해야 하지만, 일단 SSH만 열고 시작합니다.
+                                </p>
+                            </div>
+                            <div class="image-placeholder">
+                                📸 이미지: 네트워크 설정
+                                <br><small>(ec2-network-settings.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">7️⃣ 스토리지 구성</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>1개의 볼륨 - <strong>8 GiB</strong> (기본값 사용)</li>
+                                <li>볼륨 유형: gp3 (기본값)</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">8️⃣ 인스턴스 시작</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>설정 내용 확인 후 <strong>"인스턴스 시작"</strong> 클릭</li>
+                                <li>인스턴스가 생성되는 동안 1~2분 대기</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: 인스턴스 시작 성공
+                                <br><small>(ec2-launch-success.png)</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-6">
+                        <p class="text-green-800">
+                            ✅ EC2 인스턴스 생성 완료! 상태가 <strong>"실행 중 (running)"</strong>이 되면 SSH로 접속할 수 있습니다.
+                        </p>
+                    </div>
+
+                    <!-- CLI 명령어 (참고용) -->
+                    <div class="mt-8 bg-slate-700 text-white rounded-lg p-6">
+                        <h3 class="text-lg font-bold mb-3">📟 CLI로 생성하기 (선택사항)</h3>
+                        <p class="text-sm text-slate-300 mb-3">콘솔 대신 CLI로 EC2를 생성하려면:</p>
+                        <div class="code-block">
+                            <pre><code class="language-bash"># 키 페어 생성 (이미 생성했다면 생략)
+aws ec2 create-key-pair \
+  --key-name goormjpa \
+  --query 'KeyMaterial' \
+  --output text > goormjpa.pem
+
+# 키 파일 권한 설정 (Mac/Linux)
+chmod 400 goormjpa.pem
+
+# 보안 그룹 생성
+SECURITY_GROUP_ID=$(aws ec2 create-security-group \
+  --group-name goormjpa-sg \
+  --description "Security group for goormjpa" \
+  --query 'GroupId' \
+  --output text)
+
+# SSH 접근 허용 (내 IP만)
+MY_IP=$(curl -s https://checkip.amazonaws.com)
+aws ec2 authorize-security-group-ingress \
+  --group-id $SECURITY_GROUP_ID \
+  --protocol tcp \
+  --port 22 \
+  --cidr ${MY_IP}/32
+
+# EC2 인스턴스 생성
+aws ec2 run-instances \
+  --image-id ami-0c9c942bd7bf113a2 \
+  --instance-type t2.micro \
+  --key-name goormjpa \
+  --security-group-ids $SECURITY_GROUP_ID \
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=goormjpa}]'</code></pre>
+                        </div>
+                        <p class="text-sm text-slate-300 mt-2">
+                            ⚠️ <code>ami-0c9c942bd7bf113a2</code>는 서울 리전의 Ubuntu 24.04 AMI ID입니다. 최신 AMI ID는 콘솔에서 확인하세요.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 2: EC2 SSH 접속 -->
+        <section class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-8 border-l-4 border-blue-500">
+                <div class="flex items-center mb-6">
+                    <div class="step-number" style="background: #3b82f6;">2</div>
+                    <h2 class="text-3xl font-bold text-slate-800">EC2 SSH 접속</h2>
+                </div>
+
+                <div class="mb-6">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                        <p class="text-blue-800 text-sm">
+                            생성한 EC2 인스턴스에 SSH로 접속하여 서버가 정상 작동하는지 확인합니다.
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">1️⃣ 퍼블릭 IP 확인</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>EC2 콘솔 → 인스턴스 목록에서 <strong>goormjpa</strong> 선택</li>
+                                <li>하단 세부 정보에서 <strong>"퍼블릭 IPv4 주소"</strong> 복사</li>
+                                <li>예: <code class="bg-slate-200 px-2 py-1 rounded">3.34.123.45</code></li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: 퍼블릭 IP 확인
+                                <br><small>(ec2-public-ip.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-3">2️⃣ SSH 접속</p>
+
+                            <!-- Windows -->
+                            <div class="mb-4">
+                                <p class="text-slate-700 font-semibold mb-2">🪟 Windows</p>
+                                <p class="text-slate-600 text-sm mb-2">Windows 10/11은 기본 SSH 클라이언트가 있습니다. PowerShell 또는 CMD에서:</p>
+                                <div class="code-block">
+                                    <pre><code class="language-bash"># goormjpa.pem 파일이 있는 디렉토리로 이동
+cd C:\Users\사용자명\Downloads
+
+# SSH 접속 (퍼블릭 IP를 본인의 IP로 변경)
+ssh -i goormjpa.pem ubuntu@3.34.123.45</code></pre>
+                                </div>
+                                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mt-2">
+                                    <p class="text-yellow-800 text-sm">
+                                        ⚠️ 권한 오류가 발생하면 .pem 파일 우클릭 → 속성 → 보안 탭에서 모든 사용자 제거 후 본인만 추가
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- macOS/Linux -->
+                            <div class="mb-4">
+                                <p class="text-slate-700 font-semibold mb-2">🍎 macOS / 🐧 Linux</p>
+                                <div class="code-block">
+                                    <pre><code class="language-bash"># .pem 파일 권한 설정 (최초 1회만)
+chmod 400 ~/Downloads/goormjpa.pem
+
+# SSH 접속 (퍼블릭 IP를 본인의 IP로 변경)
+ssh -i ~/Downloads/goormjpa.pem ubuntu@3.34.123.45</code></pre>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-100 p-4 rounded mt-3">
+                                <p class="text-slate-700 font-semibold mb-2">접속 성공 시 출력:</p>
+                                <div class="code-block">
+                                    <pre><code class="language-bash">Welcome to Ubuntu 24.04 LTS (GNU/Linux 6.8.0-1008-aws x86_64)
+
+ubuntu@ip-172-31-0-123:~$</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">3️⃣ 서버 정보 확인</p>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># Ubuntu 버전 확인
+lsb_release -a
+
+# 메모리 확인
+free -h
+
+# 디스크 확인
+df -h
+
+# CPU 정보
+lscpu</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-6">
+                        <p class="text-green-800">
+                            ✅ SSH 접속 성공! 이제 RDS를 생성하겠습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 3: RDS 데이터베이스 생성 -->
+        <section class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-8 border-l-4 border-purple-500">
+                <div class="flex items-center mb-6">
+                    <div class="step-number" style="background: #9333ea;">3</div>
+                    <h2 class="text-3xl font-bold text-slate-800">RDS 데이터베이스 생성</h2>
+                </div>
+
+                <div class="mb-6">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                        <h3 class="text-blue-900 font-bold mb-2">💡 RDS란?</h3>
+                        <p class="text-blue-800 text-sm">
+                            Relational Database Service의 약자로, <strong>관리형 데이터베이스</strong>를 제공합니다. 백업, 패치, 모니터링을 자동으로 해줍니다.
+                        </p>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-slate-700 mb-3">RDS 생성 설정값</h3>
+
+                    <div class="bg-slate-50 rounded-lg p-4 mb-6">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-300">
+                                    <th class="text-left py-2 font-semibold">속성</th>
+                                    <th class="text-left py-2 font-semibold">설정값</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">데이터베이스 생성 방식</td>
+                                    <td class="py-2">손쉬운 생성</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">엔진 유형</td>
+                                    <td class="py-2">MariaDB</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">DB 인스턴스 크기</td>
+                                    <td class="py-2">프리티어</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">DB 인스턴스 식별자</td>
+                                    <td class="py-2 font-mono">goormjpa-db</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">마스터 사용자 이름</td>
+                                    <td class="py-2 font-mono">admin</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">마스터 암호</td>
+                                    <td class="py-2 font-mono">goorm_rdb_password</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">자격 증명 관리</td>
+                                    <td class="py-2">자체 관리</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">EC2 연결</td>
+                                    <td class="py-2">EC2 컴퓨팅 리소스에 연결 (goormjpa)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-slate-700 mb-3">콘솔에서 생성하기</h3>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">1️⃣ RDS 서비스로 이동</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>AWS Console 검색창에 <strong>"RDS"</strong> 입력</li>
+                                <li>RDS 대시보드로 이동</li>
+                                <li><strong>"데이터베이스 생성"</strong> 버튼 클릭</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: RDS 대시보드
+                                <br><small>(rds-dashboard.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">2️⃣ 데이터베이스 생성 방식</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li><strong>"손쉬운 생성"</strong> 선택 (기본값)</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: 손쉬운 생성 선택
+                                <br><small>(rds-easy-create.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">3️⃣ 엔진 옵션</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>엔진 유형: <strong>MariaDB</strong></li>
+                                <li>엔진 버전: 최신 버전 (기본값)</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: MariaDB 선택
+                                <br><small>(rds-mariadb.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">4️⃣ DB 인스턴스 크기</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li><strong>프리 티어</strong> 선택</li>
+                                <li>인스턴스 유형: db.t3.micro (자동 선택됨)</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">5️⃣ DB 인스턴스 식별자</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>DB 인스턴스 식별자: <code class="bg-slate-200 px-2 py-1 rounded">goormjpa-db</code></li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">6️⃣ 자격 증명 설정</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-2">
+                                <li>자격 증명 관리: <strong>자체 관리</strong></li>
+                                <li>마스터 사용자 이름: <code class="bg-slate-200 px-2 py-1 rounded">admin</code></li>
+                                <li>마스터 암호: <code class="bg-slate-200 px-2 py-1 rounded">goorm_rdb_password</code></li>
+                                <li>암호 확인: 같은 암호 입력</li>
+                            </ul>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mt-3">
+                                <p class="text-yellow-800 text-sm">
+                                    ⚠️ 마스터 암호를 꼭 기억하세요! 나중에 데이터베이스 접속에 필요합니다.
+                                </p>
+                            </div>
+                            <div class="image-placeholder">
+                                📸 이미지: 자격 증명 설정
+                                <br><small>(rds-credentials.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">7️⃣ EC2 연결 설정 ⭐ 중요!</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-2 mb-3">
+                                <li><strong>"EC2 컴퓨팅 리소스에 연결"</strong> 선택</li>
+                                <li>EC2 인스턴스: <strong>goormjpa</strong> 선택</li>
+                            </ul>
+                            <div class="bg-blue-50 border-l-4 border-blue-400 p-3">
+                                <p class="text-blue-800 text-sm">
+                                    💡 이렇게 하면 RDS가 EC2와 <strong>자동으로 연결</strong>되며, 보안 그룹도 자동 설정됩니다!
+                                </p>
+                            </div>
+                            <div class="image-placeholder">
+                                📸 이미지: EC2 연결 설정
+                                <br><small>(rds-ec2-connection.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">8️⃣ 데이터베이스 생성</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>설정 내용 확인 후 <strong>"데이터베이스 생성"</strong> 클릭</li>
+                                <li>생성되는 동안 5~10분 대기</li>
+                                <li>상태가 <strong>"사용 가능"</strong>이 되면 완료</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: RDS 생성 진행 중
+                                <br><small>(rds-creating.png)</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-6">
+                        <p class="text-green-800">
+                            ✅ RDS 생성 완료! 이제 EC2에서 연결 테스트를 하겠습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 4: EC2에서 RDS 연결 테스트 -->
+        <section class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-8 border-l-4 border-green-500">
+                <div class="flex items-center mb-6">
+                    <div class="step-number" style="background: #22c55e;">4</div>
+                    <h2 class="text-3xl font-bold text-slate-800">EC2에서 RDS 연결 테스트</h2>
+                </div>
+
+                <div class="mb-6">
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">1️⃣ RDS 엔드포인트 확인</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1 mb-3">
+                                <li>RDS 콘솔 → 데이터베이스 목록에서 <strong>goormjpa-db</strong> 클릭</li>
+                                <li>"연결 & 보안" 탭에서 <strong>"엔드포인트"</strong> 복사</li>
+                                <li>예: <code class="bg-slate-200 px-2 py-1 rounded text-xs">goormjpa-db.cxscca6ucgpu.ap-northeast-2.rds.amazonaws.com</code></li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: RDS 엔드포인트 확인
+                                <br><small>(rds-endpoint.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-3">2️⃣ EC2에 MariaDB 클라이언트 설치</p>
+                            <p class="text-slate-600 mb-2">EC2에 SSH로 접속한 상태에서:</p>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># 패키지 목록 업데이트
+sudo apt update
+
+# MariaDB 클라이언트 설치
+sudo apt install mariadb-client -y</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-3">3️⃣ RDS 접속</p>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># RDS 접속 (엔드포인트를 본인의 것으로 변경)
+mysql -h goormjpa-db.cxscca6ucgpu.ap-northeast-2.rds.amazonaws.com -u admin -p
+
+# 암호 입력: goorm_rdb_password</code></pre>
+                            </div>
+                            <div class="bg-slate-100 p-4 rounded mt-3">
+                                <p class="text-slate-700 font-semibold mb-2">접속 성공 시 출력:</p>
+                                <div class="code-block">
+                                    <pre><code class="language-sql">Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 24
+Server version: 10.11.8-MariaDB managed by https://aws.amazon.com/rds/
+
+MariaDB [(none)]></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-3">4️⃣ 데이터베이스 생성 및 확인</p>
+                            <div class="code-block">
+                                <pre><code class="language-sql">-- 데이터베이스 목록 확인
+SHOW DATABASES;
+
+-- 새 데이터베이스 생성
+CREATE DATABASE goormjpa;
+
+-- 생성 확인
+SHOW DATABASES;
+
+-- 종료
+exit;</code></pre>
+                            </div>
+                            <div class="bg-slate-100 p-4 rounded mt-3">
+                                <p class="text-slate-700 font-semibold mb-2">출력 예시:</p>
+                                <div class="code-block">
+                                    <pre><code class="language-sql">MariaDB [(none)]> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+
+MariaDB [(none)]> CREATE DATABASE goormjpa;
+Query OK, 1 row affected (0.01 sec)
+
+MariaDB [(none)]> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| goormjpa           |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-6">
+                        <p class="text-green-800">
+                            ✅ EC2 ↔ RDS 연결 성공! 데이터베이스 <code>goormjpa</code>가 생성되었습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 5: S3 버킷 생성 -->
+        <section class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-8 border-l-4 border-yellow-500">
+                <div class="flex items-center mb-6">
+                    <div class="step-number" style="background: #eab308;">5</div>
+                    <h2 class="text-3xl font-bold text-slate-800">S3 버킷 생성</h2>
+                </div>
+
+                <div class="mb-6">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                        <h3 class="text-blue-900 font-bold mb-2">💡 S3란?</h3>
+                        <p class="text-blue-800 text-sm">
+                            Simple Storage Service의 약자로, <strong>파일 저장소</strong>를 제공합니다. 이미지, 동영상, 문서 등을 저장하고 URL로 접근할 수 있습니다.
+                        </p>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-slate-700 mb-3">S3 버킷 생성 설정값</h3>
+
+                    <div class="bg-slate-50 rounded-lg p-4 mb-6">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-300">
+                                    <th class="text-left py-2 font-semibold">속성</th>
+                                    <th class="text-left py-2 font-semibold">설정값</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-2">버킷 이름</td>
+                                    <td class="py-2 font-mono">goormjpa-각자아이디</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">기타 설정</td>
+                                    <td class="py-2">기본값 사용</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">1️⃣ S3 서비스로 이동</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>AWS Console 검색창에 <strong>"S3"</strong> 입력</li>
+                                <li>S3 대시보드로 이동</li>
+                                <li><strong>"버킷 만들기"</strong> 버튼 클릭</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: S3 대시보드
+                                <br><small>(s3-dashboard.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">2️⃣ 버킷 이름 입력</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-2 mb-3">
+                                <li>버킷 이름: <code class="bg-slate-200 px-2 py-1 rounded">goormjpa-본인아이디</code></li>
+                                <li>예: <code class="bg-slate-200 px-2 py-1 rounded">goormjpa-topolo</code></li>
+                            </ul>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3">
+                                <p class="text-yellow-800 text-sm">
+                                    ⚠️ S3 버킷 이름은 <strong>전 세계에서 고유</strong>해야 합니다. 다른 사람이 이미 사용 중이면 생성되지 않으므로 본인만의 고유한 이름을 사용하세요!
+                                </p>
+                            </div>
+                            <div class="image-placeholder">
+                                📸 이미지: 버킷 이름 입력
+                                <br><small>(s3-bucket-name.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">3️⃣ 기타 설정</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>AWS 리전: <strong>아시아 태평양(서울) ap-northeast-2</strong></li>
+                                <li>객체 소유권: <strong>ACL 비활성화됨 (권장)</strong> (기본값)</li>
+                                <li>퍼블릭 액세스 차단 설정: <strong>모든 퍼블릭 액세스 차단</strong> (기본값, 나중에 변경)</li>
+                                <li>버킷 버전 관리: <strong>비활성화</strong> (기본값)</li>
+                                <li>나머지: 기본값 사용</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">4️⃣ 버킷 만들기</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li><strong>"버킷 만들기"</strong> 클릭</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: 버킷 생성 완료
+                                <br><small>(s3-bucket-created.png)</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-6">
+                        <p class="text-green-800">
+                            ✅ S3 버킷 생성 완료! 이제 EC2에서 S3에 접근할 수 있도록 IAM 역할을 설정하겠습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 6: EC2-S3 연결 (IAM 역할) -->
+        <section class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-8 border-l-4 border-red-500">
+                <div class="flex items-center mb-6">
+                    <div class="step-number" style="background: #ef4444;">6</div>
+                    <h2 class="text-3xl font-bold text-slate-800">EC2-S3 연결 (IAM 역할)</h2>
+                </div>
+
+                <div class="mb-6">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                        <h3 class="text-blue-900 font-bold mb-2">💡 왜 IAM 역할이 필요한가요?</h3>
+                        <p class="text-blue-800 text-sm mb-2">
+                            EC2에서 S3로 파일을 업로드하려면 <strong>권한</strong>이 필요합니다. IAM 역할을 EC2에 연결하면 Access Key 없이도 안전하게 S3에 접근할 수 있습니다.
+                        </p>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-slate-700 mb-3">IAM 역할 생성</h3>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">1️⃣ IAM 서비스로 이동</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>AWS Console 검색창에 <strong>"IAM"</strong> 입력</li>
+                                <li>좌측 메뉴에서 <strong>"역할"</strong> 클릭</li>
+                                <li><strong>"역할 생성"</strong> 버튼 클릭</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">2️⃣ 신뢰할 수 있는 엔터티 선택</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>신뢰할 수 있는 엔터티 유형: <strong>"AWS 서비스"</strong></li>
+                                <li>사용 사례: <strong>"EC2"</strong> 선택</li>
+                                <li><strong>"다음"</strong> 클릭</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: EC2 사용 사례 선택
+                                <br><small>(iam-role-ec2.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">3️⃣ 권한 정책 추가</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-2 mb-3">
+                                <li>검색창에 <strong>"AmazonS3FullAccess"</strong> 입력</li>
+                                <li><strong>AmazonS3FullAccess</strong> 체크</li>
+                                <li><strong>"다음"</strong> 클릭</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: S3FullAccess 정책 선택
+                                <br><small>(iam-role-s3-policy.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">4️⃣ 역할 이름 지정</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>역할 이름: <code class="bg-slate-200 px-2 py-1 rounded">EC2-S3-Upload-Role</code></li>
+                                <li>설명: <code class="bg-slate-200 px-2 py-1 rounded">Role for EC2 to access S3</code></li>
+                                <li><strong>"역할 생성"</strong> 클릭</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-slate-700 mb-3 mt-8">IAM 역할을 EC2에 연결</h3>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">1️⃣ EC2 인스턴스 선택</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>EC2 콘솔로 이동</li>
+                                <li>인스턴스 목록에서 <strong>goormjpa</strong> 선택</li>
+                                <li><strong>"작업 (Actions)"</strong> → <strong>"보안 (Security)"</strong> → <strong>"IAM 역할 수정 (Modify IAM role)"</strong> 클릭</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: IAM 역할 수정 메뉴
+                                <br><small>(ec2-modify-iam-role.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">2️⃣ 역할 선택</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li>IAM 역할 드롭다운에서 <strong>"EC2-S3-Upload-Role"</strong> 선택</li>
+                                <li><strong>"IAM 역할 업데이트"</strong> 클릭</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: IAM 역할 선택
+                                <br><small>(ec2-attach-iam-role.png)</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-6">
+                        <p class="text-green-800">
+                            ✅ IAM 역할 연결 완료! 이제 EC2에서 S3에 파일을 업로드할 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 7: EC2에서 S3 업로드 테스트 -->
+        <section class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-8 border-l-4 border-indigo-500">
+                <div class="flex items-center mb-6">
+                    <div class="step-number" style="background: #6366f1;">7</div>
+                    <h2 class="text-3xl font-bold text-slate-800">EC2에서 S3 업로드 테스트</h2>
+                </div>
+
+                <div class="mb-6">
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-3">1️⃣ EC2에 AWS CLI 설치</p>
+                            <p class="text-slate-600 mb-2">EC2에 SSH로 접속한 상태에서:</p>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># AWS CLI 설치
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+sudo apt install unzip -y
+unzip awscliv2.zip
+sudo ./aws/install
+
+# 설치 확인
+aws --version</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-3">2️⃣ S3 버킷 목록 확인</p>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># S3 버킷 목록 조회
+aws s3 ls</code></pre>
+                            </div>
+                            <div class="bg-slate-100 p-4 rounded mt-3">
+                                <p class="text-slate-700 font-semibold mb-2">출력 예시:</p>
+                                <div class="code-block">
+                                    <pre><code class="language-bash">2024-01-15 12:34:56 goormjpa-topolo</code></pre>
+                                </div>
+                            </div>
+                            <div class="bg-green-50 border border-green-200 p-3 rounded mt-2">
+                                <p class="text-green-700 text-sm">
+                                    ✅ 방금 생성한 버킷이 보이면 IAM 역할이 정상 작동하는 것입니다!
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-3">3️⃣ 테스트 파일 업로드</p>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># 테스트 파일 생성
+echo "Hello from EC2!" > test.txt
+
+# S3에 업로드 (버킷 이름을 본인의 것으로 변경)
+aws s3 cp test.txt s3://goormjpa-topolo/
+
+# 업로드 확인
+aws s3 ls s3://goormjpa-topolo/</code></pre>
+                            </div>
+                            <div class="bg-slate-100 p-4 rounded mt-3">
+                                <p class="text-slate-700 font-semibold mb-2">출력:</p>
+                                <div class="code-block">
+                                    <pre><code class="language-bash">upload: ./test.txt to s3://goormjpa-topolo/test.txt
+
+2024-01-15 12:35:20         17 test.txt</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-3">4️⃣ 파일 다운로드 테스트</p>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># S3에서 파일 다운로드
+aws s3 cp s3://goormjpa-topolo/test.txt ./downloaded-test.txt
+
+# 내용 확인
+cat downloaded-test.txt</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-6">
+                        <p class="text-green-800">
+                            ✅ EC2 ↔ S3 연결 성공! 파일 업로드 및 다운로드가 정상 작동합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 8: S3 퍼블릭 액세스 설정 -->
+        <section class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-8 border-l-4 border-pink-500">
+                <div class="flex items-center mb-6">
+                    <div class="step-number" style="background: #ec4899;">8</div>
+                    <h2 class="text-3xl font-bold text-slate-800">S3 퍼블릭 액세스 설정</h2>
+                </div>
+
+                <div class="mb-6">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                        <h3 class="text-blue-900 font-bold mb-2">💡 왜 퍼블릭 액세스가 필요한가요?</h3>
+                        <p class="text-blue-800 text-sm">
+                            사용자가 웹 브라우저에서 <strong>URL로 직접 이미지나 파일에 접근</strong>할 수 있도록 하기 위해서입니다. 예: https://버킷.s3.amazonaws.com/image.jpg
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">1️⃣ 퍼블릭 액세스 차단 해제</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-2 mb-3">
+                                <li>S3 콘솔에서 <strong>goormjpa-본인아이디</strong> 버킷 클릭</li>
+                                <li><strong>"권한"</strong> 탭 클릭</li>
+                                <li><strong>"퍼블릭 액세스 차단 (버킷 설정)"</strong> 섹션에서 <strong>"편집"</strong> 클릭</li>
+                                <li><strong>"모든 퍼블릭 액세스 차단"</strong> 체크 해제</li>
+                                <li><strong>"변경 사항 저장"</strong> 클릭</li>
+                                <li>확인 창에서 <code class="bg-slate-200 px-2 py-1 rounded">확인</code> 입력 후 <strong>"확인"</strong> 클릭</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: 퍼블릭 액세스 차단 해제
+                                <br><small>(s3-public-access.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">2️⃣ 버킷 정책 편집</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-2 mb-3">
+                                <li>같은 "권한" 탭에서 <strong>"버킷 정책"</strong> 섹션의 <strong>"편집"</strong> 클릭</li>
+                                <li>아래 JSON을 붙여넣기 (<strong>버킷 이름을 본인의 것으로 변경!</strong>)</li>
+                            </ul>
+                            <div class="code-block">
+                                <pre><code class="language-json">{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::goormjpa-topolo/*"
+        }
+    ]
+}</code></pre>
+                            </div>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mt-3 mb-3">
+                                <p class="text-yellow-800 text-sm">
+                                    ⚠️ <code>goormjpa-topolo</code>를 본인의 버킷 이름으로 변경하세요!
+                                </p>
+                            </div>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1">
+                                <li><strong>"변경 사항 저장"</strong> 클릭</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: 버킷 정책 편집
+                                <br><small>(s3-bucket-policy.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-3">3️⃣ URL로 접근 테스트</p>
+                            <p class="text-slate-600 mb-2">웹 브라우저에서 다음 URL로 접근:</p>
+                            <div class="bg-slate-100 p-4 rounded">
+                                <code class="text-sm">https://goormjpa-topolo.s3.amazonaws.com/test.txt</code>
+                                <p class="text-xs text-slate-500 mt-2">(버킷 이름을 본인의 것으로 변경)</p>
+                            </div>
+                            <div class="bg-green-50 border border-green-200 p-3 rounded mt-3">
+                                <p class="text-green-700 text-sm">
+                                    ✅ "Hello from EC2!"가 표시되면 성공입니다!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-6">
+                        <p class="text-green-800">
+                            ✅ S3 퍼블릭 액세스 설정 완료! 이제 누구나 URL로 파일에 접근할 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 9: RDS 외부 접근 설정 -->
+        <section class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-8 border-l-4 border-cyan-500">
+                <div class="flex items-center mb-6">
+                    <div class="step-number" style="background: #06b6d4;">9</div>
+                    <h2 class="text-3xl font-bold text-slate-800">RDS 외부 접근 설정</h2>
+                </div>
+
+                <div class="mb-6">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                        <h3 class="text-blue-900 font-bold mb-2">💡 왜 외부 접근이 필요한가요?</h3>
+                        <p class="text-blue-800 text-sm">
+                            로컬 PC의 <strong>DBeaver, MySQL Workbench 등 DB 클라이언트</strong>로 RDS에 직접 접속하여 데이터를 확인하고 관리하기 위해서입니다.
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">1️⃣ 본인의 공인 IP 확인</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-2 mb-3">
+                                <li>웹 브라우저에서 <a href="https://www.myip.com/" target="_blank" class="text-blue-600 underline">https://www.myip.com/</a> 또는 <a href="https://checkip.amazonaws.com/" target="_blank" class="text-blue-600 underline">https://checkip.amazonaws.com/</a> 접속</li>
+                                <li>표시된 IP 주소 복사 (예: <code class="bg-slate-200 px-2 py-1 rounded">123.45.67.89</code>)</li>
+                            </ul>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3">
+                                <p class="text-yellow-800 text-sm">
+                                    ⚠️ 회사/집의 공유기를 사용하면 IP가 변경될 수 있습니다. 접속이 안 되면 IP를 다시 확인하세요!
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">2️⃣ RDS 보안 그룹 확인</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-1 mb-3">
+                                <li>RDS 콘솔에서 <strong>goormjpa-db</strong> 클릭</li>
+                                <li><strong>"연결 & 보안"</strong> 탭에서 <strong>"VPC 보안 그룹"</strong> 클릭</li>
+                                <li>보안 그룹 페이지로 이동</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: RDS 보안 그룹
+                                <br><small>(rds-security-group.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-2">3️⃣ 인바운드 규칙 추가</p>
+                            <ul class="text-slate-600 list-disc list-inside space-y-2 mb-3">
+                                <li><strong>"인바운드 규칙"</strong> 탭 클릭</li>
+                                <li><strong>"인바운드 규칙 편집"</strong> 클릭</li>
+                                <li><strong>"규칙 추가"</strong> 클릭</li>
+                                <li>다음과 같이 입력:
+                                    <ul class="ml-6 mt-2 space-y-1">
+                                        <li>• 유형: <strong>MYSQL/Aurora</strong> (포트 3306 자동 입력)</li>
+                                        <li>• 소스: <strong>내 IP</strong> 또는 <strong>사용자 지정</strong></li>
+                                        <li>• IP: <code class="bg-slate-200 px-2 py-1 rounded">123.45.67.89/32</code> (본인 IP/32)</li>
+                                    </ul>
+                                </li>
+                                <li><strong>"규칙 저장"</strong> 클릭</li>
+                            </ul>
+                            <div class="image-placeholder">
+                                📸 이미지: 인바운드 규칙 추가
+                                <br><small>(rds-inbound-rule.png)</small>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <p class="font-semibold text-slate-700 mb-3">4️⃣ 로컬 PC에서 접속 테스트</p>
+                            <p class="text-slate-600 mb-2">로컬 PC 터미널에서:</p>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># MariaDB 클라이언트가 없다면 설치 (Mac)
+brew install mariadb
+
+# MariaDB 클라이언트가 없다면 설치 (Ubuntu/Debian)
+sudo apt install mariadb-client
+
+# RDS 접속 (엔드포인트를 본인의 것으로 변경)
+mysql -h goormjpa-db.cxscca6ucgpu.ap-northeast-2.rds.amazonaws.com -u admin -p
+
+# 암호 입력: goorm_rdb_password</code></pre>
+                            </div>
+                            <div class="bg-slate-100 p-4 rounded mt-3">
+                                <p class="text-slate-700 font-semibold mb-2">접속 성공 시:</p>
+                                <div class="code-block">
+                                    <pre><code class="language-sql">MariaDB [(none)]> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| goormjpa           |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mt-6">
+                        <p class="text-green-800">
+                            ✅ RDS 외부 접근 설정 완료! 로컬 PC에서 RDS에 직접 접속할 수 있습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 요약 -->
+        <section class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6">📝 이번 단계 요약</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-bold text-slate-700 mb-3">✅ 생성한 리소스</h3>
+                        <ul class="text-slate-600 space-y-2">
+                            <li>✔️ <strong>EC2</strong>: goormjpa (Ubuntu, t2.micro)</li>
+                            <li>✔️ <strong>RDS</strong>: goormjpa-db (MariaDB, db.t3.micro)</li>
+                            <li>✔️ <strong>S3</strong>: goormjpa-본인아이디</li>
+                            <li>✔️ <strong>IAM 역할</strong>: EC2-S3-Upload-Role</li>
+                            <li>✔️ <strong>키 페어</strong>: goormjpa.pem</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-700 mb-3">🔗 연결 확인</h3>
+                        <ul class="text-slate-600 space-y-2">
+                            <li>✔️ 로컬 PC → EC2 (SSH)</li>
+                            <li>✔️ EC2 → RDS (MariaDB 클라이언트)</li>
+                            <li>✔️ EC2 → S3 (AWS CLI)</li>
+                            <li>✔️ 웹 브라우저 → S3 (URL 접근)</li>
+                            <li>✔️ 로컬 PC → RDS (본인 IP 허용)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-blue-50 border-l-4 border-blue-400 p-4">
+                    <h3 class="font-bold text-blue-900 mb-2">🎯 다음 단계</h3>
+                    <p class="text-blue-800 text-sm">
+                        이제 Spring Boot 애플리케이션을 <strong>JAR로 빌드</strong>하고 EC2에 업로드하여 배포하는 방법을 배웁니다!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 다음 단계 -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-green-600 to-teal-600 rounded-lg shadow-lg p-8 text-white">
+                <h2 class="text-2xl font-bold mb-4">🎉 서버 셋팅 완료!</h2>
+                <p class="mb-4">EC2, RDS, S3가 모두 준비되었습니다.</p>
+                <p class="mb-6">다음 단계에서는 Spring Boot 애플리케이션을 배포하는 방법을 배웁니다.</p>
+                <a href="step3-manual-deploy.html" class="inline-block bg-white text-green-600 font-bold px-6 py-3 rounded-lg hover:bg-green-50 transition">
+                    수동 배포로 이동 →
+                </a>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        Prism.highlightAll();
+    </script>
+</body>
+</html>

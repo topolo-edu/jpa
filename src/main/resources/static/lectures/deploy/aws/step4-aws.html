@@ -24,11 +24,57 @@
             border-radius: 50%;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-center;
             font-weight: bold;
             margin-right: 1rem;
         }
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-button.active {
+            border-bottom-color: #3b82f6;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border: 2px dashed #9ca3af;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
+    <script>
+        function switchTab(tabGroup, tabName) {
+            // Hide all tabs in this group
+            const tabContents = document.querySelectorAll(`.${tabGroup}-content`);
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Deactivate all tab buttons in this group
+            const tabButtons = document.querySelectorAll(`.${tabGroup}-tab`);
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(`${tabGroup}-${tabName}`).classList.add('active');
+
+            // Activate selected button
+            event.currentTarget.classList.add('active');
+        }
+    </script>
 </head>
 <body class="bg-slate-50">
     <!-- Header -->
@@ -248,17 +294,25 @@
             <!-- AWS CLI 설치 -->
             <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200">
                 <h3 class="text-2xl font-bold text-slate-800 mb-6">AWS CLI 설치 및 설정</h3>
-                
+
                 <div class="space-y-6">
                     <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg">
                         <h4 class="text-lg font-semibold text-blue-800 mb-2">💡 AWS CLI란?</h4>
-                        <p class="text-blue-700">명령줄에서 AWS 서비스를 관리할 수 있는 도구입니다. EC2, S3, RDS 등을 명령어로 생성하고 관리할 수 있습니다.</p>
+                        <p class="text-blue-700">명령줄에서 AWS 서비스를 관리할 수 있는 도구입니다. EC2, S3, RDS 등을 명령어로 생성하고 관리할 수 있습니다. CLI 방식과 콘솔 UI 방식 중 선택할 수 있습니다.</p>
                     </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">AWS CLI 설치 (Windows)</h4>
-                        <div class="code-block">
-                            <pre><code class="language-bash"># 1. AWS CLI 설치 파일 다운로드
+
+                    <!-- Tab buttons -->
+                    <div class="flex border-b border-slate-200">
+                        <button class="tab-button cli-setup-tab active" onclick="switchTab('cli-setup', 'cli')">CLI 방식</button>
+                        <button class="tab-button cli-setup-tab" onclick="switchTab('cli-setup', 'console')">콘솔 UI 방식</button>
+                    </div>
+
+                    <!-- CLI content -->
+                    <div id="cli-setup-cli" class="tab-content cli-setup-content active">
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">AWS CLI 설치 (Windows)</h4>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># 1. AWS CLI 설치 파일 다운로드
 # https://awscli.amazonaws.com/AWSCLIV2.msi 다운로드 후 실행
 
 # 2. 설치 확인
@@ -274,13 +328,13 @@ aws configure
 
 # 4. 설정 확인
 aws sts get-caller-identity</code></pre>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">AWS CLI 설치 (Mac/Linux)</h4>
-                        <div class="code-block">
-                            <pre><code class="language-bash"># 1. AWS CLI 설치
+
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">AWS CLI 설치 (Mac/Linux)</h4>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># 1. AWS CLI 설치
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
@@ -290,12 +344,73 @@ aws --version
 
 # 3. AWS CLI 설정 (Windows와 동일)
 aws configure</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+                            <h4 class="text-lg font-semibold text-green-800 mb-2">✅ 설정 완료 확인</h4>
+                            <p class="text-green-700">`aws sts get-caller-identity` 명령어를 실행했을 때 IAM 사용자 정보가 나오면 성공입니다!</p>
                         </div>
                     </div>
-                    
-                    <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
-                        <h4 class="text-lg font-semibold text-green-800 mb-2">✅ 설정 완료 확인</h4>
-                        <p class="text-green-700">`aws sts get-caller-identity` 명령어를 실행했을 때 IAM 사용자 정보가 나오면 성공입니다!</p>
+
+                    <!-- Console content -->
+                    <div id="cli-setup-console" class="tab-content cli-setup-content">
+                        <div class="space-y-6">
+                            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold text-blue-800 mb-2">💡 콘솔 UI 방식</h4>
+                                <p class="text-blue-700">CLI 설치 없이 AWS Management Console 웹 인터페이스에서 직접 작업합니다. 시각적으로 확인하며 작업할 수 있어 초보자에게 적합합니다.</p>
+                            </div>
+
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-700 mb-3">AWS Management Console 접속</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">AWS Console 접속</h5>
+                                            <p class="text-slate-600 text-sm">https://console.aws.amazon.com 접속 후 IAM 사용자로 로그인</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">AWS Console 로그인 화면</p>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">리전 선택</h5>
+                                            <p class="text-slate-600 text-sm">우측 상단에서 "아시아 태평양(서울) ap-northeast-2" 선택</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">리전 선택 드롭다운 메뉴</p>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">준비 완료</h5>
+                                            <p class="text-slate-600 text-sm">이제 각 섹션의 콘솔 UI 탭을 통해 서비스를 생성할 수 있습니다</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold text-green-800 mb-2">✅ 콘솔 준비 완료</h4>
+                                <p class="text-green-700">AWS Management Console에서 모든 작업을 수행할 준비가 완료되었습니다. 아래 각 섹션에서 "콘솔 UI 방식" 탭을 선택하여 진행하세요.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -304,53 +419,61 @@ aws configure</code></pre>
         <!-- 2. VPC 및 네트워크 설정 -->
         <section class="mb-12">
             <h2 class="text-2xl font-bold text-slate-800 mb-6">2. VPC 및 네트워크 설정</h2>
-            
+
             <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200 mb-8">
                 <div class="space-y-6">
                     <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg">
                         <h4 class="text-lg font-semibold text-blue-800 mb-2">💡 VPC란?</h4>
                         <p class="text-blue-700">Virtual Private Cloud의 줄임말로, AWS 클라우드 내에서 격리된 네트워크 환경을 제공합니다. 마치 우리만의 데이터센터를 만드는 것과 같습니다.</p>
                     </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">VPC 생성 단계</h4>
-                        <div class="space-y-4">
-                            <div class="flex items-start space-x-3">
-                                <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
-                                <div>
-                                    <h5 class="font-semibold text-slate-700">VPC 생성</h5>
-                                    <p class="text-slate-600 text-sm">10.0.0.0/16 대역으로 VPC 생성 (65,536개 IP 주소)</p>
+
+                    <!-- Tab buttons -->
+                    <div class="flex border-b border-slate-200">
+                        <button class="tab-button vpc-setup-tab active" onclick="switchTab('vpc-setup', 'cli')">CLI 방식</button>
+                        <button class="tab-button vpc-setup-tab" onclick="switchTab('vpc-setup', 'console')">콘솔 UI 방식</button>
+                    </div>
+
+                    <!-- CLI content -->
+                    <div id="vpc-setup-cli" class="tab-content vpc-setup-content active">
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">VPC 생성 단계</h4>
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                    <div>
+                                        <h5 class="font-semibold text-slate-700">VPC 생성</h5>
+                                        <p class="text-slate-600 text-sm">10.0.0.0/16 대역으로 VPC 생성 (65,536개 IP 주소)</p>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="flex items-start space-x-3">
-                                <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
-                                <div>
-                                    <h5 class="font-semibold text-slate-700">인터넷 게이트웨이 생성</h5>
-                                    <p class="text-slate-600 text-sm">VPC와 인터넷을 연결하는 관문</p>
+
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                    <div>
+                                        <h5 class="font-semibold text-slate-700">인터넷 게이트웨이 생성</h5>
+                                        <p class="text-slate-600 text-sm">VPC와 인터넷을 연결하는 관문</p>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="flex items-start space-x-3">
-                                <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
-                                <div>
-                                    <h5 class="font-semibold text-slate-700">서브넷 생성</h5>
-                                    <p class="text-slate-600 text-sm">10.0.1.0/24 대역으로 퍼블릭 서브넷 생성 (256개 IP 주소)</p>
+
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                                    <div>
+                                        <h5 class="font-semibold text-slate-700">서브넷 생성</h5>
+                                        <p class="text-slate-600 text-sm">10.0.1.0/24 대역으로 퍼블릭 서브넷 생성 (256개 IP 주소)</p>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="flex items-start space-x-3">
-                                <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>
-                                <div>
-                                    <h5 class="font-semibold text-slate-700">라우트 테이블 설정</h5>
-                                    <p class="text-slate-600 text-sm">인터넷으로의 트래픽 라우팅 규칙 설정</p>
+
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>
+                                    <div>
+                                        <h5 class="font-semibold text-slate-700">라우트 테이블 설정</h5>
+                                        <p class="text-slate-600 text-sm">인터넷으로의 트래픽 라우팅 규칙 설정</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="code-block">
-                        <pre><code class="language-bash"># 1. VPC 생성
+
+                        <div class="code-block">
+                            <pre><code class="language-bash"># 1. VPC 생성
 aws ec2 create-vpc \
     --cidr-block 10.0.0.0/16 \
     --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=jpa-vpc}]'
@@ -398,11 +521,175 @@ aws ec2 create-route \
     --route-table-id $RT_ID \
     --destination-cidr-block 0.0.0.0/0 \
     --gateway-id $IGW_ID</code></pre>
+                        </div>
+
+                        <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+                            <h4 class="text-lg font-semibold text-green-800 mb-2">✅ VPC 설정 완료</h4>
+                            <p class="text-green-700">이제 EC2 인스턴스를 생성할 수 있는 격리된 네트워크 환경이 준비되었습니다!</p>
+                        </div>
                     </div>
-                    
-                    <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
-                        <h4 class="text-lg font-semibold text-green-800 mb-2">✅ VPC 설정 완료</h4>
-                        <p class="text-green-700">이제 EC2 인스턴스를 생성할 수 있는 격리된 네트워크 환경이 준비되었습니다!</p>
+
+                    <!-- Console content -->
+                    <div id="vpc-setup-console" class="tab-content vpc-setup-content">
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-700 mb-3">1단계: VPC 생성</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">VPC 서비스 접속</h5>
+                                            <p class="text-slate-600 text-sm">AWS Console 상단 검색에서 "VPC" 검색 → "VPC" 클릭</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">VPC 대시보드 화면</p>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">VPC 생성 시작</h5>
+                                            <p class="text-slate-600 text-sm">좌측 메뉴 "Your VPCs" → "Create VPC" 버튼 클릭</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">VPC 설정 입력</h5>
+                                            <ul class="text-slate-600 text-sm space-y-1 mt-2">
+                                                <li>• Name tag: <code>jpa-vpc</code></li>
+                                                <li>• IPv4 CIDR block: <code>10.0.0.0/16</code></li>
+                                                <li>• Tenancy: Default</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">VPC 생성 폼 화면</p>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">VPC 생성 완료</h5>
+                                            <p class="text-slate-600 text-sm">"Create VPC" 버튼 클릭 → VPC ID 복사 (예: vpc-0abc123def456789)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-700 mb-3">2단계: 인터넷 게이트웨이 생성</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">인터넷 게이트웨이 생성</h5>
+                                            <p class="text-slate-600 text-sm">좌측 메뉴 "Internet Gateways" → "Create internet gateway" 클릭</p>
+                                            <p class="text-slate-600 text-sm mt-1">Name tag: <code>jpa-igw</code></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">VPC에 연결</h5>
+                                            <p class="text-slate-600 text-sm">생성된 IGW 선택 → "Actions" → "Attach to VPC" → jpa-vpc 선택</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">IGW를 VPC에 연결하는 화면</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-700 mb-3">3단계: 서브넷 생성</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">서브넷 생성</h5>
+                                            <p class="text-slate-600 text-sm">좌측 메뉴 "Subnets" → "Create subnet" 클릭</p>
+                                            <ul class="text-slate-600 text-sm space-y-1 mt-2">
+                                                <li>• VPC ID: jpa-vpc 선택</li>
+                                                <li>• Subnet name: <code>jpa-public-subnet</code></li>
+                                                <li>• Availability Zone: ap-northeast-2a</li>
+                                                <li>• IPv4 CIDR block: <code>10.0.1.0/24</code></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">서브넷 생성 폼 화면</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-700 mb-3">4단계: 라우트 테이블 설정</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">라우트 테이블 생성</h5>
+                                            <p class="text-slate-600 text-sm">좌측 메뉴 "Route Tables" → "Create route table" 클릭</p>
+                                            <p class="text-slate-600 text-sm mt-1">Name: <code>jpa-public-rt</code>, VPC: jpa-vpc</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">인터넷 라우트 추가</h5>
+                                            <p class="text-slate-600 text-sm">생성된 RT 선택 → "Routes" 탭 → "Edit routes" → "Add route"</p>
+                                            <p class="text-slate-600 text-sm mt-1">Destination: <code>0.0.0.0/0</code>, Target: jpa-igw</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">서브넷 연결</h5>
+                                            <p class="text-slate-600 text-sm">"Subnet associations" 탭 → "Edit subnet associations" → jpa-public-subnet 선택</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">라우트 테이블 설정 화면</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold text-green-800 mb-2">✅ VPC 설정 완료</h4>
+                                <p class="text-green-700">이제 EC2 인스턴스를 생성할 수 있는 격리된 네트워크 환경이 준비되었습니다!</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -411,58 +698,66 @@ aws ec2 create-route \
         <!-- 3. RDS 데이터베이스 설정 -->
         <section class="mb-12">
             <h2 class="text-2xl font-bold text-slate-800 mb-6">3. RDS 데이터베이스 설정</h2>
-            
+
             <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200 mb-8">
                 <div class="space-y-6">
                     <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg">
                         <h4 class="text-lg font-semibold text-blue-800 mb-2">💡 RDS란?</h4>
                         <p class="text-blue-700">Relational Database Service의 줄임말로, AWS에서 제공하는 관리형 데이터베이스 서비스입니다. 백업, 패치, 모니터링 등을 자동으로 처리해줍니다.</p>
                     </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">RDS 설정 단계</h4>
-                        <div class="space-y-4">
-                            <div class="flex items-start space-x-3">
-                                <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
-                                <div>
-                                    <h5 class="font-semibold text-slate-700">RDS 서브넷 그룹 생성</h5>
-                                    <p class="text-slate-600 text-sm">RDS가 사용할 서브넷을 그룹으로 묶어서 정의</p>
+
+                    <!-- Tab buttons -->
+                    <div class="flex border-b border-slate-200">
+                        <button class="tab-button rds-setup-tab active" onclick="switchTab('rds-setup', 'cli')">CLI 방식</button>
+                        <button class="tab-button rds-setup-tab" onclick="switchTab('rds-setup', 'console')">콘솔 UI 방식</button>
+                    </div>
+
+                    <!-- CLI content -->
+                    <div id="rds-setup-cli" class="tab-content rds-setup-content active">
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">RDS 설정 단계</h4>
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                    <div>
+                                        <h5 class="font-semibold text-slate-700">RDS 서브넷 그룹 생성</h5>
+                                        <p class="text-slate-600 text-sm">RDS가 사용할 서브넷을 그룹으로 묶어서 정의</p>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="flex items-start space-x-3">
-                                <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
-                                <div>
-                                    <h5 class="font-semibold text-slate-700">보안 그룹 생성</h5>
-                                    <p class="text-slate-600 text-sm">데이터베이스 접근을 위한 보안 규칙 설정</p>
+
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                    <div>
+                                        <h5 class="font-semibold text-slate-700">보안 그룹 생성</h5>
+                                        <p class="text-slate-600 text-sm">데이터베이스 접근을 위한 보안 규칙 설정</p>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="flex items-start space-x-3">
-                                <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
-                                <div>
-                                    <h5 class="font-semibold text-slate-700">RDS 인스턴스 생성</h5>
-                                    <p class="text-slate-600 text-sm">MariaDB 데이터베이스 인스턴스 생성</p>
+
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                                    <div>
+                                        <h5 class="font-semibold text-slate-700">RDS 인스턴스 생성</h5>
+                                        <p class="text-slate-600 text-sm">MariaDB 데이터베이스 인스턴스 생성</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">1단계: RDS 서브넷 그룹 생성</h4>
-                        <div class="code-block">
-                            <pre><code class="language-bash"># RDS 서브넷 그룹 생성
+
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">1단계: RDS 서브넷 그룹 생성</h4>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># RDS 서브넷 그룹 생성
 aws rds create-db-subnet-group \
     --db-subnet-group-name jpa-subnet-group \
     --db-subnet-group-description "JPA Application Subnet Group" \
     --subnet-ids $SUBNET_ID</code></pre>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">2단계: RDS 보안 그룹 생성</h4>
-                        <div class="code-block">
-                            <pre><code class="language-bash"># RDS 보안 그룹 생성
+
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">2단계: RDS 보안 그룹 생성</h4>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># RDS 보안 그룹 생성
 aws ec2 create-security-group \
     --group-name jpa-rds-sg \
     --description "Security group for RDS database" \
@@ -477,13 +772,13 @@ aws ec2 authorize-security-group-ingress \
     --protocol tcp \
     --port 3306 \
     --source-group $EC2_SG_ID</code></pre>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">3단계: RDS 인스턴스 생성</h4>
-                        <div class="code-block">
-                            <pre><code class="language-bash"># MariaDB RDS 인스턴스 생성
+
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">3단계: RDS 인스턴스 생성</h4>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># MariaDB RDS 인스턴스 생성
 aws rds create-db-instance \
     --db-instance-identifier jpa-database \
     --db-instance-class db.t3.micro \
@@ -500,22 +795,203 @@ aws rds create-db-instance \
     --publicly-accessible false \
     --storage-encrypted true \
     --tags Key=Name,Value=jpa-database</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+                            <h4 class="text-lg font-semibold text-yellow-800 mb-2">⚠️ 주의사항</h4>
+                            <ul class="text-yellow-700 space-y-1 text-sm">
+                                <li>• <strong>비밀번호 강도</strong>: 8자 이상, 대소문자, 숫자, 특수문자 포함</li>
+                                <li>• <strong>생성 시간</strong>: RDS 인스턴스 생성에는 5-10분 소요</li>
+                                <li>• <strong>비용</strong>: db.t3.micro는 무료 티어 대상이지만, 12개월 후 과금</li>
+                                <li>• <strong>접근 제한</strong>: EC2에서만 접근 가능 (publicly-accessible=false)</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+                            <h4 class="text-lg font-semibold text-green-800 mb-2">✅ RDS 설정 완료</h4>
+                            <p class="text-green-700">RDS 인스턴스가 생성되면 엔드포인트 주소를 확인하여 애플리케이션에서 사용할 수 있습니다!</p>
                         </div>
                     </div>
-                    
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
-                        <h4 class="text-lg font-semibold text-yellow-800 mb-2">⚠️ 주의사항</h4>
-                        <ul class="text-yellow-700 space-y-1 text-sm">
-                            <li>• <strong>비밀번호 강도</strong>: 8자 이상, 대소문자, 숫자, 특수문자 포함</li>
-                            <li>• <strong>생성 시간</strong>: RDS 인스턴스 생성에는 5-10분 소요</li>
-                            <li>• <strong>비용</strong>: db.t3.micro는 무료 티어 대상이지만, 12개월 후 과금</li>
-                            <li>• <strong>접근 제한</strong>: EC2에서만 접근 가능 (publicly-accessible=false)</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
-                        <h4 class="text-lg font-semibold text-green-800 mb-2">✅ RDS 설정 완료</h4>
-                        <p class="text-green-700">RDS 인스턴스가 생성되면 엔드포인트 주소를 확인하여 애플리케이션에서 사용할 수 있습니다!</p>
+
+                    <!-- Console content -->
+                    <div id="rds-setup-console" class="tab-content rds-setup-content">
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-700 mb-3">1단계: RDS 서비스 접속</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">RDS 서비스 접속</h5>
+                                            <p class="text-slate-600 text-sm">AWS Console 상단 검색에서 "RDS" 검색 → "RDS" 클릭</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">RDS 대시보드 화면</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-700 mb-3">2단계: 서브넷 그룹 생성</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">서브넷 그룹 메뉴</h5>
+                                            <p class="text-slate-600 text-sm">좌측 메뉴 "Subnet groups" → "Create DB subnet group" 클릭</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">서브넷 그룹 설정</h5>
+                                            <ul class="text-slate-600 text-sm space-y-1 mt-2">
+                                                <li>• Name: <code>jpa-subnet-group</code></li>
+                                                <li>• Description: JPA Application Subnet Group</li>
+                                                <li>• VPC: jpa-vpc 선택</li>
+                                                <li>• Availability Zones: ap-northeast-2a 선택</li>
+                                                <li>• Subnets: jpa-public-subnet 선택</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">서브넷 그룹 생성 폼</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-700 mb-3">3단계: 보안 그룹 생성</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">VPC 서비스로 이동</h5>
+                                            <p class="text-slate-600 text-sm">VPC 서비스 → "Security Groups" → "Create security group"</p>
+                                            <ul class="text-slate-600 text-sm space-y-1 mt-2">
+                                                <li>• Security group name: <code>jpa-rds-sg</code></li>
+                                                <li>• Description: Security group for RDS database</li>
+                                                <li>• VPC: jpa-vpc 선택</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">인바운드 규칙 추가</h5>
+                                            <p class="text-slate-600 text-sm">"Inbound rules" → "Add rule"</p>
+                                            <ul class="text-slate-600 text-sm space-y-1 mt-2">
+                                                <li>• Type: MySQL/Aurora (자동으로 3306 포트)</li>
+                                                <li>• Source: Custom → EC2 보안 그룹 선택</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">RDS 보안 그룹 인바운드 규칙</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-700 mb-3">4단계: RDS 인스턴스 생성</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">데이터베이스 생성 시작</h5>
+                                            <p class="text-slate-600 text-sm">RDS 대시보드 → "Databases" → "Create database" 클릭</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">엔진 옵션</h5>
+                                            <ul class="text-slate-600 text-sm space-y-1 mt-2">
+                                                <li>• Engine type: MariaDB</li>
+                                                <li>• Version: MariaDB 10.6.8 이상</li>
+                                                <li>• Templates: Free tier</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">Settings</h5>
+                                            <ul class="text-slate-600 text-sm space-y-1 mt-2">
+                                                <li>• DB instance identifier: <code>jpa-database</code></li>
+                                                <li>• Master username: <code>admin</code></li>
+                                                <li>• Master password: 강력한 비밀번호 입력</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">Connectivity</h5>
+                                            <ul class="text-slate-600 text-sm space-y-1 mt-2">
+                                                <li>• VPC: jpa-vpc 선택</li>
+                                                <li>• DB subnet group: jpa-subnet-group</li>
+                                                <li>• Public access: No</li>
+                                                <li>• VPC security group: jpa-rds-sg</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">RDS 인스턴스 생성 설정 화면</p>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">5</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">생성 완료</h5>
+                                            <p class="text-slate-600 text-sm">"Create database" 클릭 → 5-10분 대기 → 엔드포인트 주소 확인</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold text-yellow-800 mb-2">⚠️ 주의사항</h4>
+                                <ul class="text-yellow-700 space-y-1 text-sm">
+                                    <li>• <strong>비밀번호 강도</strong>: 8자 이상, 대소문자, 숫자, 특수문자 포함</li>
+                                    <li>• <strong>생성 시간</strong>: RDS 인스턴스 생성에는 5-10분 소요</li>
+                                    <li>• <strong>비용</strong>: db.t3.micro는 무료 티어 대상이지만, 12개월 후 과금</li>
+                                    <li>• <strong>접근 제한</strong>: EC2에서만 접근 가능 (Public access: No)</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold text-green-800 mb-2">✅ RDS 설정 완료</h4>
+                                <p class="text-green-700">RDS 인스턴스가 생성되면 엔드포인트 주소를 확인하여 애플리케이션에서 사용할 수 있습니다!</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -524,47 +1000,55 @@ aws rds create-db-instance \
         <!-- 4. EC2 인스턴스 생성 -->
         <section class="mb-12">
             <h2 class="text-2xl font-bold text-slate-800 mb-6">4. EC2 인스턴스 생성</h2>
-            
+
             <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200 mb-8">
                 <div class="space-y-6">
                     <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg">
                         <h4 class="text-lg font-semibold text-blue-800 mb-2">💡 EC2란?</h4>
                         <p class="text-blue-700">Elastic Compute Cloud의 줄임말로, AWS에서 제공하는 가상 서버입니다. 선택한 리눅스가 깔린 빈 서버로, Java와 Docker를 설치해야 합니다.</p>
                     </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">EC2 설정 단계</h4>
-                        <div class="space-y-4">
-                            <div class="flex items-start space-x-3">
-                                <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
-                                <div>
-                                    <h5 class="font-semibold text-slate-700">보안 그룹 생성</h5>
-                                    <p class="text-slate-600 text-sm">SSH, HTTP, HTTPS 접근을 위한 보안 규칙 설정</p>
+
+                    <!-- Tab buttons -->
+                    <div class="flex border-b border-slate-200">
+                        <button class="tab-button ec2-setup-tab active" onclick="switchTab('ec2-setup', 'cli')">CLI 방식</button>
+                        <button class="tab-button ec2-setup-tab" onclick="switchTab('ec2-setup', 'console')">콘솔 UI 방식</button>
+                    </div>
+
+                    <!-- CLI content -->
+                    <div id="ec2-setup-cli" class="tab-content ec2-setup-content active">
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">EC2 설정 단계</h4>
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                    <div>
+                                        <h5 class="font-semibold text-slate-700">보안 그룹 생성</h5>
+                                        <p class="text-slate-600 text-sm">SSH, HTTP, HTTPS 접근을 위한 보안 규칙 설정</p>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="flex items-start space-x-3">
-                                <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
-                                <div>
-                                    <h5 class="font-semibold text-slate-700">키 페어 생성</h5>
-                                    <p class="text-slate-600 text-sm">SSH 접근을 위한 키 페어 생성</p>
+
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                    <div>
+                                        <h5 class="font-semibold text-slate-700">키 페어 생성</h5>
+                                        <p class="text-slate-600 text-sm">SSH 접근을 위한 키 페어 생성</p>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="flex items-start space-x-3">
-                                <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
-                                <div>
-                                    <h5 class="font-semibold text-slate-700">EC2 인스턴스 생성</h5>
-                                    <p class="text-slate-600 text-sm">Ubuntu 20.04 LTS 기반 인스턴스 생성</p>
+
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                                    <div>
+                                        <h5 class="font-semibold text-slate-700">EC2 인스턴스 생성</h5>
+                                        <p class="text-slate-600 text-sm">Ubuntu 20.04 LTS 기반 인스턴스 생성</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">1단계: EC2 보안 그룹 생성</h4>
-                        <div class="code-block">
-                            <pre><code class="language-bash"># EC2 보안 그룹 생성
+
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">1단계: EC2 보안 그룹 생성</h4>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># EC2 보안 그룹 생성
 aws ec2 create-security-group \
     --group-name jpa-app-sg \
     --description "Security group for JPA application" \
@@ -593,13 +1077,13 @@ aws ec2 authorize-security-group-ingress \
     --protocol tcp \
     --port 443 \
     --cidr 0.0.0.0/0</code></pre>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">2단계: 키 페어 생성</h4>
-                        <div class="code-block">
-                            <pre><code class="language-bash"># 키 페어 생성
+
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">2단계: 키 페어 생성</h4>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># 키 페어 생성
 aws ec2 create-key-pair \
     --key-name jpa-keypair \
     --query 'KeyMaterial' \
@@ -607,13 +1091,13 @@ aws ec2 create-key-pair \
 
 # 키 페어 권한 설정 (보안을 위해)
 chmod 400 jpa-keypair.pem</code></pre>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">3단계: EC2 인스턴스 생성</h4>
-                        <div class="code-block">
-                            <pre><code class="language-bash"># EC2 인스턴스 생성
+
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">3단계: EC2 인스턴스 생성</h4>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># EC2 인스턴스 생성
 aws ec2 run-instances \
     --image-id ami-0c76973fbe0ee100c \
     --count 1 \
@@ -628,22 +1112,160 @@ INSTANCE_ID=i-0abc123def456789
 
 # 인스턴스 상태 확인
 aws ec2 describe-instances --instance-ids $INSTANCE_ID</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+                            <h4 class="text-lg font-semibold text-yellow-800 mb-2">⚠️ 주의사항</h4>
+                            <ul class="text-yellow-700 space-y-1 text-sm">
+                                <li>• <strong>AMI ID</strong>: Ubuntu 20.04 LTS (ami-0c76973fbe0ee100c) 사용</li>
+                                <li>• <strong>인스턴스 타입</strong>: t2.micro (무료 티어 대상)</li>
+                                <li>• <strong>키 페어 보관</strong>: jpa-keypair.pem 파일을 안전한 곳에 보관</li>
+                                <li>• <strong>생성 시간</strong>: EC2 인스턴스 생성에는 2-3분 소요</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+                            <h4 class="text-lg font-semibold text-green-800 mb-2">✅ EC2 설정 완료</h4>
+                            <p class="text-green-700">EC2 인스턴스가 생성되면 SSH로 접속하여 Java와 Docker를 설치할 수 있습니다!</p>
                         </div>
                     </div>
-                    
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
-                        <h4 class="text-lg font-semibold text-yellow-800 mb-2">⚠️ 주의사항</h4>
-                        <ul class="text-yellow-700 space-y-1 text-sm">
-                            <li>• <strong>AMI ID</strong>: Ubuntu 20.04 LTS (ami-0c76973fbe0ee100c) 사용</li>
-                            <li>• <strong>인스턴스 타입</strong>: t2.micro (무료 티어 대상)</li>
-                            <li>• <strong>키 페어 보관</strong>: jpa-keypair.pem 파일을 안전한 곳에 보관</li>
-                            <li>• <strong>생성 시간</h4>: EC2 인스턴스 생성에는 2-3분 소요</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
-                        <h4 class="text-lg font-semibold text-green-800 mb-2">✅ EC2 설정 완료</h4>
-                        <p class="text-green-700">EC2 인스턴스가 생성되면 SSH로 접속하여 Java와 Docker를 설치할 수 있습니다!</p>
+
+                    <!-- Console content -->
+                    <div id="ec2-setup-console" class="tab-content ec2-setup-content">
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-700 mb-3">EC2 인스턴스 생성 (통합 방식)</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">EC2 서비스 접속</h5>
+                                            <p class="text-slate-600 text-sm">AWS Console 상단 검색에서 "EC2" 검색 → "EC2" 클릭</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">EC2 대시보드 화면</p>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">인스턴스 시작</h5>
+                                            <p class="text-slate-600 text-sm">"Instances" → "Launch instances" 버튼 클릭</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">이름 및 AMI 선택</h5>
+                                            <ul class="text-slate-600 text-sm space-y-1 mt-2">
+                                                <li>• Name: <code>jpa-app-server</code></li>
+                                                <li>• AMI: Ubuntu Server 20.04 LTS 선택</li>
+                                                <li>• Architecture: 64-bit (x86)</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">인스턴스 타입</h5>
+                                            <p class="text-slate-600 text-sm">Instance type: <code>t2.micro</code> (무료 티어 대상)</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">5</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">키 페어 생성</h5>
+                                            <p class="text-slate-600 text-sm">"Create new key pair" → Name: <code>jpa-keypair</code> → 다운로드 후 안전한 곳에 보관</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">키 페어 생성 화면</p>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">6</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">네트워크 설정</h5>
+                                            <ul class="text-slate-600 text-sm space-y-1 mt-2">
+                                                <li>• VPC: jpa-vpc 선택</li>
+                                                <li>• Subnet: jpa-public-subnet 선택</li>
+                                                <li>• Auto-assign public IP: Enable</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">7</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">보안 그룹 생성</h5>
+                                            <p class="text-slate-600 text-sm">"Create security group" 선택</p>
+                                            <ul class="text-slate-600 text-sm space-y-1 mt-2">
+                                                <li>• Security group name: <code>jpa-app-sg</code></li>
+                                                <li>• Description: Security group for JPA application</li>
+                                                <li>• Inbound rules:</li>
+                                                <li class="ml-4">- SSH (22) from Anywhere (0.0.0.0/0)</li>
+                                                <li class="ml-4">- HTTP (80) from Anywhere (0.0.0.0/0)</li>
+                                                <li class="ml-4">- HTTPS (443) from Anywhere (0.0.0.0/0)</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">보안 그룹 설정 화면</p>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">8</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">스토리지 구성</h5>
+                                            <p class="text-slate-600 text-sm">8 GiB gp2 (기본값 사용)</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">9</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">인스턴스 시작</h5>
+                                            <p class="text-slate-600 text-sm">"Launch instance" 클릭 → 2-3분 대기 → 퍼블릭 IP 확인</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold text-yellow-800 mb-2">⚠️ 주의사항</h4>
+                                <ul class="text-yellow-700 space-y-1 text-sm">
+                                    <li>• <strong>키 페어 보관</strong>: jpa-keypair.pem 파일을 안전한 곳에 보관 (재다운로드 불가)</li>
+                                    <li>• <strong>인스턴스 타입</strong>: t2.micro (무료 티어 대상)</li>
+                                    <li>• <strong>퍼블릭 IP</strong>: SSH 접속에 필요하므로 반드시 확인</li>
+                                    <li>• <strong>생성 시간</strong>: EC2 인스턴스 생성에는 2-3분 소요</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold text-green-800 mb-2">✅ EC2 설정 완료</h4>
+                                <p class="text-green-700">EC2 인스턴스가 생성되면 SSH로 접속하여 Java와 Docker를 설치할 수 있습니다!</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -652,59 +1274,67 @@ aws ec2 describe-instances --instance-ids $INSTANCE_ID</code></pre>
         <!-- 5. S3 버킷 설정 -->
         <section class="mb-12">
             <h2 class="text-2xl font-bold text-slate-800 mb-6">5. S3 버킷 설정</h2>
-            
+
             <div class="bg-white rounded-lg shadow-md p-6 border border-slate-200 mb-8">
                 <div class="space-y-6">
                     <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg">
                         <h4 class="text-lg font-semibold text-blue-800 mb-2">💡 S3란?</h4>
                         <p class="text-blue-700">Simple Storage Service의 줄임말로, AWS에서 제공하는 무제한 파일 저장소입니다. 이미지, 문서, 동영상 등 모든 종류의 파일을 저장할 수 있습니다.</p>
                     </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">S3 설정 단계</h4>
-                        <div class="space-y-4">
-                            <div class="flex items-start space-x-3">
-                                <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
-                                <div>
-                                    <h5 class="font-semibold text-slate-700">S3 버킷 생성</h5>
-                                    <p class="text-slate-600 text-sm">고유한 이름으로 S3 버킷 생성</p>
+
+                    <!-- Tab buttons -->
+                    <div class="flex border-b border-slate-200">
+                        <button class="tab-button s3-setup-tab active" onclick="switchTab('s3-setup', 'cli')">CLI 방식</button>
+                        <button class="tab-button s3-setup-tab" onclick="switchTab('s3-setup', 'console')">콘솔 UI 방식</button>
+                    </div>
+
+                    <!-- CLI content -->
+                    <div id="s3-setup-cli" class="tab-content s3-setup-content active">
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">S3 설정 단계</h4>
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                    <div>
+                                        <h5 class="font-semibold text-slate-700">S3 버킷 생성</h5>
+                                        <p class="text-slate-600 text-sm">고유한 이름으로 S3 버킷 생성</p>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="flex items-start space-x-3">
-                                <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
-                                <div>
-                                    <h5 class="font-semibold text-slate-700">버킷 정책 설정</h5>
-                                    <p class="text-slate-600 text-sm">이미지 공개 접근을 위한 정책 설정</p>
+
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                    <div>
+                                        <h5 class="font-semibold text-slate-700">버킷 정책 설정</h5>
+                                        <p class="text-slate-600 text-sm">이미지 공개 접근을 위한 정책 설정</p>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="flex items-start space-x-3">
-                                <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
-                                <div>
-                                    <h5 class="font-semibold text-slate-700">CORS 설정</h5>
-                                    <p class="text-slate-600 text-sm">웹 애플리케이션에서 S3 접근을 위한 CORS 설정</p>
+
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                                    <div>
+                                        <h5 class="font-semibold text-slate-700">CORS 설정</h5>
+                                        <p class="text-slate-600 text-sm">웹 애플리케이션에서 S3 접근을 위한 CORS 설정</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">1단계: S3 버킷 생성</h4>
-                        <div class="code-block">
-                            <pre><code class="language-bash"># S3 버킷 생성 (고유한 이름 사용)
+
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">1단계: S3 버킷 생성</h4>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># S3 버킷 생성 (고유한 이름 사용)
 BUCKET_NAME=jpa-app-files-$(date +%s)
 aws s3 mb s3://$BUCKET_NAME
 
 # 버킷 이름 확인
 echo "버킷 이름: $BUCKET_NAME"</code></pre>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">2단계: 버킷 정책 설정</h4>
-                        <div class="code-block">
-                            <pre><code class="language-bash"># 버킷 정책 생성 (이미지 공개 접근 허용)
+
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">2단계: 버킷 정책 설정</h4>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># 버킷 정책 생성 (이미지 공개 접근 허용)
 cat > bucket-policy.json << EOF
 {
     "Version": "2012-10-17",
@@ -724,13 +1354,13 @@ EOF
 aws s3api put-bucket-policy \
     --bucket $BUCKET_NAME \
     --policy file://bucket-policy.json</code></pre>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-slate-700 mb-3">3단계: CORS 설정</h4>
-                        <div class="code-block">
-                            <pre><code class="language-bash"># CORS 설정 생성
+
+                        <div>
+                            <h4 class="text-lg font-semibold text-slate-700 mb-3">3단계: CORS 설정</h4>
+                            <div class="code-block">
+                                <pre><code class="language-bash"># CORS 설정 생성
 cat > cors-config.json << EOF
 {
     "CORSRules": [
@@ -748,22 +1378,180 @@ EOF
 aws s3api put-bucket-cors \
     --bucket $BUCKET_NAME \
     --cors-configuration file://cors-config.json</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+                            <h4 class="text-lg font-semibold text-yellow-800 mb-2">⚠️ 주의사항</h4>
+                            <ul class="text-yellow-700 space-y-1 text-sm">
+                                <li>• <strong>버킷 이름</strong>: 전 세계적으로 고유해야 함 (소문자, 숫자, 하이픈만 사용)</li>
+                                <li>• <strong>정책 설정</strong>: images/ 폴더만 공개 접근 허용</li>
+                                <li>• <strong>CORS 설정</strong>: 웹 애플리케이션에서 S3 접근을 위해 필요</li>
+                                <li>• <strong>비용</strong>: S3는 무료 티어 대상 (5GB 저장, 20,000 GET 요청)</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+                            <h4 class="text-lg font-semibold text-green-800 mb-2">✅ S3 설정 완료</h4>
+                            <p class="text-green-700">S3 버킷이 생성되면 애플리케이션에서 파일을 업로드하고 다운로드할 수 있습니다!</p>
                         </div>
                     </div>
-                    
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
-                        <h4 class="text-lg font-semibold text-yellow-800 mb-2">⚠️ 주의사항</h4>
-                        <ul class="text-yellow-700 space-y-1 text-sm">
-                            <li>• <strong>버킷 이름</strong>: 전 세계적으로 고유해야 함 (소문자, 숫자, 하이픈만 사용)</li>
-                            <li>• <strong>정책 설정</strong>: images/ 폴더만 공개 접근 허용</li>
-                            <li>• <strong>CORS 설정</strong>: 웹 애플리케이션에서 S3 접근을 위해 필요</li>
-                            <li>• <strong>비용</strong>: S3는 무료 티어 대상 (5GB 저장, 20,000 GET 요청)</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
-                        <h4 class="text-lg font-semibold text-green-800 mb-2">✅ S3 설정 완료</h4>
-                        <p class="text-green-700">S3 버킷이 생성되면 애플리케이션에서 파일을 업로드하고 다운로드할 수 있습니다!</p>
+
+                    <!-- Console content -->
+                    <div id="s3-setup-console" class="tab-content s3-setup-content">
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-700 mb-3">1단계: S3 버킷 생성</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">S3 서비스 접속</h5>
+                                            <p class="text-slate-600 text-sm">AWS Console 상단 검색에서 "S3" 검색 → "S3" 클릭</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">S3 대시보드 화면</p>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">버킷 생성 시작</h5>
+                                            <p class="text-slate-600 text-sm">"Create bucket" 버튼 클릭</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">버킷 설정</h5>
+                                            <ul class="text-slate-600 text-sm space-y-1 mt-2">
+                                                <li>• Bucket name: 고유한 이름 입력 (예: <code>jpa-app-files-20250128</code>)</li>
+                                                <li>• AWS Region: ap-northeast-2 (서울)</li>
+                                                <li>• Block all public access: 체크 해제 (public 접근 허용)</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">S3 버킷 생성 폼 화면</p>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">버킷 생성 완료</h5>
+                                            <p class="text-slate-600 text-sm">"Create bucket" 버튼 클릭하여 버킷 생성</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-700 mb-3">2단계: 버킷 정책 설정</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">버킷 선택</h5>
+                                            <p class="text-slate-600 text-sm">생성한 버킷 클릭 → "Permissions" 탭 이동</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">버킷 정책 편집</h5>
+                                            <p class="text-slate-600 text-sm">"Bucket policy" → "Edit" 클릭</p>
+                                            <p class="text-slate-600 text-sm mt-2">아래 JSON 입력 (버킷 이름 교체 필요):</p>
+                                            <div class="bg-gray-100 p-2 rounded mt-2 text-xs">
+                                                <pre>{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Sid": "PublicReadGetObject",
+    "Effect": "Allow",
+    "Principal": "*",
+    "Action": "s3:GetObject",
+    "Resource": "arn:aws:s3:::YOUR-BUCKET-NAME/images/*"
+  }]
+}</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">버킷 정책 편집 화면</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="text-lg font-semibold text-slate-700 mb-3">3단계: CORS 설정</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">CORS 편집</h5>
+                                            <p class="text-slate-600 text-sm">"Permissions" 탭 → "Cross-origin resource sharing (CORS)" → "Edit" 클릭</p>
+                                            <p class="text-slate-600 text-sm mt-2">아래 JSON 입력:</p>
+                                            <div class="bg-gray-100 p-2 rounded mt-2 text-xs">
+                                                <pre>[{
+  "AllowedHeaders": ["*"],
+  "AllowedMethods": ["GET", "POST", "PUT", "DELETE"],
+  "AllowedOrigins": ["*"],
+  "ExposeHeaders": []
+}]</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="screenshot-placeholder">
+                                        <svg class="w-16 h-16 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <p class="text-gray-600 font-semibold">스크린샷 위치</p>
+                                        <p class="text-gray-500 text-sm">CORS 설정 화면</p>
+                                    </div>
+
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                        <div>
+                                            <h5 class="font-semibold text-slate-700">설정 저장</h5>
+                                            <p class="text-slate-600 text-sm">"Save changes" 버튼 클릭</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold text-yellow-800 mb-2">⚠️ 주의사항</h4>
+                                <ul class="text-yellow-700 space-y-1 text-sm">
+                                    <li>• <strong>버킷 이름</strong>: 전 세계적으로 고유해야 함 (소문자, 숫자, 하이픈만 사용)</li>
+                                    <li>• <strong>Public access</strong>: images/ 폴더만 공개 접근 허용</li>
+                                    <li>• <strong>정책 JSON</strong>: YOUR-BUCKET-NAME을 실제 버킷 이름으로 교체</li>
+                                    <li>• <strong>비용</strong>: S3는 무료 티어 대상 (5GB 저장, 20,000 GET 요청)</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold text-green-800 mb-2">✅ S3 설정 완료</h4>
+                                <p class="text-green-700">S3 버킷이 생성되면 애플리케이션에서 파일을 업로드하고 다운로드할 수 있습니다!</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

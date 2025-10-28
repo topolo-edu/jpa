@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 3: 수동 배포</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+</head>
+<body class="bg-white">
+    <div class="container mx-auto px-4 py-6 max-w-4xl">
+
+        <!-- Header -->
+        <header class="mb-6 pb-4 border-b-2 border-slate-800">
+            <h1 class="text-3xl font-bold text-slate-900">Step 3: 수동 배포</h1>
+            <p class="text-slate-600 mt-2">JAR, Docker, Docker Compose를 이용한 EC2 배포</p>
+        </header>
+
+        <!-- 사전 준비 -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-slate-800 mb-2">사전 준비 사항</h2>
+            <ul class="list-disc list-inside text-slate-700 space-y-1">
+                <li>Step 1 완료: AWS 계정 생성 및 CLI 설치</li>
+                <li>Step 2 완료: EC2, RDS, S3 환경 구축</li>
+                <li>EC2 SSH 접속 가능 (goormjpa.pem)</li>
+            </ul>
+        </section>
+
+        <!-- 배포 방식 비교 -->
+        <section class="mb-8">
+            <h2 class="text-xl font-bold text-slate-800 mb-3">배포 방식 비교</h2>
+            <table class="w-full border border-slate-300 text-sm">
+                <thead class="bg-slate-100">
+                    <tr>
+                        <th class="border border-slate-300 px-4 py-2 text-left">구분</th>
+                        <th class="border border-slate-300 px-4 py-2 text-left">JAR</th>
+                        <th class="border border-slate-300 px-4 py-2 text-left">Docker</th>
+                        <th class="border border-slate-300 px-4 py-2 text-left">Compose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-slate-300 px-4 py-2 font-medium">난이도</td>
+                        <td class="border border-slate-300 px-4 py-2">쉬움</td>
+                        <td class="border border-slate-300 px-4 py-2">보통</td>
+                        <td class="border border-slate-300 px-4 py-2">어려움</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-slate-300 px-4 py-2 font-medium">환경 일관성</td>
+                        <td class="border border-slate-300 px-4 py-2">낮음</td>
+                        <td class="border border-slate-300 px-4 py-2">높음</td>
+                        <td class="border border-slate-300 px-4 py-2">매우 높음</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-slate-300 px-4 py-2 font-medium">권장 사용처</td>
+                        <td class="border border-slate-300 px-4 py-2">개발/테스트</td>
+                        <td class="border border-slate-300 px-4 py-2">단일 앱</td>
+                        <td class="border border-slate-300 px-4 py-2">복잡한 구성</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <hr class="my-8">
+
+        <!-- Part 1: JAR 배포 -->
+        <section class="mb-10">
+            <h2 class="text-2xl font-bold text-slate-900 mb-4 pb-2 border-b border-slate-300">Part 1: JAR 파일 배포</h2>
+
+            <!-- Step 1 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">1. 로컬에서 JAR 빌드</h3>
+                <p class="text-sm text-slate-600 mb-3"><code>application.yml</code>에 AWS RDS 엔드포인트 설정</p>
+
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code>spring:
+  datasource:
+    url: jdbc:mariadb://goormjpa-db.xxxxx.ap-northeast-2.rds.amazonaws.com:3306/goormjpa
+    username: admin
+    password: goorm_rdb_password
+
+cloud:
+  aws:
+    credentials:
+      instanceProfile: true
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: goormjpa-yourname</code></pre>
+
+                <p class="text-sm text-slate-600 my-2">빌드 명령어:</p>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code># Windows
+.\gradlew clean build
+
+# macOS/Linux
+./gradlew clean build</code></pre>
+
+                <p class="text-sm text-slate-600 mt-2">→ <code>build/libs/goormjpa-0.0.1-SNAPSHOT.jar</code> 생성</p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">2. EC2로 JAR 파일 업로드</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code># Windows
+scp -i goormjpa.pem .\build\libs\goormjpa-0.0.1-SNAPSHOT.jar ubuntu@EC2_IP:/home/ubuntu/
+
+# macOS/Linux
+scp -i ~/Downloads/goormjpa.pem ./build/libs/goormjpa-0.0.1-SNAPSHOT.jar ubuntu@EC2_IP:/home/ubuntu/</code></pre>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">3. EC2에 Java 설치</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code>ssh -i goormjpa.pem ubuntu@EC2_IP
+
+sudo apt update
+sudo apt install openjdk-17-jdk -y
+
+java -version</code></pre>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">4. JAR 실행</h3>
+                <p class="text-sm text-slate-600 mb-2">포그라운드 실행 (테스트용):</p>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code>java -jar goormjpa-0.0.1-SNAPSHOT.jar</code></pre>
+
+                <p class="text-sm text-slate-600 mb-2 mt-3">백그라운드 실행 (권장):</p>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code>nohup java -jar goormjpa-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+
+# 로그 확인
+tail -f app.log
+
+# 중지
+pkill -f goormjpa</code></pre>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">5. 보안 그룹 설정</h3>
+                <p class="text-sm text-slate-700 mb-2">AWS 콘솔 → EC2 → 보안 그룹 → 인바운드 규칙 추가:</p>
+                <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
+                    <li>유형: 사용자 지정 TCP</li>
+                    <li>포트: 8080</li>
+                    <li>소스: 0.0.0.0/0 (또는 My IP)</li>
+                </ul>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">6. 접속 테스트</h3>
+                <p class="text-sm text-slate-700">브라우저: <code class="bg-slate-100 px-2 py-1 rounded">http://EC2_IP:8080</code></p>
+            </div>
+        </section>
+
+        <hr class="my-8">
+
+        <!-- Part 2: Docker 배포 -->
+        <section class="mb-10">
+            <h2 class="text-2xl font-bold text-slate-900 mb-4 pb-2 border-b border-slate-300">Part 2: Docker 배포</h2>
+
+            <!-- Step 1 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">1. Dockerfile 작성</h3>
+                <p class="text-sm text-slate-600 mb-2">프로젝트 루트에 <code>Dockerfile</code> 생성:</p>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code># 빌드 단계
+FROM gradle:8.5-jdk17 AS build
+WORKDIR /app
+COPY . .
+RUN gradle clean build -x test
+
+# 실행 단계
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY --from=build /app/build/libs/goormjpa-0.0.1-SNAPSHOT.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]</code></pre>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">2. .dockerignore 작성</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code>.git
+.gradle
+build
+*.md</code></pre>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">3. 로컬에서 이미지 빌드</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code>docker build -t goormjpa-app .
+docker images</code></pre>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">4. 이미지 EC2로 전송</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code># 이미지 저장
+docker save goormjpa-app:latest -o goormjpa-app.tar
+
+# EC2로 전송
+scp -i goormjpa.pem goormjpa-app.tar ubuntu@EC2_IP:/home/ubuntu/</code></pre>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">5. EC2에 Docker 설치</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code>ssh -i goormjpa.pem ubuntu@EC2_IP
+
+sudo apt update
+sudo apt install docker.io -y
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# 권한 설정
+sudo usermod -aG docker $USER
+exit
+# 재접속</code></pre>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">6. 이미지 로드 및 실행</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code># 이미지 로드
+docker load -i goormjpa-app.tar
+
+# 컨테이너 실행
+docker run -d \
+  --name goormjpa-container \
+  -p 8080:8080 \
+  --restart unless-stopped \
+  goormjpa-app:latest
+
+# 로그 확인
+docker logs -f goormjpa-container</code></pre>
+            </div>
+
+            <!-- Step 7 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">7. 컨테이너 관리 명령어</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code>docker ps                              # 실행 중인 컨테이너
+docker stop goormjpa-container         # 중지
+docker start goormjpa-container        # 시작
+docker restart goormjpa-container      # 재시작
+docker rm -f goormjpa-container        # 삭제</code></pre>
+            </div>
+        </section>
+
+        <hr class="my-8">
+
+        <!-- Part 3: Docker Compose 배포 -->
+        <section class="mb-10">
+            <h2 class="text-2xl font-bold text-slate-900 mb-4 pb-2 border-b border-slate-300">Part 3: Docker Compose 배포</h2>
+
+            <!-- Step 1 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">1. docker-compose.yml 작성</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code>version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: goormjpa-app:latest
+    container_name: goormjpa-app
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - goormjpa-network
+
+networks:
+  goormjpa-network:
+    driver: bridge</code></pre>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">2. EC2로 프로젝트 전송</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code># 압축
+tar -czf goormjpa.tar.gz --exclude='.git' --exclude='build' .
+
+# 전송
+scp -i goormjpa.pem goormjpa.tar.gz ubuntu@EC2_IP:/home/ubuntu/</code></pre>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">3. EC2에 Docker Compose 설치</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code>sudo apt install docker-compose-plugin -y
+docker compose version</code></pre>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">4. 실행</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code>tar -xzf goormjpa.tar.gz
+cd goormjpa
+
+docker compose up -d --build
+docker compose logs -f</code></pre>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">5. 관리 명령어</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code>docker compose ps          # 상태 확인
+docker compose stop        # 중지
+docker compose start       # 시작
+docker compose restart     # 재시작
+docker compose down        # 중지 및 삭제</code></pre>
+            </div>
+        </section>
+
+        <hr class="my-8">
+
+        <!-- 트러블슈팅 -->
+        <section class="mb-10">
+            <h2 class="text-xl font-bold text-slate-800 mb-3">트러블슈팅</h2>
+
+            <div class="mb-4">
+                <h3 class="font-bold text-slate-700 mb-1">포트 8080이 이미 사용 중</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code>sudo lsof -i :8080
+sudo kill -9 PID번호</code></pre>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="font-bold text-slate-700 mb-1">Docker 빌드 시 메모리 부족 (t2.micro)</h3>
+<pre class="bg-slate-900 text-white p-3 rounded text-sm overflow-x-auto"><code># 스왑 메모리 추가
+sudo dd if=/dev/zero of=/swapfile bs=128M count=16
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile</code></pre>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="font-bold text-slate-700 mb-1">RDS 연결 실패</h3>
+                <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
+                    <li>EC2와 RDS가 같은 VPC에 있는지 확인</li>
+                    <li>RDS 보안 그룹에서 EC2 보안 그룹 허용 확인</li>
+                    <li>application.yml의 엔드포인트 주소 확인</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-12 pt-6 border-t border-slate-300 text-center text-sm text-slate-600">
+            <p>
+                <a href="../index.html" class="text-blue-600 hover:underline">배포 메인</a> |
+                <a href="step2-server-setup.html" class="text-blue-600 hover:underline ml-3">← 이전: 서버 셋팅</a> |
+                <a href="step5-cicd.html" class="text-blue-600 hover:underline ml-3">다음: CI/CD 배포 →</a>
+            </p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>

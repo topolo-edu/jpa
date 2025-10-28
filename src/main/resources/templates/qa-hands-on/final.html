@@ -398,100 +398,64 @@
     </div>
 
     <!-- Final Presentation Script -->
-    <div class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg shadow-xl p-6 mb-8 text-white">
-        <h2 class="text-2xl font-bold mb-6 flex items-center">
-            <i class="fas fa-microphone-alt mr-3"></i>
-            최종 발표 완벽 대본 (3분 버전)
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center text-gray-800">
+            <i class="fas fa-presentation text-indigo-600 mr-3"></i>
+            발표 구성 예시
         </h2>
 
-        <div class="bg-white bg-opacity-20 rounded-lg p-5 mb-4">
-            <h3 class="font-bold text-lg mb-3">🎤 구조: 문제 → 과정 → 결과 → 배움</h3>
-            <div class="space-y-4 text-sm">
+        <div class="bg-gray-50 rounded-lg p-5 mb-4">
+            <h3 class="font-semibold text-gray-900 mb-4">발표 흐름: 문제 → 과정 → 결과 → 배움</h3>
+            <div class="space-y-3 text-sm text-gray-700">
                 <!-- Part 1 -->
-                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
-                    <p class="font-semibold mb-2 text-yellow-200">
-                        <i class="fas fa-exclamation-circle mr-2"></i>1️⃣ 문제 제기 (30초)
-                    </p>
-                    <p class="italic leading-relaxed">
-                        "안녕하세요. 저희는 <strong>스마트 쇼핑몰</strong> 프로젝트를 진행했습니다.<br>
-                        개발 초기에는 기능만 급하게 만들다 보니 <strong>테스트 없이 배포</strong>했고,
-                        그 결과 <strong>운영 중에 주문이 누락</strong>되는 치명적인 버그가 발생했습니다.<br>
-                        이 경험을 통해 <strong>'품질 보증 프로세스'</strong>가 얼마나 중요한지 깨달았습니다."
+                <div class="border-l-4 border-indigo-400 pl-4 py-3">
+                    <p class="font-semibold mb-2 text-gray-800">1. 문제 인식</p>
+                    <p>
+                        프로젝트 초기에는 기능 구현에만 집중하여 테스트 없이 배포했고,
+                        운영 중 버그가 발견되어 품질 보증의 필요성을 느꼈습니다.
                     </p>
                 </div>
 
                 <!-- Part 2 -->
-                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
-                    <p class="font-semibold mb-2 text-green-200">
-                        <i class="fas fa-tools mr-2"></i>2️⃣ 해결 과정 (90초)
-                    </p>
-                    <div class="space-y-2">
-                        <p class="italic">
-                            <strong class="text-green-300">[Postman]</strong>
-                            "먼저 <strong>Postman</strong>으로 모든 API 엔드포인트를 수동 테스트했습니다.
-                            정상 케이스뿐 아니라 400, 404 등 에러 케이스까지 검증했고, Collection으로 저장했습니다."
-                        </p>
-                        <p class="italic">
-                            <strong class="text-blue-300">[JUnit]</strong>
-                            "하지만 매번 수동 테스트는 비효율적이라 <strong>JUnit</strong>으로 자동 테스트를 작성했습니다.
-                            Entity 비즈니스 로직부터 API 통합 테스트까지 총 <strong>커버리지 70%</strong>를 달성했습니다."
-                        </p>
-                        <p class="italic">
-                            <strong class="text-yellow-300">[nGrinder/JMeter]</strong>
-                            "기능은 정상이지만 <strong>성능이 문제</strong>였습니다.
-                            nGrinder로 부하 테스트를 해보니 N+1 쿼리 문제로 TPS가 50에 불과했습니다.
-                            <strong>Fetch Join</strong>을 적용한 결과 <strong>TPS 500</strong>으로 10배 개선되었습니다."
-                        </p>
-                        <p class="italic">
-                            <strong class="text-indigo-300">[CI/CD]</strong>
-                            "마지막으로 <strong>GitHub Actions</strong>로 CI/CD를 구축했습니다.
-                            이제 코드를 푸시하면 자동으로 모든 테스트가 실행되고,
-                            실패하면 PR 머지가 차단됩니다. 팀원들의 실수를 사전에 방지할 수 있게 되었습니다."
-                        </p>
+                <div class="border-l-4 border-indigo-400 pl-4 py-3">
+                    <p class="font-semibold mb-2 text-gray-800">2. 해결 과정</p>
+                    <div class="space-y-2 ml-2">
+                        <p><strong>Postman</strong>: API 엔드포인트를 수동으로 테스트하고 Collection으로 관리했습니다.</p>
+                        <p><strong>JUnit</strong>: Entity부터 Controller까지 자동 테스트를 작성하여 커버리지 70%를 달성했습니다.</p>
+                        <p><strong>nGrinder</strong>: 부하 테스트로 N+1 문제를 발견하고 Fetch Join으로 TPS를 50에서 500으로 개선했습니다.</p>
+                        <p><strong>GitHub Actions</strong>: CI/CD 파이프라인을 구축하여 푸시 시 자동으로 테스트가 실행되도록 했습니다.</p>
                     </div>
                 </div>
 
                 <!-- Part 3 -->
-                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
-                    <p class="font-semibold mb-2 text-blue-200">
-                        <i class="fas fa-chart-line mr-2"></i>3️⃣ 결과 (30초)
-                    </p>
-                    <p class="italic leading-relaxed mb-2">
-                        "결과적으로 다음과 같은 성과를 달성했습니다:"
-                    </p>
-                    <ul class="space-y-1 text-xs list-disc list-inside ml-4">
-                        <li>✅ <strong>배포 후 버그 발생률 80% 감소</strong></li>
-                        <li>✅ <strong>테스트 커버리지 70% 달성</strong> (자동 검증)</li>
-                        <li>✅ <strong>성능 10배 향상</strong> (TPS 50 → 500)</li>
-                        <li>✅ <strong>CI/CD 파이프라인 구축</strong> (푸시 시 자동 테스트)</li>
+                <div class="border-l-4 border-indigo-400 pl-4 py-3">
+                    <p class="font-semibold mb-2 text-gray-800">3. 결과</p>
+                    <ul class="space-y-1 ml-2">
+                        <li>• 테스트 커버리지 70% 달성</li>
+                        <li>• 성능 10배 향상 (TPS 50 → 500)</li>
+                        <li>• CI/CD 자동화 완료</li>
                     </ul>
                 </div>
 
                 <!-- Part 4 -->
-                <div class="bg-white bg-opacity-10 p-4 rounded-lg">
-                    <p class="font-semibold mb-2 text-pink-200">
-                        <i class="fas fa-graduation-cap mr-2"></i>4️⃣ 배운 점 (30초)
-                    </p>
-                    <p class="italic leading-relaxed">
-                        "이 프로젝트를 통해 <strong>'테스트는 선택이 아닌 필수'</strong>라는 것을 배웠습니다.<br>
-                        처음에는 테스트 작성이 시간 낭비라고 생각했지만,
-                        오히려 <strong>버그 수정 시간을 줄여</strong> 전체 개발 속도가 빨라졌습니다.<br>
-                        또한 <strong>대기업 수준의 QA 프로세스</strong>를 경험하면서
-                        실무에서 바로 적용할 수 있는 자신감을 얻었습니다. 감사합니다."
+                <div class="border-l-4 border-indigo-400 pl-4 py-3">
+                    <p class="font-semibold mb-2 text-gray-800">4. 배운 점</p>
+                    <p>
+                        초기에는 테스트 작성이 시간 소모로 느껴졌지만,
+                        장기적으로는 버그 수정 시간을 줄여 전체 개발 속도를 향상시켰습니다.
+                        체계적인 QA 프로세스의 중요성을 경험했습니다.
                     </p>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white bg-opacity-20 rounded-lg p-4">
-            <h3 class="font-bold mb-2 flex items-center">
-                <i class="fas fa-star mr-2"></i>발표 꿀팁
-            </h3>
-            <ul class="space-y-1 text-sm">
-                <li>• 숫자를 강조하세요: "10배 향상", "80% 감소", "TPS 500" 같은 구체적 수치</li>
-                <li>• 화면을 보여주세요: 말만 하지 말고 실제 GitHub Actions 탭, 성능 그래프 띄우기</li>
-                <li>• 실패 경험을 먼저 말하세요: "처음엔 실패했지만 이렇게 해결했다"가 더 진정성 있음</li>
-                <li>• 3분 넘지 않기: 연습해서 정확히 2분 50초 맞추면 프로처럼 보임</li>
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+            <h3 class="font-semibold text-blue-900 mb-2">발표 시 참고사항</h3>
+            <ul class="space-y-1 text-sm text-blue-800">
+                <li>• 구체적인 수치를 활용하세요 (TPS 500, 커버리지 70% 등)</li>
+                <li>• 화면 자료를 준비하세요 (GitHub Actions 탭, 성능 그래프)</li>
+                <li>• 문제 해결 과정을 중심으로 설명하세요</li>
+                <li>• 시간 배분에 유의하세요 (3분 이내)</li>
             </ul>
         </div>
     </div>
@@ -653,50 +617,44 @@
         </div>
     </div>
 
-    <!-- Congratulations -->
-    <div class="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-lg shadow-xl p-8 text-white text-center">
-        <div class="text-6xl mb-4">🎉</div>
-        <h2 class="text-4xl font-bold mb-4">축하합니다!</h2>
-        <p class="text-xl mb-6">
-            <strong>QA Hands-On 전 과정</strong>을 완료하셨습니다!<br>
-            이제 당신은 <strong>대기업 수준의 품질 보증 프로세스</strong>를 구축할 수 있습니다.
+    <!-- Completion -->
+    <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">학습 완료</h2>
+        <p class="text-gray-700 mb-6">
+            테스트 자동화 가이드 전 과정을 완료했습니다.
         </p>
-        <div class="bg-white bg-opacity-20 rounded-lg p-6 mb-6">
-            <h3 class="font-bold text-lg mb-3">🏅 획득한 스킬</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                <div class="bg-white bg-opacity-10 p-3 rounded">
-                    <span class="level-badge level-1 mb-2 block">Lv.1</span>
-                    <strong>Postman</strong><br>API 수동 테스트
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+            <h3 class="font-semibold text-gray-900 mb-4">학습한 내용</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-700">
+                <div class="border border-gray-200 p-3 rounded">
+                    <span class="level-badge level-1 mb-2 block">Step 1</span>
+                    <strong>Postman</strong><br>API 테스트
                 </div>
-                <div class="bg-white bg-opacity-10 p-3 rounded">
-                    <span class="level-badge level-2 mb-2 block">Lv.2</span>
+                <div class="border border-gray-200 p-3 rounded">
+                    <span class="level-badge level-2 mb-2 block">Step 2</span>
                     <strong>JUnit</strong><br>자동 테스트
                 </div>
-                <div class="bg-white bg-opacity-10 p-3 rounded">
-                    <span class="level-badge level-3 mb-2 block">Lv.3</span>
+                <div class="border border-gray-200 p-3 rounded">
+                    <span class="level-badge level-3 mb-2 block">Step 3</span>
                     <strong>nGrinder</strong><br>성능 테스트
                 </div>
-                <div class="bg-white bg-opacity-10 p-3 rounded">
-                    <span class="level-badge level-4 mb-2 block">Lv.4</span>
-                    <strong>JMeter</strong><br>고급 성능 분석
+                <div class="border border-gray-200 p-3 rounded">
+                    <span class="level-badge level-4 mb-2 block">Step 4</span>
+                    <strong>JMeter</strong><br>성능 분석
                 </div>
             </div>
-            <div class="mt-4 bg-white bg-opacity-10 p-3 rounded">
-                <i class="fas fa-rocket text-2xl mr-2"></i>
+            <div class="mt-4 border border-gray-200 p-3 rounded text-gray-700">
                 <strong>CI/CD</strong> - GitHub Actions 자동화
             </div>
         </div>
         <div class="flex justify-center space-x-4">
-            <a href="/qa-hands-on/overview" class="bg-white text-orange-600 px-6 py-3 rounded-lg font-bold hover:bg-orange-50 transition">
-                <i class="fas fa-redo mr-2"></i>다시 복습하기
+            <a href="/qa-hands-on/overview" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                처음으로
             </a>
-            <a href="/project/step2/index" class="bg-orange-700 text-white px-6 py-3 rounded-lg font-bold hover:bg-orange-800 transition">
-                <i class="fas fa-code mr-2"></i>프로젝트로 돌아가기
+            <a href="/project/step2/index" class="bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition">
+                프로젝트로 돌아가기
             </a>
         </div>
-        <p class="mt-6 text-sm opacity-90">
-            이 학습 자료가 도움이 되었다면 GitHub에 ⭐ Star를 눌러주세요!
-        </p>
     </div>
 
 </main>
