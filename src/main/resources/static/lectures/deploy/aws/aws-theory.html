@@ -415,6 +415,127 @@
                 </table>
             </div>
 
+            <!-- Serverless (FaaS) 추가 개념 -->
+            <div class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-6 border border-purple-200 mb-8">
+                <h3 class="text-xl font-bold text-slate-800 mb-3 flex items-center">
+                    <span class="text-2xl mr-2">⚡</span> 추가 개념: Serverless (FaaS)
+                </h3>
+
+                <p class="text-slate-700 mb-4">
+                    <strong>Serverless</strong>는 "서버가 없다"는 의미가 아니라, <strong>개발자가 서버를 의식하지 않아도 된다</strong>는 개념입니다.
+                    PaaS에서 더 나아가 <strong>함수(Function) 단위로 코드를 실행</strong>하며, 사용한 만큼만 과금됩니다.
+                </p>
+
+                <div class="bg-white rounded-lg p-4 mb-3">
+                    <h4 class="font-semibold text-slate-700 mb-2">📌 주요 특징</h4>
+                    <ul class="text-sm text-slate-600 space-y-1">
+                        <li>✅ 서버 관리 완전히 불필요 (프로비저닝, 스케일링 자동)</li>
+                        <li>✅ 함수가 실행될 때만 과금 (유휴 시간은 무료)</li>
+                        <li>✅ 자동 스케일링 (트래픽에 따라 자동 확장/축소)</li>
+                        <li>⚠️ 콜드 스타트 문제 (첫 실행 시 지연)</li>
+                        <li>⚠️ 실행 시간 제한 (보통 15분 이내)</li>
+                    </ul>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-3 text-sm mb-3">
+                    <div class="bg-orange-50 p-3 rounded border border-orange-200">
+                        <strong class="text-orange-700">AWS Lambda</strong>
+                        <p class="text-slate-600 text-xs mt-1">AWS의 Serverless 컴퓨팅</p>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded border border-blue-200">
+                        <strong class="text-blue-700">Azure Functions</strong>
+                        <p class="text-slate-600 text-xs mt-1">Microsoft Azure의 FaaS</p>
+                    </div>
+                    <div class="bg-green-50 p-3 rounded border border-green-200">
+                        <strong class="text-green-700">Google Cloud Functions</strong>
+                        <p class="text-slate-600 text-xs mt-1">GCP의 이벤트 기반 함수</p>
+                    </div>
+                </div>
+
+                <div class="bg-purple-100 border border-purple-300 p-3 rounded text-sm text-purple-800">
+                    <strong>💡 참고:</strong> 이 강의의 Spring Boot 애플리케이션은 <strong>전통적인 웹 서버 방식</strong>이므로
+                    EC2(IaaS)가 더 적합합니다. Serverless는 짧고 독립적인 작업(예: 이미지 리사이징, 데이터 처리)에 유리합니다.
+                </div>
+
+                <!-- 발음 및 약자 정리 표 -->
+                <div class="bg-white rounded-lg border border-slate-200 mt-4 mb-4 overflow-hidden">
+                    <div class="bg-gradient-to-r from-slate-100 to-slate-50 p-3 border-b border-slate-200">
+                        <h4 class="font-semibold text-slate-800 text-center">🎵 약자 및 발음 정리</h4>
+                    </div>
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="py-3 px-4 text-left font-semibold border-b border-slate-200">약자</th>
+                                <th class="py-3 px-4 text-left font-semibold border-b border-slate-200">정식 발음</th>
+                                <th class="py-3 px-4 text-center font-semibold border-b border-slate-200">보통 발음</th>
+                                <th class="py-3 px-4 text-left font-semibold border-b border-slate-200">의미</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-600">
+                            <tr class="hover:bg-orange-50">
+                                <td class="py-3 px-4 font-bold text-orange-700">IaaS</td>
+                                <td class="py-3 px-4">Infrastructure as a Service</td>
+                                <td class="py-3 px-4 text-center font-semibold">아이애스</td>
+                                <td class="py-3 px-4">인프라형 서비스</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50">
+                                <td class="py-3 px-4 font-bold text-blue-700">PaaS</td>
+                                <td class="py-3 px-4">Platform as a Service</td>
+                                <td class="py-3 px-4 text-center font-semibold">파스</td>
+                                <td class="py-3 px-4">플랫폼형 서비스</td>
+                            </tr>
+                            <tr class="hover:bg-green-50">
+                                <td class="py-3 px-4 font-bold text-green-700">SaaS</td>
+                                <td class="py-3 px-4">Software as a Service</td>
+                                <td class="py-3 px-4 text-center font-semibold">사스</td>
+                                <td class="py-3 px-4">소프트웨어형 서비스</td>
+                            </tr>
+                            <tr class="hover:bg-purple-50">
+                                <td class="py-3 px-4 font-bold text-purple-700">FaaS</td>
+                                <td class="py-3 px-4">Function as a Service</td>
+                                <td class="py-3 px-4 text-center font-semibold">패스</td>
+                                <td class="py-3 px-4">함수형 서비스 (Serverless)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="bg-slate-50 p-3 text-xs text-slate-600 text-center border-t border-slate-200">
+                        발음만 봐도, 위 네 가지를 한꺼번에 외우기 좋죠 😄
+                    </div>
+                </div>
+
+                <!-- PaaS vs FaaS 개발자 관점 -->
+                <div class="bg-yellow-50 border border-yellow-300 rounded-lg p-4">
+                    <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                        <span class="text-lg mr-2">💻</span> Java 개발자 관점: PaaS vs FaaS 차이
+                    </h4>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div class="bg-white p-4 rounded border border-blue-200">
+                            <div class="font-bold text-blue-700 mb-2">PaaS (Platform as a Service)</div>
+                            <div class="text-slate-600 space-y-1">
+                                <p><strong>배포 단위:</strong> 애플리케이션 전체</p>
+                                <p><strong>예시:</strong> Spring Boot 프로젝트 전체</p>
+                                <p><strong>실행:</strong> 서버가 계속 돌아감 (24/7)</p>
+                                <p><strong>코드:</strong> <code class="bg-blue-100 px-1 rounded text-xs">@SpringBootApplication</code></p>
+                                <p class="text-xs text-slate-500 mt-2">→ main() 실행되고 톰캣 서버 계속 대기</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded border border-purple-200">
+                            <div class="font-bold text-purple-700 mb-2">FaaS (Function as a Service)</div>
+                            <div class="text-slate-600 space-y-1">
+                                <p><strong>배포 단위:</strong> 함수 하나</p>
+                                <p><strong>예시:</strong> Java 메서드 하나만 배포</p>
+                                <p><strong>실행:</strong> 요청 올 때만 실행 (이벤트 기반)</p>
+                                <p><strong>코드:</strong> <code class="bg-purple-100 px-1 rounded text-xs">handleRequest()</code></p>
+                                <p class="text-xs text-slate-500 mt-2">→ 요청 → 함수 실행 → 응답 → 종료</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-yellow-100 border border-yellow-400 p-3 rounded mt-3 text-xs text-yellow-800">
+                        <strong>🤔 쉽게 구분:</strong> PaaS는 "프로젝트 전체 배포 (서버 항상 ON)", FaaS는 "함수만 배포 (필요할 때만 ON)"
+                    </div>
+                </div>
+            </div>
+
             <!-- 이 강의에서는 -->
             <div class="grid md:grid-cols-2 gap-6 mb-8">
                 <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg shadow-md p-6 border-2 border-orange-300">
