@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>배포 전체 흐름 로드맵 | JPA 학습 프로젝트</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .arrow-down {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid #cbd5e1;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50">
+    <!-- 헤더 (동적 로드) -->
+    <div id="header"></div>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="container mx-auto px-4 py-8 max-w-5xl">
+        <!-- 타이틀 -->
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                🚀 배포 전체 흐름 로드맵
+            </h1>
+            <p class="text-slate-600 text-lg">개발부터 쿠버네티스까지, 전체 여정을 한눈에!</p>
+        </div>
+
+        <!-- 로드맵 플로우 -->
+        <div class="space-y-8">
+
+            <!-- Step 1: 로컬 개발 -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border-2 border-blue-200">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-3xl mr-4">
+                        🔧
+                    </div>
+                    <div>
+                        <div class="text-sm text-blue-600 font-semibold">STEP 1</div>
+                        <h2 class="text-2xl font-bold text-slate-800">로컬 개발</h2>
+                    </div>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-4 mb-3">
+                    <p class="text-slate-700 mb-2"><strong>핵심:</strong> Spring Boot + JPA 애플리케이션 개발</p>
+                    <code class="bg-blue-900 text-blue-100 px-3 py-1 rounded text-sm">./gradlew bootRun</code>
+                </div>
+                <div class="grid md:grid-cols-3 gap-3 text-sm">
+                    <div class="bg-slate-50 p-3 rounded">✅ Entity 설계</div>
+                    <div class="bg-slate-50 p-3 rounded">✅ REST API 개발</div>
+                    <div class="bg-slate-50 p-3 rounded">✅ 테스트 작성</div>
+                </div>
+            </div>
+
+            <div class="arrow-down"></div>
+
+            <!-- Step 2: JAR 빌드 -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border-2 border-green-200">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-3xl mr-4">
+                        🏗️
+                    </div>
+                    <div>
+                        <div class="text-sm text-green-600 font-semibold">STEP 2</div>
+                        <h2 class="text-2xl font-bold text-slate-800">빌드 (JAR)</h2>
+                    </div>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4 mb-3">
+                    <p class="text-slate-700 mb-3"><strong>핵심:</strong> 실행 가능한 JAR 파일 생성</p>
+
+                    <div class="grid md:grid-cols-2 gap-3 text-sm">
+                        <div class="bg-white p-3 rounded border border-green-200">
+                            <code class="bg-green-900 text-green-100 px-2 py-1 rounded text-xs block mb-2">./gradlew build</code>
+                            <p class="text-slate-600 text-xs leading-relaxed">
+                                변경된 파일만 다시 컴파일<br>
+                                <span class="text-green-700 font-semibold">→ 빠름, 개발/테스트용</span>
+                            </p>
+                        </div>
+                        <div class="bg-white p-3 rounded border border-green-300 border-2">
+                            <code class="bg-green-900 text-green-100 px-2 py-1 rounded text-xs block mb-2">./gradlew clean build</code>
+                            <p class="text-slate-600 text-xs leading-relaxed">
+                                build/ 폴더 삭제 후 처음부터<br>
+                                <span class="text-green-700 font-semibold">→ 확실함, 배포용 권장 ⭐</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 p-3 rounded text-sm text-slate-600">
+                    📦 결과물: <code>build/libs/jpa-0.0.1-SNAPSHOT.jar</code>
+                </div>
+            </div>
+
+            <div class="arrow-down"></div>
+
+            <!-- Step 3: JAR 직접 배포 -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border-2 border-orange-200">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center text-3xl mr-4">
+                        ☕
+                    </div>
+                    <div>
+                        <div class="text-sm text-orange-600 font-semibold">STEP 3</div>
+                        <h2 class="text-2xl font-bold text-slate-800">JAR 직접 배포</h2>
+                    </div>
+                </div>
+                <div class="bg-orange-50 rounded-lg p-4 mb-3">
+                    <p class="text-slate-700 mb-2"><strong>핵심:</strong> 서버에 JAR 복사 후 직접 실행</p>
+                    <code class="bg-orange-900 text-orange-100 px-3 py-1 rounded text-sm">java -jar app.jar</code>
+                </div>
+                <div class="grid md:grid-cols-2 gap-3 text-sm">
+                    <div class="bg-slate-50 p-3 rounded">✅ 가장 단순한 방법</div>
+                    <div class="bg-slate-50 p-3 rounded">⚠️ 서버 환경 직접 설정 필요</div>
+                </div>
+            </div>
+
+            <div class="arrow-down"></div>
+
+            <!-- JAR vs Docker 비교 -->
+            <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl shadow-lg p-8 border-2 border-amber-300">
+                <h3 class="text-2xl font-bold text-slate-800 mb-6 text-center">
+                    🤔 JAR 직접 배포 vs Docker, 뭐가 다를까?
+                </h3>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- JAR 직접 배포 -->
+                    <div class="bg-white rounded-lg p-6 border-2 border-orange-200">
+                        <div class="text-center mb-4">
+                            <div class="text-4xl mb-2">☕</div>
+                            <h4 class="text-xl font-bold text-orange-700">JAR 직접 배포</h4>
+                            <p class="text-sm text-slate-500">전통적인 방식</p>
+                        </div>
+
+                        <div class="bg-orange-50 rounded-lg p-4 mb-4">
+                            <p class="text-sm font-semibold text-slate-700 mb-2">서버에서 해야 할 일:</p>
+                            <div class="text-sm text-slate-600 space-y-2">
+                                <div>1️⃣ OS 업데이트</div>
+                                <div>2️⃣ Java 21 설치</div>
+                                <div>3️⃣ JAR 파일 복사</div>
+                                <div>4️⃣ 환경변수 설정</div>
+                                <div>5️⃣ 포트 설정</div>
+                                <div>6️⃣ <code class="bg-orange-200 px-1 rounded">java -jar app.jar</code> 실행</div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-start">
+                                <span class="text-red-500 mr-2">❌</span>
+                                <span class="text-slate-600">서버마다 환경 다름</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-red-500 mr-2">❌</span>
+                                <span class="text-slate-600">Java 버전 충돌 가능</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-red-500 mr-2">❌</span>
+                                <span class="text-slate-600">설정 누락 시 오류</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-green-600 mr-2">✅</span>
+                                <span class="text-slate-600">가장 단순한 방법</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Docker 배포 -->
+                    <div class="bg-white rounded-lg p-6 border-2 border-cyan-200">
+                        <div class="text-center mb-4">
+                            <div class="text-4xl mb-2">🐳</div>
+                            <h4 class="text-xl font-bold text-cyan-700">Docker 배포</h4>
+                            <p class="text-sm text-slate-500">현대적인 방식</p>
+                        </div>
+
+                        <div class="bg-cyan-50 rounded-lg p-4 mb-4">
+                            <p class="text-sm font-semibold text-slate-700 mb-2">Docker가 해주는 일:</p>
+                            <div class="text-sm text-slate-600 space-y-2">
+                                <div>✨ OS 환경 (Ubuntu/Alpine)</div>
+                                <div>✨ Java 21 자동 설치</div>
+                                <div>✨ JAR 파일 포함</div>
+                                <div>✨ 환경변수 세팅</div>
+                                <div>✨ 포트 매핑</div>
+                                <div>✨ 실행 명령어 정의</div>
+                                <div class="pt-2 border-t border-cyan-200">
+                                    → <strong>이미지 하나에 모두 패키징!</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-start">
+                                <span class="text-green-600 mr-2">✅</span>
+                                <span class="text-slate-600">어디서나 동일하게 동작</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-green-600 mr-2">✅</span>
+                                <span class="text-slate-600">버전 관리 쉬움 (태그)</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-green-600 mr-2">✅</span>
+                                <span class="text-slate-600">환경 격리 (충돌 없음)</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-green-600 mr-2">✅</span>
+                                <span class="text-slate-600">롤백 간편 (이전 이미지)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 핵심 요약 -->
+                <div class="mt-6 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-lg p-4 text-white text-center">
+                    <p class="font-semibold mb-1">💡 핵심 차이</p>
+                    <p class="text-sm">JAR 직접 배포 = "깡통 서버에 수동으로 세팅" / Docker = "완벽히 세팅된 환경을 통째로 복사"</p>
+                </div>
+            </div>
+
+            <div class="arrow-down"></div>
+
+            <!-- Step 4: Docker -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border-2 border-cyan-200">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center text-3xl mr-4">
+                        🐳
+                    </div>
+                    <div>
+                        <div class="text-sm text-cyan-600 font-semibold">STEP 4</div>
+                        <h2 class="text-2xl font-bold text-slate-800">Docker 컨테이너화</h2>
+                    </div>
+                </div>
+                <div class="bg-cyan-50 rounded-lg p-4 mb-4">
+                    <p class="text-slate-700 mb-2"><strong>핵심:</strong> 환경에 독립적인 컨테이너 이미지 생성</p>
+                    <div class="space-y-1">
+                        <code class="bg-cyan-900 text-cyan-100 px-3 py-1 rounded text-sm block">docker build -t jpa-app .</code>
+                        <code class="bg-cyan-900 text-cyan-100 px-3 py-1 rounded text-sm block">docker run -p 8080:8080 jpa-app</code>
+                    </div>
+                </div>
+
+                <!-- Dockerfile이 하는 일 -->
+                <div class="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg p-4 mb-3 border border-cyan-200">
+                    <p class="font-semibold text-slate-700 mb-3 text-sm">📝 Dockerfile이 이미지를 만들 때 하는 일:</p>
+                    <div class="space-y-2 text-sm text-slate-600">
+                        <div class="flex items-start">
+                            <code class="bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded text-xs mr-2 font-mono">FROM</code>
+                            <span>베이스 이미지 선택 (예: <code class="text-xs">openjdk:21-jdk-slim</code>)</span>
+                        </div>
+                        <div class="flex items-start">
+                            <code class="bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded text-xs mr-2 font-mono">WORKDIR</code>
+                            <span>작업 디렉토리 설정 (예: <code class="text-xs">/app</code>)</span>
+                        </div>
+                        <div class="flex items-start">
+                            <code class="bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded text-xs mr-2 font-mono">COPY</code>
+                            <span>JAR 파일을 이미지 안으로 복사</span>
+                        </div>
+                        <div class="flex items-start">
+                            <code class="bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded text-xs mr-2 font-mono">ENV</code>
+                            <span>환경변수 설정 (DB 주소, 포트 등)</span>
+                        </div>
+                        <div class="flex items-start">
+                            <code class="bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded text-xs mr-2 font-mono">EXPOSE</code>
+                            <span>사용할 포트 선언 (예: <code class="text-xs">8080</code>)</span>
+                        </div>
+                        <div class="flex items-start">
+                            <code class="bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded text-xs mr-2 font-mono">CMD</code>
+                            <span>컨테이너 시작 시 실행 명령어 (예: <code class="text-xs">java -jar app.jar</code>)</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-cyan-200 text-xs text-cyan-800">
+                        💡 이 모든 설정이 하나의 <strong>이미지 파일</strong>로 패키징됩니다!
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-3 text-sm">
+                    <div class="bg-slate-50 p-3 rounded">✅ Dockerfile 한 번 작성</div>
+                    <div class="bg-slate-50 p-3 rounded">✅ 어디서나 동일하게 실행</div>
+                </div>
+            </div>
+
+            <div class="arrow-down"></div>
+
+            <!-- Step 5: Docker Compose -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border-2 border-purple-200">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center text-3xl mr-4">
+                        🎼
+                    </div>
+                    <div>
+                        <div class="text-sm text-purple-600 font-semibold">STEP 5</div>
+                        <h2 class="text-2xl font-bold text-slate-800">Docker Compose</h2>
+                    </div>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4 mb-4">
+                    <p class="text-slate-700 mb-2"><strong>핵심:</strong> 여러 컨테이너를 한번에 관리 (앱 + DB + 웹서버)</p>
+                    <code class="bg-purple-900 text-purple-100 px-3 py-1 rounded text-sm">docker-compose up -d</code>
+                </div>
+
+                <!-- 환경변수 설정 시점 -->
+                <div class="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg p-4 mb-4 border border-amber-300">
+                    <p class="font-semibold text-slate-800 mb-3 text-sm flex items-center">
+                        <span class="text-lg mr-2">🔐</span> 환경변수는 언제 설정되나요? (프로필, DB 비밀번호 등)
+                    </p>
+
+                    <div class="grid md:grid-cols-3 gap-3 text-xs mb-3">
+                        <!-- Dockerfile (빌드 타임) -->
+                        <div class="bg-white p-3 rounded border border-red-200">
+                            <div class="font-semibold text-red-700 mb-2 flex items-center">
+                                <span class="mr-1">❌</span> Dockerfile (빌드 타임)
+                            </div>
+                            <code class="bg-red-50 text-red-800 px-2 py-1 rounded block text-xs mb-2">ENV KEY=value</code>
+                            <p class="text-red-600">기본값만! 비밀번호 절대 금지</p>
+                        </div>
+
+                        <!-- docker run (실행 시점) -->
+                        <div class="bg-white p-3 rounded border border-green-200">
+                            <div class="font-semibold text-green-700 mb-2 flex items-center">
+                                <span class="mr-1">✅</span> docker run
+                            </div>
+                            <code class="bg-green-50 text-green-800 px-2 py-1 rounded block text-xs mb-2">-e DB_PASSWORD=secret</code>
+                            <p class="text-green-600">실행 시 주입</p>
+                        </div>
+
+                        <!-- docker-compose (실행 시점) -->
+                        <div class="bg-white p-3 rounded border border-purple-300 border-2">
+                            <div class="font-semibold text-purple-700 mb-2 flex items-center">
+                                <span class="mr-1">⭐</span> docker-compose
+                            </div>
+                            <code class="bg-purple-50 text-purple-800 px-2 py-1 rounded block text-xs mb-2">environment:</code>
+                            <p class="text-purple-600">yml + .env 조합 (실무)</p>
+                        </div>
+                    </div>
+
+                    <!-- 실제 예시 -->
+                    <div class="bg-white rounded-lg p-3 border border-amber-200">
+                        <p class="font-semibold text-slate-700 mb-2 text-xs">📄 docker-compose.yml 예시:</p>
+                        <pre class="bg-slate-800 text-slate-100 p-3 rounded text-xs overflow-x-auto"><code>services:
+  app:
+    image: jpa-app
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DB_URL=jdbc:mariadb://db:3306/jpa
+      - DB_PASSWORD=\${DB_PASSWORD}  # .env 파일에서 로드
+  db:
+    image: mariadb
+    environment:
+      - MARIADB_ROOT_PASSWORD=\${DB_PASSWORD}</code></pre>
+                        <p class="text-xs text-amber-700 mt-2">
+                            💡 비밀번호는 <code class="bg-amber-100 px-1 rounded">.env</code> 파일에 따로 관리 (Git 제외)
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-3 text-sm">
+                    <div class="bg-slate-50 p-3 rounded">📱 Spring Boot App</div>
+                    <div class="bg-slate-50 p-3 rounded">🗄️ MariaDB</div>
+                    <div class="bg-slate-50 p-3 rounded">🌐 Nginx</div>
+                </div>
+            </div>
+
+            <div class="arrow-down"></div>
+
+            <!-- Step 6: CI (Continuous Integration) -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border-2 border-indigo-200">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center text-3xl mr-4">
+                        🔨
+                    </div>
+                    <div>
+                        <div class="text-sm text-indigo-600 font-semibold">STEP 6</div>
+                        <h2 class="text-2xl font-bold text-slate-800">CI (Continuous Integration)</h2>
+                    </div>
+                </div>
+                <div class="bg-indigo-50 rounded-lg p-4 mb-3">
+                    <p class="text-slate-700 mb-2"><strong>핵심:</strong> 코드 푸시 시 자동 빌드 및 테스트</p>
+                    <div class="text-sm text-slate-600 space-y-1">
+                        <div>1. Git Push → GitHub</div>
+                        <div>2. 자동 빌드 (./gradlew build)</div>
+                        <div>3. 자동 테스트 실행</div>
+                        <div>4. Docker 이미지 빌드 & Push</div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 p-3 rounded text-sm text-slate-600">
+                    📄 설정: <code>.github/workflows/ci.yml</code>
+                </div>
+            </div>
+
+            <div class="arrow-down"></div>
+
+            <!-- Step 7: CD (Continuous Deployment) -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border-2 border-teal-200">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center text-3xl mr-4">
+                        🚀
+                    </div>
+                    <div>
+                        <div class="text-sm text-teal-600 font-semibold">STEP 7</div>
+                        <h2 class="text-2xl font-bold text-slate-800">CD (Continuous Deployment)</h2>
+                    </div>
+                </div>
+                <div class="bg-teal-50 rounded-lg p-4 mb-3">
+                    <p class="text-slate-700 mb-2"><strong>핵심:</strong> 빌드된 이미지를 자동으로 서버에 배포</p>
+                    <div class="text-sm text-slate-600 space-y-1">
+                        <div>1. Docker Hub에서 최신 이미지 Pull</div>
+                        <div>2. 서버에 SSH 접속</div>
+                        <div>3. 기존 컨테이너 중지</div>
+                        <div>4. 새 컨테이너 실행</div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 p-3 rounded text-sm text-slate-600">
+                    📄 설정: <code>.github/workflows/cd.yml</code> 또는 통합 파일
+                </div>
+            </div>
+
+            <div class="arrow-down"></div>
+
+            <!-- Step 8: AWS 배포 -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border-2 border-yellow-200">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center text-3xl mr-4">
+                        ☁️
+                    </div>
+                    <div>
+                        <div class="text-sm text-yellow-600 font-semibold">STEP 8</div>
+                        <h2 class="text-2xl font-bold text-slate-800">AWS 클라우드 배포</h2>
+                    </div>
+                </div>
+                <div class="bg-yellow-50 rounded-lg p-4 mb-3">
+                    <p class="text-slate-700 mb-2"><strong>핵심:</strong> EC2 인스턴스에 배포 (실제 서비스 운영)</p>
+                    <div class="text-sm text-slate-600 space-y-1">
+                        <div>1. EC2 인스턴스 생성 (Ubuntu)</div>
+                        <div>2. Docker 설치</div>
+                        <div>3. Docker Compose로 배포</div>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-3 text-sm">
+                    <div class="bg-slate-50 p-3 rounded">🖥️ EC2 (서버)</div>
+                    <div class="bg-slate-50 p-3 rounded">🗄️ RDS (데이터베이스)</div>
+                </div>
+            </div>
+
+            <div class="arrow-down"></div>
+
+            <!-- Step 9: Kubernetes (선택) -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border-2 border-pink-200">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-3xl mr-4">
+                        ☸️
+                    </div>
+                    <div>
+                        <div class="text-sm text-pink-600 font-semibold">STEP 9 (고급)</div>
+                        <h2 class="text-2xl font-bold text-slate-800">Kubernetes 오케스트레이션</h2>
+                    </div>
+                </div>
+                <div class="bg-pink-50 rounded-lg p-4 mb-3">
+                    <p class="text-slate-700 mb-2"><strong>핵심:</strong> 대규모 컨테이너 관리 및 자동 스케일링</p>
+                    <code class="bg-pink-900 text-pink-100 px-3 py-1 rounded text-sm">kubectl apply -f deployment.yml</code>
+                </div>
+                <div class="grid md:grid-cols-3 gap-3 text-sm">
+                    <div class="bg-slate-50 p-3 rounded">🔄 자동 복구</div>
+                    <div class="bg-slate-50 p-3 rounded">📈 오토 스케일링</div>
+                    <div class="bg-slate-50 p-3 rounded">🔀 로드 밸런싱</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 환경별 설정 관리 -->
+        <div class="mt-12 bg-white rounded-2xl shadow-xl p-8 border-2 border-slate-300">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6 text-center">
+                🔧 환경별 설정 관리 (개발/테스트/운영)
+            </h3>
+
+            <!-- 환경 구분 -->
+            <div class="grid md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-5 border-2 border-blue-300">
+                    <div class="text-center mb-3">
+                        <div class="text-3xl mb-2">💻</div>
+                        <h4 class="text-xl font-bold text-blue-700">개발 환경 (Local)</h4>
+                        <p class="text-xs text-slate-600 mt-1">내 컴퓨터</p>
+                    </div>
+                    <div class="space-y-2 text-sm text-slate-700">
+                        <div>• H2 인메모리 DB</div>
+                        <div>• 상세한 로그 출력</div>
+                        <div>• 자동 리로드 (DevTools)</div>
+                        <div>• <code class="bg-blue-200 px-1 rounded text-xs">application-dev.properties</code></div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-5 border-2 border-orange-300">
+                    <div class="text-center mb-3">
+                        <div class="text-3xl mb-2">🧪</div>
+                        <h4 class="text-xl font-bold text-orange-700">테스트 환경 (Staging)</h4>
+                        <p class="text-xs text-slate-600 mt-1">운영과 동일한 환경</p>
+                    </div>
+                    <div class="space-y-2 text-sm text-slate-700">
+                        <div>• 실제 DB (복제본)</div>
+                        <div>• 운영 설정 테스트</div>
+                        <div>• QA 진행</div>
+                        <div>• <code class="bg-orange-200 px-1 rounded text-xs">application-test.properties</code></div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-5 border-2 border-green-300">
+                    <div class="text-center mb-3">
+                        <div class="text-3xl mb-2">🚀</div>
+                        <h4 class="text-xl font-bold text-green-700">운영 환경 (Production)</h4>
+                        <p class="text-xs text-slate-600 mt-1">실제 서비스</p>
+                    </div>
+                    <div class="space-y-2 text-sm text-slate-700">
+                        <div>• RDS / 운영 DB</div>
+                        <div>• 최소한의 로그</div>
+                        <div>• 성능 최적화</div>
+                        <div>• <code class="bg-green-200 px-1 rounded text-xs">application-prod.properties</code></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 비밀정보 관리 -->
+            <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-lg p-6 border-2 border-red-300">
+                <h4 class="text-xl font-bold text-slate-800 mb-4 flex items-center">
+                    <span class="text-2xl mr-2">🔐</span> 비밀정보 관리 (DB 비밀번호, API 키 등)
+                </h4>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-4">
+                    <!-- 절대 하면 안 되는 것 -->
+                    <div class="bg-white rounded-lg p-4 border-2 border-red-400">
+                        <div class="font-bold text-red-700 mb-3 flex items-center">
+                            <span class="text-xl mr-2">❌</span> 절대 하면 안 되는 것
+                        </div>
+                        <div class="space-y-2 text-sm text-slate-700">
+                            <div class="flex items-start">
+                                <span class="text-red-500 mr-2">✗</span>
+                                <code class="bg-red-100 px-2 py-1 rounded text-xs">application.properties</code>에 하드코딩
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-red-500 mr-2">✗</span>
+                                Git에 비밀번호 커밋
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-red-500 mr-2">✗</span>
+                                코드에 직접 작성
+                            </div>
+                        </div>
+                        <div class="mt-3 p-2 bg-red-100 rounded text-xs text-red-800">
+                            ⚠️ 한 번 Git에 올라가면 히스토리에 영구 보존!
+                        </div>
+                    </div>
+
+                    <!-- 올바른 방법 -->
+                    <div class="bg-white rounded-lg p-4 border-2 border-green-400">
+                        <div class="font-bold text-green-700 mb-3 flex items-center">
+                            <span class="text-xl mr-2">✅</span> 올바른 방법
+                        </div>
+                        <div class="space-y-2 text-sm text-slate-700">
+                            <div class="flex items-start">
+                                <span class="text-green-500 mr-2">✓</span>
+                                <div>
+                                    <code class="bg-green-100 px-2 py-1 rounded text-xs">.env</code> 파일 사용
+                                    <div class="text-xs text-slate-500 ml-4">→ .gitignore에 추가</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-green-500 mr-2">✓</span>
+                                환경변수로 주입
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-green-500 mr-2">✓</span>
+                                <div>
+                                    AWS Secrets Manager
+                                    <div class="text-xs text-slate-500 ml-4">→ 클라우드 비밀 관리</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 실제 예시 -->
+                <div class="bg-white rounded-lg p-4 border border-slate-300">
+                    <p class="font-semibold text-slate-700 mb-3 text-sm">📋 실무 예시:</p>
+
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <!-- application.properties -->
+                        <div>
+                            <p class="text-xs text-slate-600 mb-2">📄 application.properties (Git에 올림)</p>
+                            <pre class="bg-slate-800 text-slate-100 p-3 rounded text-xs overflow-x-auto"><code># 플레이스홀더 사용
+spring.datasource.url=\${DB_URL}
+spring.datasource.password=\${DB_PASSWORD}
+jwt.secret=\${JWT_SECRET}</code></pre>
+                        </div>
+
+                        <!-- .env -->
+                        <div>
+                            <p class="text-xs text-slate-600 mb-2">📄 .env (Git에 안 올림 🚫)</p>
+                            <pre class="bg-slate-800 text-slate-100 p-3 rounded text-xs overflow-x-auto"><code># 실제 값 (.gitignore 필수!)
+DB_URL=jdbc:mariadb://localhost:3306/jpa
+DB_PASSWORD=mySecretPassword123!
+JWT_SECRET=super-secret-key-256bits</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 p-3 bg-blue-50 rounded text-xs text-blue-800">
+                        <strong>💡 프로필 전환:</strong>
+                        <code class="bg-blue-200 px-2 py-1 rounded mx-1">-Dspring.profiles.active=prod</code> 또는
+                        <code class="bg-blue-200 px-2 py-1 rounded mx-1">SPRING_PROFILES_ACTIVE=prod</code> 환경변수
+                    </div>
+                </div>
+            </div>
+
+            <!-- 환경별 전환 흐름 -->
+            <div class="mt-6 bg-gradient-to-r from-slate-100 to-slate-200 rounded-lg p-5">
+                <h4 class="font-bold text-slate-800 mb-4 text-center">🔄 환경 전환 흐름</h4>
+                <div class="flex items-center justify-center gap-4 text-sm flex-wrap">
+                    <div class="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold">
+                        개발 (local)
+                    </div>
+                    <span class="text-2xl">→</span>
+                    <div class="bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold">
+                        테스트 (staging)
+                    </div>
+                    <span class="text-2xl">→</span>
+                    <div class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold">
+                        운영 (production)
+                    </div>
+                </div>
+                <p class="text-center text-xs text-slate-600 mt-3">
+                    각 환경은 <strong>독립된 DB</strong>와 <strong>별도의 설정 파일</strong>을 사용합니다
+                </p>
+            </div>
+        </div>
+
+        <!-- 요약 -->
+        <div class="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-8 text-white">
+            <h3 class="text-2xl font-bold mb-4 text-center">🎯 여정 요약</h3>
+            <div class="grid md:grid-cols-5 gap-3 text-sm">
+                <div class="bg-white/20 backdrop-blur rounded-lg p-4 text-center">
+                    <div class="text-3xl mb-2">🔧</div>
+                    <div class="font-semibold">개발</div>
+                    <div class="text-xs mt-1 opacity-90">Spring Boot</div>
+                </div>
+                <div class="bg-white/20 backdrop-blur rounded-lg p-4 text-center">
+                    <div class="text-3xl mb-2">🐳</div>
+                    <div class="font-semibold">컨테이너화</div>
+                    <div class="text-xs mt-1 opacity-90">Docker</div>
+                </div>
+                <div class="bg-white/20 backdrop-blur rounded-lg p-4 text-center">
+                    <div class="text-3xl mb-2">🔨</div>
+                    <div class="font-semibold">CI</div>
+                    <div class="text-xs mt-1 opacity-90">빌드/테스트</div>
+                </div>
+                <div class="bg-white/20 backdrop-blur rounded-lg p-4 text-center">
+                    <div class="text-3xl mb-2">🚀</div>
+                    <div class="font-semibold">CD</div>
+                    <div class="text-xs mt-1 opacity-90">자동 배포</div>
+                </div>
+                <div class="bg-white/20 backdrop-blur rounded-lg p-4 text-center">
+                    <div class="text-3xl mb-2">☁️</div>
+                    <div class="font-semibold">클라우드</div>
+                    <div class="text-xs mt-1 opacity-90">AWS/K8s</div>
+                </div>
+            </div>
+            <p class="text-center mt-6 opacity-90">
+                💡 단계별로 학습하면서 점진적으로 난이도를 높여갑니다!
+            </p>
+        </div>
+
+        <!-- 네비게이션 -->
+        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+            <h3 class="font-bold text-slate-800 mb-4">📚 상세 학습 자료</h3>
+            <div class="grid md:grid-cols-2 gap-3 text-sm">
+                <a href="/lectures/deploy/local/step0-jar-deploy.html" class="bg-orange-50 hover:bg-orange-100 p-3 rounded border border-orange-200 transition">
+                    ☕ JAR 배포 가이드
+                </a>
+                <a href="/lectures/deploy/local/step1-dockerfile-deploy.html" class="bg-cyan-50 hover:bg-cyan-100 p-3 rounded border border-cyan-200 transition">
+                    🐳 Docker 배포 가이드
+                </a>
+                <a href="/lectures/deploy/local/step2-compose-deploy.html" class="bg-purple-50 hover:bg-purple-100 p-3 rounded border border-purple-200 transition">
+                    🎼 Docker Compose 가이드
+                </a>
+                <a href="/lectures/deploy/aws/step4-aws.html" class="bg-yellow-50 hover:bg-yellow-100 p-3 rounded border border-yellow-200 transition">
+                    ☁️ AWS 배포 가이드
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 (동적 로드) -->
+    <div id="footer"></div>
+
+    <script>
+        // 헤더/푸터 동적 로드
+        fetch('/lectures/deploy/header.html')
+            .then(response => {
+                if (response.ok) return response.text();
+                throw new Error('Header not found');
+            })
+            .then(data => document.getElementById('header').innerHTML = data)
+            .catch(err => {
+                console.log('Header not loaded:', err);
+                document.getElementById('header').innerHTML = `
+                    <nav class="bg-white shadow-md">
+                        <div class="container mx-auto px-4 py-4">
+                            <a href="/guide" class="text-blue-600 hover:text-blue-800 font-semibold">← 가이드 홈으로</a>
+                        </div>
+                    </nav>
+                `;
+            });
+
+        fetch('/lectures/deploy/footer.html')
+            .then(response => {
+                if (response.ok) return response.text();
+                throw new Error('Footer not found');
+            })
+            .then(data => document.getElementById('footer').innerHTML = data)
+            .catch(err => {
+                console.log('Footer not loaded:', err);
+                document.getElementById('footer').innerHTML = `
+                    <footer class="bg-slate-800 text-white py-6 mt-12">
+                        <div class="container mx-auto px-4 text-center">
+                            <p>&copy; 2024 JPA 학습 프로젝트. All rights reserved.</p>
+                        </div>
+                    </footer>
+                `;
+            });
+    </script>
+</body>
+</html>

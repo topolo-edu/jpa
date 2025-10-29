@@ -15,6 +15,7 @@
 ## 2. 배포 강의
 
 **접속 URL (서버 실행 시):**
+- **🚀 http://localhost:8080/lectures/summary/deployment-roadmap.html** - 배포 전체 흐름 로드맵 (추천!)
 - http://localhost:8080/lectures/deploy/index.html
 - http://localhost:8080/lectures/deploy/general.html
 - http://localhost:8080/lectures/deploy/network-basics.html
