@@ -127,6 +127,23 @@
     <span style="color: #fbbf24">public</span> List&lt;Order&gt; <span style="color: #ffffff">searchOrders</span>(<span style="color: #7dd3fc">@RequestParam</span> String name) {
         <span style="color: #fbbf24">return</span> orderService.findByCustomerName(name);
     }
+
+    <span style="color: #6b7280">// 7. @RequestParam 고급 사용법</span>
+    <span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/advanced-search"</span>)
+    <span style="color: #fbbf24">public</span> List&lt;Order&gt; <span style="color: #ffffff">advancedSearch</span>(
+        <span style="color: #6b7280">// URL 파라미터 키와 변수명이 다를 때</span>
+        <span style="color: #7dd3fc">@RequestParam</span>(<span style="color: #86efac">"customer_name"</span>) String customerName,
+
+        <span style="color: #6b7280">// 선택적 파라미터 (없어도 됨)</span>
+        <span style="color: #7dd3fc">@RequestParam</span>(required = <span style="color: #f472b6">false</span>) String status,
+
+        <span style="color: #6b7280">// 기본값 설정</span>
+        <span style="color: #7dd3fc">@RequestParam</span>(defaultValue = <span style="color: #86efac">"0"</span>) <span style="color: #fbbf24">int</span> page,
+        <span style="color: #7dd3fc">@RequestParam</span>(defaultValue = <span style="color: #86efac">"10"</span>) <span style="color: #fbbf24">int</span> size
+    ) {
+        <span style="color: #fbbf24">return</span> orderService.searchOrders(customerName, status, page, size);
+    }
+    <span style="color: #6b7280">// 호출 예시: /api/orders/advanced-search?customer_name=홍길동&status=PENDING&page=0&size=20</span>
 }</pre>
                 </div>
             </div>
@@ -452,6 +469,13 @@
                     <i class="fas fa-forward mr-2"></i>
                     다음 단계
                 </h2>
+                <a href="/springboot/response-entity" class="block bg-white rounded-lg p-4 shadow hover:shadow-lg transition mb-4">
+                    <h3 class="font-bold text-gray-800 mb-2">
+                        <i class="fas fa-reply text-indigo-600 mr-2"></i>
+                        ResponseEntity 완벽 가이드
+                    </h3>
+                    <p class="text-sm text-gray-600">HTTP 응답을 세밀하게 제어하는 ResponseEntity의 모든 것 (추천!)</p>
+                </a>
                 <a href="/springboot/service" class="block bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
                     <h3 class="font-bold text-gray-800 mb-2">
                         <i class="fas fa-cogs text-green-600 mr-2"></i>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/springboot-layout}">
+<head>
+    <title>ResponseEntity 완벽 가이드</title>
+</head>
+<body>
+    <div layout:fragment="content">
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-3">
+                <i class="fas fa-reply text-indigo-600 mr-3"></i>
+                ResponseEntity 완벽 가이드
+            </h1>
+            <p class="text-lg text-gray-600">
+                HTTP 응답을 세밀하게 제어하는 ResponseEntity의 모든 것
+            </p>
+        </div>
+
+        <!-- What is ResponseEntity -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-question-circle text-blue-600 mr-2"></i>
+                ResponseEntity란?
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <p class="text-gray-700 mb-4">
+                    <strong>ResponseEntity</strong>는 HTTP 응답의 <strong>상태 코드</strong>, <strong>헤더</strong>, <strong>바디</strong>를
+                    모두 제어할 수 있는 Spring의 클래스입니다.
+                </p>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                    <h3 class="font-bold text-blue-800 mb-2">구성 요소</h3>
+                    <ul class="text-blue-700 space-y-1">
+                        <li><strong>상태 코드 (Status Code):</strong> 200 OK, 404 Not Found, 500 Error 등</li>
+                        <li><strong>헤더 (Headers):</strong> Content-Type, Authorization, Custom Headers 등</li>
+                        <li><strong>바디 (Body):</strong> 실제 응답 데이터 (JSON, XML 등)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- 일반 반환 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-gray-400">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-times-circle text-gray-600 mr-2"></i>일반 반환
+                    </h3>
+                    <div class="code-block mb-3"><pre><span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/orders/{id}"</span>)
+<span style="color: #fbbf24">public</span> Order <span style="color: #ffffff">getOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+    <span style="color: #fbbf24">return</span> orderService.findById(id);
+    <span style="color: #6b7280">// 상태 코드: 항상 200 OK</span>
+    <span style="color: #6b7280">// 헤더: 기본값만</span>
+}</pre>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded text-sm text-gray-600">
+                        <strong>제한:</strong> 상태 코드, 헤더 커스터마이징 불가
+                    </div>
+                </div>
+
+                <!-- ResponseEntity 반환 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-indigo-500">
+                    <h3 class="text-xl font-bold text-indigo-800 mb-4">
+                        <i class="fas fa-check-circle text-indigo-600 mr-2"></i>ResponseEntity 반환
+                    </h3>
+                    <div class="code-block mb-3"><pre><span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/orders/{id}"</span>)
+<span style="color: #fbbf24">public</span> ResponseEntity&lt;Order&gt; <span style="color: #ffffff">getOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+    Order order = orderService.findById(id);
+    <span style="color: #fbbf24">return</span> ResponseEntity.ok(order);
+    <span style="color: #6b7280">// 상태 코드: 원하는 대로 설정 가능</span>
+    <span style="color: #6b7280">// 헤더: 추가 가능</span>
+}</pre>
+                    </div>
+                    <div class="bg-indigo-50 p-3 rounded text-sm text-indigo-700">
+                        <strong>유연성:</strong> 모든 HTTP 응답 요소 제어 가능
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Basic Usage -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-rocket text-green-600 mr-2"></i>
+                기본 사용법
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">1️⃣ 간단한 성공 응답</h3>
+                <div class="code-block mb-6"><pre><span style="color: #6b7280">// 200 OK + 데이터 반환</span>
+<span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/orders/{id}"</span>)
+<span style="color: #fbbf24">public</span> ResponseEntity&lt;Order&gt; <span style="color: #ffffff">getOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+    Order order = orderService.findById(id);
+    <span style="color: #fbbf24">return</span> ResponseEntity.ok(order);
+}</pre>
+                </div>
+
+                <h3 class="text-xl font-bold text-gray-800 mb-4">2️⃣ 생성 성공 응답 (201 Created)</h3>
+                <div class="code-block mb-6"><pre><span style="color: #7dd3fc">@PostMapping</span>(<span style="color: #86efac">"/orders"</span>)
+<span style="color: #fbbf24">public</span> ResponseEntity&lt;Order&gt; <span style="color: #ffffff">createOrder</span>(<span style="color: #7dd3fc">@RequestBody</span> OrderRequest request) {
+    Order order = orderService.create(request);
+    <span style="color: #fbbf24">return</span> ResponseEntity
+        .status(HttpStatus.<span style="color: #fbbf24">CREATED</span>)  <span style="color: #6b7280">// 201</span>
+        .body(order);
+}
+
+<span style="color: #6b7280">// 또는 간단하게</span>
+<span style="color: #fbbf24">return</span> ResponseEntity.status(<span style="color: #fbbf24">201</span>).body(order);</pre>
+                </div>
+
+                <h3 class="text-xl font-bold text-gray-800 mb-4">3️⃣ 삭제 성공 (204 No Content)</h3>
+                <div class="code-block mb-6"><pre><span style="color: #7dd3fc">@DeleteMapping</span>(<span style="color: #86efac">"/orders/{id}"</span>)
+<span style="color: #fbbf24">public</span> ResponseEntity&lt;Void&gt; <span style="color: #ffffff">deleteOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+    orderService.delete(id);
+    <span style="color: #fbbf24">return</span> ResponseEntity.noContent().build();  <span style="color: #6b7280">// 204, 바디 없음</span>
+}</pre>
+                </div>
+
+                <h3 class="text-xl font-bold text-gray-800 mb-4">4️⃣ 에러 응답</h3>
+                <div class="code-block"><pre><span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/orders/{id}"</span>)
+<span style="color: #fbbf24">public</span> ResponseEntity&lt;Order&gt; <span style="color: #ffffff">getOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+    Optional&lt;Order&gt; order = orderService.findById(id);
+
+    <span style="color: #fbbf24">if</span> (order.isEmpty()) {
+        <span style="color: #fbbf24">return</span> ResponseEntity.notFound().build();  <span style="color: #6b7280">// 404</span>
+    }
+
+    <span style="color: #fbbf24">return</span> ResponseEntity.ok(order.get());  <span style="color: #6b7280">// 200</span>
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Status Codes -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-list-ol text-purple-600 mr-2"></i>
+                주요 HTTP 상태 코드
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- 2xx Success -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-green-500">
+                    <h3 class="text-lg font-bold text-green-800 mb-4">
+                        <i class="fas fa-check-circle mr-2"></i>2xx 성공
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <code class="text-green-600 font-bold">200 OK</code>
+                            <p class="text-gray-600 mt-1">요청 성공</p>
+                            <code class="text-xs bg-gray-100 px-2 py-1 rounded block mt-1">ResponseEntity.ok()</code>
+                        </div>
+                        <div>
+                            <code class="text-green-600 font-bold">201 Created</code>
+                            <p class="text-gray-600 mt-1">리소스 생성됨</p>
+                            <code class="text-xs bg-gray-100 px-2 py-1 rounded block mt-1">ResponseEntity.status(201)</code>
+                        </div>
+                        <div>
+                            <code class="text-green-600 font-bold">204 No Content</code>
+                            <p class="text-gray-600 mt-1">성공했지만 반환 데이터 없음</p>
+                            <code class="text-xs bg-gray-100 px-2 py-1 rounded block mt-1">ResponseEntity.noContent()</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4xx Client Error -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-yellow-500">
+                    <h3 class="text-lg font-bold text-yellow-800 mb-4">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>4xx 클라이언트 에러
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <code class="text-yellow-600 font-bold">400 Bad Request</code>
+                            <p class="text-gray-600 mt-1">잘못된 요청</p>
+                            <code class="text-xs bg-gray-100 px-2 py-1 rounded block mt-1">ResponseEntity.badRequest()</code>
+                        </div>
+                        <div>
+                            <code class="text-yellow-600 font-bold">401 Unauthorized</code>
+                            <p class="text-gray-600 mt-1">인증 필요</p>
+                            <code class="text-xs bg-gray-100 px-2 py-1 rounded block mt-1">ResponseEntity.status(401)</code>
+                        </div>
+                        <div>
+                            <code class="text-yellow-600 font-bold">403 Forbidden</code>
+                            <p class="text-gray-600 mt-1">권한 없음</p>
+                            <code class="text-xs bg-gray-100 px-2 py-1 rounded block mt-1">ResponseEntity.status(403)</code>
+                        </div>
+                        <div>
+                            <code class="text-yellow-600 font-bold">404 Not Found</code>
+                            <p class="text-gray-600 mt-1">리소스 없음</p>
+                            <code class="text-xs bg-gray-100 px-2 py-1 rounded block mt-1">ResponseEntity.notFound()</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5xx Server Error -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-red-500">
+                    <h3 class="text-lg font-bold text-red-800 mb-4">
+                        <i class="fas fa-times-circle mr-2"></i>5xx 서버 에러
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <code class="text-red-600 font-bold">500 Internal Server Error</code>
+                            <p class="text-gray-600 mt-1">서버 내부 오류</p>
+                            <code class="text-xs bg-gray-100 px-2 py-1 rounded block mt-1">ResponseEntity.status(500)</code>
+                        </div>
+                        <div>
+                            <code class="text-red-600 font-bold">503 Service Unavailable</code>
+                            <p class="text-gray-600 mt-1">서비스 이용 불가</p>
+                            <code class="text-xs bg-gray-100 px-2 py-1 rounded block mt-1">ResponseEntity.status(503)</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Headers -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-file-alt text-orange-600 mr-2"></i>
+                헤더 추가하기
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">1️⃣ Location 헤더 (리소스 생성 시)</h3>
+                <div class="code-block mb-6"><pre><span style="color: #7dd3fc">@PostMapping</span>(<span style="color: #86efac">"/orders"</span>)
+<span style="color: #fbbf24">public</span> ResponseEntity&lt;Order&gt; <span style="color: #ffffff">createOrder</span>(<span style="color: #7dd3fc">@RequestBody</span> OrderRequest request) {
+    Order order = orderService.create(request);
+
+    URI location = ServletUriComponentsBuilder
+        .fromCurrentRequest()
+        .path(<span style="color: #86efac">"/{id}"</span>)
+        .buildAndExpand(order.getId())
+        .toUri();
+
+    <span style="color: #fbbf24">return</span> ResponseEntity
+        .created(location)  <span style="color: #6b7280">// 201 + Location 헤더</span>
+        .body(order);
+}
+
+<span style="color: #6b7280">// 응답 헤더:</span>
+<span style="color: #6b7280">// Location: http://localhost:8080/api/orders/123</span></pre>
+                </div>
+
+                <h3 class="text-xl font-bold text-gray-800 mb-4">2️⃣ 커스텀 헤더 추가</h3>
+                <div class="code-block mb-6"><pre><span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/orders/{id}"</span>)
+<span style="color: #fbbf24">public</span> ResponseEntity&lt;Order&gt; <span style="color: #ffffff">getOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+    Order order = orderService.findById(id);
+
+    <span style="color: #fbbf24">return</span> ResponseEntity.ok()
+        .header(<span style="color: #86efac">"X-Custom-Header"</span>, <span style="color: #86efac">"custom-value"</span>)
+        .header(<span style="color: #86efac">"X-Total-Count"</span>, <span style="color: #86efac">"100"</span>)
+        .body(order);
+}</pre>
+                </div>
+
+                <h3 class="text-xl font-bold text-gray-800 mb-4">3️⃣ HttpHeaders 객체 사용</h3>
+                <div class="code-block"><pre><span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/orders"</span>)
+<span style="color: #fbbf24">public</span> ResponseEntity&lt;List&lt;Order&gt;&gt; <span style="color: #ffffff">getOrders</span>() {
+    List&lt;Order&gt; orders = orderService.findAll();
+
+    HttpHeaders headers = <span style="color: #fbbf24">new</span> HttpHeaders();
+    headers.add(<span style="color: #86efac">"X-Total-Count"</span>, String.valueOf(orders.size()));
+    headers.add(<span style="color: #86efac">"X-Page-Number"</span>, <span style="color: #86efac">"1"</span>);
+    headers.setCacheControl(CacheControl.maxAge(<span style="color: #fbbf24">60</span>, TimeUnit.<span style="color: #fbbf24">SECONDS</span>));
+
+    <span style="color: #fbbf24">return</span> ResponseEntity.ok()
+        .headers(headers)
+        .body(orders);
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Builder Pattern -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-tools text-blue-600 mr-2"></i>
+                빌더 패턴 활용
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <p class="text-gray-700 mb-4">
+                    ResponseEntity는 <strong>빌더 패턴</strong>을 제공하여 유창한(fluent) 방식으로 응답을 구성할 수 있습니다.
+                </p>
+
+                <div class="code-block"><pre><span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/orders/{id}"</span>)
+<span style="color: #fbbf24">public</span> ResponseEntity&lt;Order&gt; <span style="color: #ffffff">getOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+    Order order = orderService.findById(id);
+
+    <span style="color: #fbbf24">return</span> ResponseEntity
+        .status(HttpStatus.<span style="color: #fbbf24">OK</span>)                    <span style="color: #6b7280">// 상태 코드</span>
+        .header(<span style="color: #86efac">"X-Custom-Header"</span>, <span style="color: #86efac">"value"</span>)   <span style="color: #6b7280">// 헤더 추가</span>
+        .contentType(MediaType.APPLICATION_JSON) <span style="color: #6b7280">// Content-Type</span>
+        .cacheControl(CacheControl.maxAge(<span style="color: #fbbf24">60</span>, TimeUnit.<span style="color: #fbbf24">SECONDS</span>)) <span style="color: #6b7280">// 캐시</span>
+        .body(order);                            <span style="color: #6b7280">// 응답 바디</span>
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practical Patterns -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-star text-yellow-600 mr-2"></i>
+                실무 패턴
+            </h2>
+
+            <!-- Pattern 1: ApiResponse Wrapper -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm mr-2">패턴 1</span>
+                    ApiResponse 래퍼 클래스
+                </h3>
+
+                <p class="text-gray-700 mb-4">일관된 API 응답 형식을 위한 래퍼 클래스</p>
+
+                <div class="code-block mb-4"><pre><span style="color: #6b7280">// ApiResponse.java</span>
+<span style="color: #fbbf24">public record</span> <span style="color: #ffffff">ApiResponse</span>&lt;T&gt;(
+    <span style="color: #fbbf24">boolean</span> success,
+    String message,
+    T data,
+    String errorCode
+) {
+    <span style="color: #fbbf24">public static</span> &lt;T&gt; ApiResponse&lt;T&gt; <span style="color: #ffffff">success</span>(T data) {
+        <span style="color: #fbbf24">return new</span> ApiResponse&lt;&gt;(<span style="color: #f472b6">true</span>, <span style="color: #86efac">"Success"</span>, data, <span style="color: #f472b6">null</span>);
+    }
+
+    <span style="color: #fbbf24">public static</span> &lt;T&gt; ApiResponse&lt;T&gt; <span style="color: #ffffff">error</span>(String message, String errorCode) {
+        <span style="color: #fbbf24">return new</span> ApiResponse&lt;&gt;(<span style="color: #f472b6">false</span>, message, <span style="color: #f472b6">null</span>, errorCode);
+    }
+}</pre>
+                </div>
+
+                <div class="code-block"><pre><span style="color: #6b7280">// Controller에서 사용</span>
+<span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/orders/{id}"</span>)
+<span style="color: #fbbf24">public</span> ResponseEntity&lt;ApiResponse&lt;Order&gt;&gt; <span style="color: #ffffff">getOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+    Order order = orderService.findById(id);
+    <span style="color: #fbbf24">return</span> ResponseEntity.ok(ApiResponse.success(order));
+}
+
+<span style="color: #6b7280">// 응답 예시:</span>
+<span style="color: #6b7280">// {</span>
+<span style="color: #6b7280">//   "success": true,</span>
+<span style="color: #6b7280">//   "message": "Success",</span>
+<span style="color: #6b7280">//   "data": { "id": 1, "customerName": "홍길동" },</span>
+<span style="color: #6b7280">//   "errorCode": null</span>
+<span style="color: #6b7280">// }</span></pre>
+                </div>
+            </div>
+
+            <!-- Pattern 2: Optional 처리 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm mr-2">패턴 2</span>
+                    Optional 우아하게 처리하기
+                </h3>
+
+                <div class="code-block"><pre><span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/orders/{id}"</span>)
+<span style="color: #fbbf24">public</span> ResponseEntity&lt;Order&gt; <span style="color: #ffffff">getOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+    <span style="color: #fbbf24">return</span> orderService.findById(id)
+        .map(ResponseEntity::ok)          <span style="color: #6b7280">// 있으면 200 OK</span>
+        .orElse(ResponseEntity.notFound().build());  <span style="color: #6b7280">// 없으면 404</span>
+}
+
+<span style="color: #6b7280">// 또는 orElseGet 사용</span>
+<span style="color: #fbbf24">return</span> orderService.findById(id)
+    .map(order -> ResponseEntity.ok()
+        .header(<span style="color: #86efac">"X-Order-Status"</span>, order.getStatus())
+        .body(order))
+    .orElseGet(() -> ResponseEntity.notFound().build());</pre>
+                </div>
+            </div>
+
+            <!-- Pattern 3: 조건부 응답 -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm mr-2">패턴 3</span>
+                    조건부 응답 처리
+                </h3>
+
+                <div class="code-block"><pre><span style="color: #7dd3fc">@PutMapping</span>(<span style="color: #86efac">"/orders/{id}"</span>)
+<span style="color: #fbbf24">public</span> ResponseEntity&lt;ApiResponse&lt;Order&gt;&gt; <span style="color: #ffffff">updateOrder</span>(
+        <span style="color: #7dd3fc">@PathVariable</span> Long id,
+        <span style="color: #7dd3fc">@RequestBody</span> OrderRequest request) {
+
+    <span style="color: #fbbf24">try</span> {
+        Order order = orderService.update(id, request);
+        <span style="color: #fbbf24">return</span> ResponseEntity.ok(ApiResponse.success(order));
+
+    } <span style="color: #fbbf24">catch</span> (OrderNotFoundException e) {
+        <span style="color: #fbbf24">return</span> ResponseEntity
+            .status(HttpStatus.<span style="color: #fbbf24">NOT_FOUND</span>)
+            .body(ApiResponse.error(e.getMessage(), <span style="color: #86efac">"ORDER_NOT_FOUND"</span>));
+
+    } <span style="color: #fbbf24">catch</span> (InvalidOrderStatusException e) {
+        <span style="color: #fbbf24">return</span> ResponseEntity
+            .status(HttpStatus.<span style="color: #fbbf24">BAD_REQUEST</span>)
+            .body(ApiResponse.error(e.getMessage(), <span style="color: #86efac">"INVALID_STATUS"</span>));
+    }
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-thumbs-up text-green-600 mr-2"></i>
+                실무 권장사항
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- DO -->
+                <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+                    <h3 class="font-bold text-green-800 mb-3">
+                        <i class="fas fa-check-circle mr-2"></i>✅ 이렇게 하세요
+                    </h3>
+                    <ul class="text-sm text-green-700 space-y-2">
+                        <li><strong>의미 있는 상태 코드 사용</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded">201 Created, 204 No Content</code>
+                        </li>
+                        <li><strong>리소스 생성 시 Location 헤더</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded">.created(location)</code>
+                        </li>
+                        <li><strong>일관된 응답 형식 유지</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded">ApiResponse 래퍼 클래스</code>
+                        </li>
+                        <li><strong>에러 응답에 에러 코드 포함</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded">errorCode: "ORDER_NOT_FOUND"</code>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- DON'T -->
+                <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded">
+                    <h3 class="font-bold text-red-800 mb-3">
+                        <i class="fas fa-times-circle mr-2"></i>❌ 피해야 할 것
+                    </h3>
+                    <ul class="text-sm text-red-700 space-y-2">
+                        <li><strong>모든 응답에 200 OK 사용</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded line-through">에러도 200 반환</code>
+                        </li>
+                        <li><strong>상태 코드와 메시지 불일치</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded line-through">200 + "Error occurred"</code>
+                        </li>
+                        <li><strong>불필요한 헤더 남발</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded line-through">의미 없는 커스텀 헤더 추가</code>
+                        </li>
+                        <li><strong>응답 형식 불일치</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded line-through">API마다 다른 형식</code>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Complete Example -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-code text-purple-600 mr-2"></i>
+                완전한 실전 예제
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="code-block"><pre><span style="color: #7dd3fc">@RestController</span>
+<span style="color: #7dd3fc">@RequestMapping</span>(<span style="color: #86efac">"/api/orders"</span>)
+<span style="color: #7dd3fc">@RequiredArgsConstructor</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">OrderController</span> {
+
+    <span style="color: #fbbf24">private final</span> OrderService orderService;
+
+    <span style="color: #6b7280">// 1. 목록 조회 - 200 OK + 헤더</span>
+    <span style="color: #7dd3fc">@GetMapping</span>
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;ApiResponse&lt;List&lt;Order&gt;&gt;&gt; <span style="color: #ffffff">getOrders</span>() {
+        List&lt;Order&gt; orders = orderService.findAll();
+
+        <span style="color: #fbbf24">return</span> ResponseEntity.ok()
+            .header(<span style="color: #86efac">"X-Total-Count"</span>, String.valueOf(orders.size()))
+            .body(ApiResponse.success(orders));
+    }
+
+    <span style="color: #6b7280">// 2. 단건 조회 - 200 OK or 404 Not Found</span>
+    <span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/{id}"</span>)
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;ApiResponse&lt;Order&gt;&gt; <span style="color: #ffffff">getOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+        <span style="color: #fbbf24">return</span> orderService.findById(id)
+            .map(order -> ResponseEntity.ok(ApiResponse.success(order)))
+            .orElse(ResponseEntity
+                .status(HttpStatus.<span style="color: #fbbf24">NOT_FOUND</span>)
+                .body(ApiResponse.error(<span style="color: #86efac">"주문을 찾을 수 없습니다"</span>, <span style="color: #86efac">"ORDER_NOT_FOUND"</span>)));
+    }
+
+    <span style="color: #6b7280">// 3. 생성 - 201 Created + Location 헤더</span>
+    <span style="color: #7dd3fc">@PostMapping</span>
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;ApiResponse&lt;Order&gt;&gt; <span style="color: #ffffff">createOrder</span>(
+            <span style="color: #7dd3fc">@Valid</span> <span style="color: #7dd3fc">@RequestBody</span> OrderRequest request) {
+
+        Order order = orderService.create(request);
+
+        URI location = ServletUriComponentsBuilder
+            .fromCurrentRequest()
+            .path(<span style="color: #86efac">"/{id}"</span>)
+            .buildAndExpand(order.getId())
+            .toUri();
+
+        <span style="color: #fbbf24">return</span> ResponseEntity
+            .created(location)
+            .body(ApiResponse.success(order));
+    }
+
+    <span style="color: #6b7280">// 4. 수정 - 200 OK</span>
+    <span style="color: #7dd3fc">@PutMapping</span>(<span style="color: #86efac">"/{id}"</span>)
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;ApiResponse&lt;Order&gt;&gt; <span style="color: #ffffff">updateOrder</span>(
+            <span style="color: #7dd3fc">@PathVariable</span> Long id,
+            <span style="color: #7dd3fc">@Valid</span> <span style="color: #7dd3fc">@RequestBody</span> OrderRequest request) {
+
+        Order order = orderService.update(id, request);
+        <span style="color: #fbbf24">return</span> ResponseEntity.ok(ApiResponse.success(order));
+    }
+
+    <span style="color: #6b7280">// 5. 삭제 - 204 No Content</span>
+    <span style="color: #7dd3fc">@DeleteMapping</span>(<span style="color: #86efac">"/{id}"</span>)
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;Void&gt; <span style="color: #ffffff">deleteOrder</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+        orderService.delete(id);
+        <span style="color: #fbbf24">return</span> ResponseEntity.noContent().build();
+    }
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg shadow-lg p-8">
+                <h2 class="text-3xl font-bold mb-6">
+                    <i class="fas fa-graduation-cap mr-2"></i>핵심 요약
+                </h2>
+                <div class="grid md:grid-cols-2 gap-6 text-sm">
+                    <div>
+                        <p class="font-bold mb-2">ResponseEntity 구성 요소</p>
+                        <ul class="space-y-1 opacity-90">
+                            <li>• 상태 코드 (Status Code)</li>
+                            <li>• 헤더 (Headers)</li>
+                            <li>• 바디 (Body)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="font-bold mb-2">주요 메서드</p>
+                        <ul class="space-y-1 opacity-90">
+                            <li>• .ok() - 200 OK</li>
+                            <li>• .created(location) - 201 Created</li>
+                            <li>• .noContent() - 204 No Content</li>
+                            <li>• .notFound() - 404 Not Found</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="font-bold mb-2">실무 패턴</p>
+                        <ul class="space-y-1 opacity-90">
+                            <li>• ApiResponse 래퍼 클래스</li>
+                            <li>• Optional 우아한 처리</li>
+                            <li>• 일관된 응답 형식</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="font-bold mb-2">권장사항</p>
+                        <ul class="space-y-1 opacity-90">
+                            <li>• 의미 있는 상태 코드 사용</li>
+                            <li>• Location 헤더 추가 (생성 시)</li>
+                            <li>• 에러 응답에 에러 코드 포함</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Step -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500 p-6 rounded-lg">
+                <h2 class="text-2xl font-bold text-green-800 mb-4">
+                    <i class="fas fa-forward mr-2"></i>
+                    다음 단계
+                </h2>
+                <a href="/springboot/service" class="block bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
+                    <h3 class="font-bold text-gray-800 mb-2">
+                        <i class="fas fa-cogs text-green-600 mr-2"></i>
+                        Service 어노테이션 학습하기
+                    </h3>
+                    <p class="text-sm text-gray-600">@Service, @Transactional 등 비즈니스 로직 계층 어노테이션</p>
+                </a>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>

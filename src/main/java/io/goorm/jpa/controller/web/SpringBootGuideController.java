@@ -45,4 +45,11 @@ public class SpringBootGuideController {
         model.addAttribute("pageTitle", "Repository 어노테이션");
         return "springboot/repository";
     }
+
+    @GetMapping("/response-entity")
+    public String responseEntity(Model model) {
+        log.info("Spring Boot response-entity page accessed");
+        model.addAttribute("pageTitle", "ResponseEntity 완벽 가이드");
+        return "springboot/response-entity";
+    }
 }

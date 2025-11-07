@@ -32,7 +32,19 @@
 
 ---
 
-## 3. Step 2 강의 (서버 실행 필수)
+## 3. Spring Boot 계층별 어노테이션 가이드 (서버 실행 필수)
+
+**접속 URL:**
+- http://localhost:8080/springboot/setup - 프로젝트 설정
+- http://localhost:8080/springboot/model - Entity/Model 어노테이션
+- http://localhost:8080/springboot/controller - Controller 어노테이션
+- http://localhost:8080/springboot/response-entity - **ResponseEntity 완벽 가이드** (추천!)
+- http://localhost:8080/springboot/service - Service 어노테이션
+- http://localhost:8080/springboot/repository - Repository 어노테이션
+
+---
+
+## 4. Step 2 강의 (서버 실행 필수)
 
 **접속 URL:**
 - http://localhost:8080/project/step2/overview - 개요
