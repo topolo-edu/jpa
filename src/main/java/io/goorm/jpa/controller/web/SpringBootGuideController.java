@@ -52,4 +52,11 @@ public class SpringBootGuideController {
         model.addAttribute("pageTitle", "ResponseEntity 완벽 가이드");
         return "springboot/response-entity";
     }
+
+    @GetMapping("/exception-handling")
+    public String exceptionHandling(Model model) {
+        log.info("Spring Boot exception-handling page accessed");
+        model.addAttribute("pageTitle", "전역 예외 처리 가이드");
+        return "springboot/exception-handling";
+    }
 }

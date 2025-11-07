@@ -40,6 +40,7 @@
 - http://localhost:8080/springboot/controller - Controller 어노테이션
 - http://localhost:8080/springboot/response-entity - **ResponseEntity 완벽 가이드** (추천!)
 - http://localhost:8080/springboot/service - Service 어노테이션
+- http://localhost:8080/springboot/exception-handling - **전역 예외 처리 가이드** (추천!)
 - http://localhost:8080/springboot/repository - Repository 어노테이션
 
 ---

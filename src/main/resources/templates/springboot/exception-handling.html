@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/springboot-layout}">
+<head>
+    <title>전역 예외 처리 가이드</title>
+</head>
+<body>
+    <div layout:fragment="content">
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-3">
+                <i class="fas fa-exclamation-triangle text-red-600 mr-3"></i>
+                전역 예외 처리 가이드
+            </h1>
+            <p class="text-lg text-gray-600">
+                @ControllerAdvice와 사용자 정의 예외로 일관된 에러 응답 구현하기
+            </p>
+        </div>
+
+        <!-- Why Exception Handling -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-question-circle text-blue-600 mr-2"></i>
+                왜 전역 예외 처리가 필요한가?
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- 문제점 -->
+                <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded">
+                    <h3 class="font-bold text-red-800 mb-3">
+                        <i class="fas fa-times-circle mr-2"></i>예외 처리가 없으면?
+                    </h3>
+                    <ul class="text-sm text-red-700 space-y-2">
+                        <li>• 예외마다 try-catch 중복 코드</li>
+                        <li>• 일관되지 않은 에러 응답 형식</li>
+                        <li>• 클라이언트가 에러 파싱 어려움</li>
+                        <li>• 개발자 친화적인 에러 메시지 노출</li>
+                        <li>• 유지보수 어려움</li>
+                    </ul>
+                </div>
+
+                <!-- 해결책 -->
+                <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+                    <h3 class="font-bold text-green-800 mb-3">
+                        <i class="fas fa-check-circle mr-2"></i>전역 예외 처리 시
+                    </h3>
+                    <ul class="text-sm text-green-700 space-y-2">
+                        <li>• 한 곳에서 모든 예외 관리</li>
+                        <li>• 일관된 에러 응답 형식</li>
+                        <li>• 클라이언트가 쉽게 처리 가능</li>
+                        <li>• 사용자 친화적인 에러 메시지</li>
+                        <li>• 유지보수 용이</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Basic Concept -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+                핵심 구성 요소
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-blue-500">
+                    <h3 class="text-lg font-bold text-blue-800 mb-3">
+                        <i class="fas fa-shield-alt mr-2"></i>@ControllerAdvice
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-3">모든 컨트롤러의 예외를 한 곳에서 처리</p>
+                    <code class="text-xs bg-gray-100 px-2 py-1 rounded block">전역 예외 핸들러</code>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-purple-500">
+                    <h3 class="text-lg font-bold text-purple-800 mb-3">
+                        <i class="fas fa-bug mr-2"></i>사용자 정의 예외
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-3">비즈니스 로직 예외를 명확하게 표현</p>
+                    <code class="text-xs bg-gray-100 px-2 py-1 rounded block">Custom Exception</code>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-orange-500">
+                    <h3 class="text-lg font-bold text-orange-800 mb-3">
+                        <i class="fas fa-code mr-2"></i>ErrorCode Enum
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-3">에러 코드와 메시지를 체계적으로 관리</p>
+                    <code class="text-xs bg-gray-100 px-2 py-1 rounded block">에러 코드 중앙 관리</code>
+                </div>
+            </div>
+        </section>
+
+        <!-- ControllerAdvice vs RestControllerAdvice -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-info-circle text-indigo-600 mr-2"></i>
+                @ControllerAdvice vs @RestControllerAdvice
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- @ControllerAdvice -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-blue-500">
+                    <h3 class="text-xl font-bold text-blue-800 mb-4">
+                        <i class="fas fa-file-code mr-2"></i>@ControllerAdvice
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-4">
+                        <strong>뷰(View) 템플릿을 반환</strong>하는 컨트롤러용<br>
+                        에러 페이지(HTML)를 반환할 때 사용
+                    </p>
+                    <div class="code-block"><pre><span style="color: #7dd3fc">@ControllerAdvice</span>
+<span style="color: #7dd3fc">@Slf4j</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">MvcExceptionHandler</span> {
+
+    <span style="color: #7dd3fc">@ExceptionHandler</span>(Exception.<span style="color: #fbbf24">class</span>)
+    <span style="color: #fbbf24">public</span> String <span style="color: #ffffff">handleException</span>(Exception e, Model model) {
+        log.error(<span style="color: #86efac">"Error occurred"</span>, e);
+        model.addAttribute(<span style="color: #86efac">"error"</span>, e.getMessage());
+        <span style="color: #fbbf24">return</span> <span style="color: #86efac">"error/error"</span>; <span style="color: #6b7280">// HTML 뷰 반환</span>
+    }
+}</pre>
+                    </div>
+                    <div class="mt-4 bg-blue-50 p-3 rounded text-xs text-blue-700">
+                        <strong>용도:</strong> 서버 사이드 렌더링 (SSR), HTML 에러 페이지
+                    </div>
+                </div>
+
+                <!-- @RestControllerAdvice -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-green-500">
+                    <h3 class="text-xl font-bold text-green-800 mb-4">
+                        <i class="fas fa-exchange-alt mr-2"></i>@RestControllerAdvice
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-4">
+                        <strong>JSON/XML 데이터를 반환</strong>하는 REST API용<br>
+                        @ControllerAdvice + @ResponseBody
+                    </p>
+                    <div class="code-block"><pre><span style="color: #7dd3fc">@RestControllerAdvice</span>  <span style="color: #6b7280">// = @ControllerAdvice + @ResponseBody</span>
+<span style="color: #7dd3fc">@Slf4j</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">GlobalExceptionHandler</span> {
+
+    <span style="color: #7dd3fc">@ExceptionHandler</span>(Exception.<span style="color: #fbbf24">class</span>)
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;ErrorResponse&gt; <span style="color: #ffffff">handleException</span>(Exception e) {
+        log.error(<span style="color: #86efac">"Error occurred"</span>, e);
+        ErrorResponse response = ErrorResponse.of(...);
+        <span style="color: #fbbf24">return</span> ResponseEntity.status(<span style="color: #fbbf24">500</span>).body(response);
+        <span style="color: #6b7280">// 자동으로 JSON 변환</span>
+    }
+}</pre>
+                    </div>
+                    <div class="mt-4 bg-green-50 p-3 rounded text-xs text-green-700">
+                        <strong>용도:</strong> REST API, JSON 응답 (React, Vue 등)
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+                <h4 class="font-bold text-yellow-800 mb-2">
+                    <i class="fas fa-lightbulb mr-2"></i>
+                    프로젝트에서 두 개 모두 사용 가능
+                </h4>
+                <p class="text-sm text-yellow-700 mb-3">
+                    웹 페이지(MVC)와 REST API를 함께 제공하는 프로젝트라면 둘 다 만들어야 합니다.
+                </p>
+                <div class="grid md:grid-cols-2 gap-4 text-xs text-yellow-700">
+                    <div>
+                        <strong>MvcExceptionHandler</strong>
+                        <ul class="mt-2 space-y-1 ml-4">
+                            <li>• @ControllerAdvice 사용</li>
+                            <li>• /error/** 페이지 반환</li>
+                            <li>• 웹 브라우저용</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <strong>RestApiExceptionHandler</strong>
+                        <ul class="mt-2 space-y-1 ml-4">
+                            <li>• @RestControllerAdvice 사용</li>
+                            <li>• /api/** JSON 응답</li>
+                            <li>• 프론트엔드 API용</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 1: ErrorResponse -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-file-code text-green-600 mr-2"></i>
+                1단계: ErrorResponse DTO
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <p class="text-gray-700 mb-4">일관된 에러 응답 형식을 위한 DTO</p>
+
+                <div class="code-block mb-4"><pre><span style="color: #6b7280">// ErrorResponse.java</span>
+<span style="color: #7dd3fc">@Getter</span>
+<span style="color: #7dd3fc">@AllArgsConstructor</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">ErrorResponse</span> {
+    <span style="color: #fbbf24">private</span> String errorCode;      <span style="color: #6b7280">// 에러 코드 (예: USER_NOT_FOUND)</span>
+    <span style="color: #fbbf24">private</span> String message;        <span style="color: #6b7280">// 사용자에게 보여줄 메시지</span>
+    <span style="color: #fbbf24">private</span> LocalDateTime timestamp; <span style="color: #6b7280">// 에러 발생 시간</span>
+
+    <span style="color: #6b7280">// 정적 팩토리 메서드</span>
+    <span style="color: #fbbf24">public static</span> ErrorResponse <span style="color: #ffffff">of</span>(String errorCode, String message) {
+        <span style="color: #fbbf24">return new</span> ErrorResponse(errorCode, message, LocalDateTime.now());
+    }
+}
+
+<span style="color: #6b7280">// 응답 예시:</span>
+<span style="color: #6b7280">// {</span>
+<span style="color: #6b7280">//   "errorCode": "USER_NOT_FOUND",</span>
+<span style="color: #6b7280">//   "message": "사용자를 찾을 수 없습니다",</span>
+<span style="color: #6b7280">//   "timestamp": "2025-01-07T10:30:00"</span>
+<span style="color: #6b7280">// }</span></pre>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                    <h4 class="font-semibold text-blue-800 mb-2">💡 더 상세한 ErrorResponse (선택)</h4>
+                    <div class="code-block mt-2"><pre><span style="color: #7dd3fc">@Getter</span>
+<span style="color: #7dd3fc">@AllArgsConstructor</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">ErrorResponse</span> {
+    <span style="color: #fbbf24">private</span> String errorCode;
+    <span style="color: #fbbf24">private</span> String message;
+    <span style="color: #fbbf24">private</span> <span style="color: #fbbf24">int</span> status;              <span style="color: #6b7280">// HTTP 상태 코드</span>
+    <span style="color: #fbbf24">private</span> String path;              <span style="color: #6b7280">// 에러 발생 경로</span>
+    <span style="color: #fbbf24">private</span> LocalDateTime timestamp;
+    <span style="color: #fbbf24">private</span> Map&lt;String, String&gt; errors; <span style="color: #6b7280">// 필드별 에러 (Validation용)</span>
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 2: ErrorCode Enum -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-list text-purple-600 mr-2"></i>
+                2단계: ErrorCode Enum
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <p class="text-gray-700 mb-4">에러 코드를 체계적으로 관리하는 Enum</p>
+
+                <div class="code-block"><pre><span style="color: #6b7280">// ErrorCode.java</span>
+<span style="color: #7dd3fc">@Getter</span>
+<span style="color: #7dd3fc">@RequiredArgsConstructor</span>
+<span style="color: #fbbf24">public enum</span> <span style="color: #ffffff">ErrorCode</span> {
+
+    <span style="color: #6b7280">// 400 Bad Request</span>
+    <span style="color: #fbbf24">INVALID_INPUT</span>(HttpStatus.<span style="color: #fbbf24">BAD_REQUEST</span>, <span style="color: #86efac">"COMMON_001"</span>, <span style="color: #86efac">"잘못된 입력값입니다"</span>),
+    <span style="color: #fbbf24">INVALID_TYPE</span>(HttpStatus.<span style="color: #fbbf24">BAD_REQUEST</span>, <span style="color: #86efac">"COMMON_002"</span>, <span style="color: #86efac">"타입이 올바르지 않습니다"</span>),
+
+    <span style="color: #6b7280">// 401 Unauthorized</span>
+    <span style="color: #fbbf24">UNAUTHORIZED</span>(HttpStatus.<span style="color: #fbbf24">UNAUTHORIZED</span>, <span style="color: #86efac">"AUTH_001"</span>, <span style="color: #86efac">"인증이 필요합니다"</span>),
+    <span style="color: #fbbf24">INVALID_TOKEN</span>(HttpStatus.<span style="color: #fbbf24">UNAUTHORIZED</span>, <span style="color: #86efac">"AUTH_002"</span>, <span style="color: #86efac">"유효하지 않은 토큰입니다"</span>),
+
+    <span style="color: #6b7280">// 403 Forbidden</span>
+    <span style="color: #fbbf24">FORBIDDEN</span>(HttpStatus.<span style="color: #fbbf24">FORBIDDEN</span>, <span style="color: #86efac">"AUTH_003"</span>, <span style="color: #86efac">"권한이 없습니다"</span>),
+
+    <span style="color: #6b7280">// 404 Not Found</span>
+    <span style="color: #fbbf24">USER_NOT_FOUND</span>(HttpStatus.<span style="color: #fbbf24">NOT_FOUND</span>, <span style="color: #86efac">"USER_001"</span>, <span style="color: #86efac">"사용자를 찾을 수 없습니다"</span>),
+    <span style="color: #fbbf24">ORDER_NOT_FOUND</span>(HttpStatus.<span style="color: #fbbf24">NOT_FOUND</span>, <span style="color: #86efac">"ORDER_001"</span>, <span style="color: #86efac">"주문을 찾을 수 없습니다"</span>),
+    <span style="color: #fbbf24">RESOURCE_NOT_FOUND</span>(HttpStatus.<span style="color: #fbbf24">NOT_FOUND</span>, <span style="color: #86efac">"COMMON_003"</span>, <span style="color: #86efac">"리소스를 찾을 수 없습니다"</span>),
+
+    <span style="color: #6b7280">// 409 Conflict</span>
+    <span style="color: #fbbf24">DUPLICATE_EMAIL</span>(HttpStatus.<span style="color: #fbbf24">CONFLICT</span>, <span style="color: #86efac">"USER_002"</span>, <span style="color: #86efac">"이미 존재하는 이메일입니다"</span>),
+    <span style="color: #fbbf24">DUPLICATE_USERNAME</span>(HttpStatus.<span style="color: #fbbf24">CONFLICT</span>, <span style="color: #86efac">"USER_003"</span>, <span style="color: #86efac">"이미 존재하는 사용자명입니다"</span>),
+
+    <span style="color: #6b7280">// 500 Internal Server Error</span>
+    <span style="color: #fbbf24">INTERNAL_SERVER_ERROR</span>(HttpStatus.<span style="color: #fbbf24">INTERNAL_SERVER_ERROR</span>, <span style="color: #86efac">"COMMON_999"</span>, <span style="color: #86efac">"서버 내부 오류가 발생했습니다"</span>);
+
+    <span style="color: #fbbf24">private final</span> HttpStatus status;
+    <span style="color: #fbbf24">private final</span> String code;
+    <span style="color: #fbbf24">private final</span> String message;
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 3: Custom Exception -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-bug text-orange-600 mr-2"></i>
+                3단계: 사용자 정의 예외
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">기본 예외 클래스</h3>
+                <div class="code-block"><pre><span style="color: #6b7280">// BusinessException.java - 비즈니스 로직 예외의 부모 클래스</span>
+<span style="color: #7dd3fc">@Getter</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">BusinessException</span> <span style="color: #fbbf24">extends</span> RuntimeException {
+    <span style="color: #fbbf24">private final</span> ErrorCode errorCode;
+
+    <span style="color: #fbbf24">public</span> <span style="color: #ffffff">BusinessException</span>(ErrorCode errorCode) {
+        <span style="color: #fbbf24">super</span>(errorCode.getMessage());
+        <span style="color: #fbbf24">this</span>.errorCode = errorCode;
+    }
+
+    <span style="color: #fbbf24">public</span> <span style="color: #ffffff">BusinessException</span>(ErrorCode errorCode, String customMessage) {
+        <span style="color: #fbbf24">super</span>(customMessage);
+        <span style="color: #fbbf24">this</span>.errorCode = errorCode;
+    }
+}</pre>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">구체적인 예외 클래스들</h3>
+                <div class="code-block"><pre><span style="color: #6b7280">// UserNotFoundException.java</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">UserNotFoundException</span> <span style="color: #fbbf24">extends</span> BusinessException {
+    <span style="color: #fbbf24">public</span> <span style="color: #ffffff">UserNotFoundException</span>() {
+        <span style="color: #fbbf24">super</span>(ErrorCode.<span style="color: #fbbf24">USER_NOT_FOUND</span>);
+    }
+
+    <span style="color: #fbbf24">public</span> <span style="color: #ffffff">UserNotFoundException</span>(Long userId) {
+        <span style="color: #fbbf24">super</span>(ErrorCode.<span style="color: #fbbf24">USER_NOT_FOUND</span>, <span style="color: #86efac">"사용자를 찾을 수 없습니다. ID: "</span> + userId);
+    }
+}
+
+<span style="color: #6b7280">// DuplicateEmailException.java</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">DuplicateEmailException</span> <span style="color: #fbbf24">extends</span> BusinessException {
+    <span style="color: #fbbf24">public</span> <span style="color: #ffffff">DuplicateEmailException</span>(String email) {
+        <span style="color: #fbbf24">super</span>(ErrorCode.<span style="color: #fbbf24">DUPLICATE_EMAIL</span>, <span style="color: #86efac">"이미 존재하는 이메일입니다: "</span> + email);
+    }
+}
+
+<span style="color: #6b7280">// OrderNotFoundException.java</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">OrderNotFoundException</span> <span style="color: #fbbf24">extends</span> BusinessException {
+    <span style="color: #fbbf24">public</span> <span style="color: #ffffff">OrderNotFoundException</span>(Long orderId) {
+        <span style="color: #fbbf24">super</span>(ErrorCode.<span style="color: #fbbf24">ORDER_NOT_FOUND</span>, <span style="color: #86efac">"주문을 찾을 수 없습니다. ID: "</span> + orderId);
+    }
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 4: Global Exception Handler -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-shield-alt text-blue-600 mr-2"></i>
+                4단계: @ControllerAdvice - 전역 예외 핸들러
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="code-block"><pre><span style="color: #7dd3fc">@RestControllerAdvice</span>  <span style="color: #6b7280">// @ControllerAdvice + @ResponseBody</span>
+<span style="color: #7dd3fc">@Slf4j</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">GlobalExceptionHandler</span> {
+
+    <span style="color: #6b7280">// 1. 비즈니스 예외 처리</span>
+    <span style="color: #7dd3fc">@ExceptionHandler</span>(BusinessException.<span style="color: #fbbf24">class</span>)
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;ErrorResponse&gt; <span style="color: #ffffff">handleBusinessException</span>(BusinessException e) {
+        log.error(<span style="color: #86efac">"BusinessException: {}"</span>, e.getMessage());
+
+        ErrorCode errorCode = e.getErrorCode();
+        ErrorResponse response = ErrorResponse.of(
+            errorCode.getCode(),
+            e.getMessage()
+        );
+
+        <span style="color: #fbbf24">return</span> ResponseEntity
+            .status(errorCode.getStatus())
+            .body(response);
+    }
+
+    <span style="color: #6b7280">// 2. Validation 예외 처리 (@Valid 실패)</span>
+    <span style="color: #7dd3fc">@ExceptionHandler</span>(MethodArgumentNotValidException.<span style="color: #fbbf24">class</span>)
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;ErrorResponse&gt; <span style="color: #ffffff">handleValidationException</span>(
+            MethodArgumentNotValidException e) {
+
+        log.error(<span style="color: #86efac">"Validation error: {}"</span>, e.getMessage());
+
+        <span style="color: #6b7280">// 첫 번째 에러 메시지만 반환</span>
+        String message = e.getBindingResult()
+            .getFieldErrors()
+            .stream()
+            .findFirst()
+            .map(FieldError::getDefaultMessage)
+            .orElse(<span style="color: #86efac">"입력값이 올바르지 않습니다"</span>);
+
+        ErrorResponse response = ErrorResponse.of(<span style="color: #86efac">"VALIDATION_ERROR"</span>, message);
+
+        <span style="color: #fbbf24">return</span> ResponseEntity
+            .status(HttpStatus.<span style="color: #fbbf24">BAD_REQUEST</span>)
+            .body(response);
+    }
+
+    <span style="color: #6b7280">// 3. 메서드 인자 타입 불일치</span>
+    <span style="color: #7dd3fc">@ExceptionHandler</span>(MethodArgumentTypeMismatchException.<span style="color: #fbbf24">class</span>)
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;ErrorResponse&gt; <span style="color: #ffffff">handleTypeMismatch</span>(
+            MethodArgumentTypeMismatchException e) {
+
+        log.error(<span style="color: #86efac">"Type mismatch: {}"</span>, e.getMessage());
+
+        ErrorResponse response = ErrorResponse.of(
+            <span style="color: #86efac">"TYPE_MISMATCH"</span>,
+            <span style="color: #86efac">"타입이 올바르지 않습니다: "</span> + e.getName()
+        );
+
+        <span style="color: #fbbf24">return</span> ResponseEntity
+            .status(HttpStatus.<span style="color: #fbbf24">BAD_REQUEST</span>)
+            .body(response);
+    }
+
+    <span style="color: #6b7280">// 4. 필수 파라미터 누락</span>
+    <span style="color: #7dd3fc">@ExceptionHandler</span>(MissingServletRequestParameterException.<span style="color: #fbbf24">class</span>)
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;ErrorResponse&gt; <span style="color: #ffffff">handleMissingParameter</span>(
+            MissingServletRequestParameterException e) {
+
+        log.error(<span style="color: #86efac">"Missing parameter: {}"</span>, e.getMessage());
+
+        ErrorResponse response = ErrorResponse.of(
+            <span style="color: #86efac">"MISSING_PARAMETER"</span>,
+            <span style="color: #86efac">"필수 파라미터가 누락되었습니다: "</span> + e.getParameterName()
+        );
+
+        <span style="color: #fbbf24">return</span> ResponseEntity
+            .status(HttpStatus.<span style="color: #fbbf24">BAD_REQUEST</span>)
+            .body(response);
+    }
+
+    <span style="color: #6b7280">// 5. HTTP 메서드 지원 안함</span>
+    <span style="color: #7dd3fc">@ExceptionHandler</span>(HttpRequestMethodNotSupportedException.<span style="color: #fbbf24">class</span>)
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;ErrorResponse&gt; <span style="color: #ffffff">handleMethodNotSupported</span>(
+            HttpRequestMethodNotSupportedException e) {
+
+        log.error(<span style="color: #86efac">"Method not supported: {}"</span>, e.getMessage());
+
+        ErrorResponse response = ErrorResponse.of(
+            <span style="color: #86efac">"METHOD_NOT_ALLOWED"</span>,
+            <span style="color: #86efac">"지원하지 않는 HTTP 메서드입니다: "</span> + e.getMethod()
+        );
+
+        <span style="color: #fbbf24">return</span> ResponseEntity
+            .status(HttpStatus.<span style="color: #fbbf24">METHOD_NOT_ALLOWED</span>)
+            .body(response);
+    }
+
+    <span style="color: #6b7280">// 6. 모든 예외의 최종 처리 (fallback)</span>
+    <span style="color: #7dd3fc">@ExceptionHandler</span>(Exception.<span style="color: #fbbf24">class</span>)
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;ErrorResponse&gt; <span style="color: #ffffff">handleGenericException</span>(Exception e) {
+        log.error(<span style="color: #86efac">"Unexpected error"</span>, e);
+
+        ErrorResponse response = ErrorResponse.of(
+            <span style="color: #86efac">"INTERNAL_SERVER_ERROR"</span>,
+            <span style="color: #86efac">"서버 내부 오류가 발생했습니다"</span>
+        );
+
+        <span style="color: #fbbf24">return</span> ResponseEntity
+            .status(HttpStatus.<span style="color: #fbbf24">INTERNAL_SERVER_ERROR</span>)
+            .body(response);
+    }
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Usage in Service -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-code text-indigo-600 mr-2"></i>
+                5단계: Service에서 예외 사용하기
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="code-block"><pre><span style="color: #7dd3fc">@Service</span>
+<span style="color: #7dd3fc">@Transactional</span>(readOnly = <span style="color: #f472b6">true</span>)
+<span style="color: #7dd3fc">@RequiredArgsConstructor</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">UserService</span> {
+
+    <span style="color: #fbbf24">private final</span> UserRepository userRepository;
+
+    <span style="color: #6b7280">// 1. 사용자 조회 - 없으면 예외 발생</span>
+    <span style="color: #fbbf24">public</span> User <span style="color: #ffffff">getUser</span>(Long userId) {
+        <span style="color: #fbbf24">return</span> userRepository.findById(userId)
+            .orElseThrow(() -> <span style="color: #fbbf24">new</span> UserNotFoundException(userId));
+    }
+
+    <span style="color: #6b7280">// 2. 이메일로 사용자 조회</span>
+    <span style="color: #fbbf24">public</span> User <span style="color: #ffffff">getUserByEmail</span>(String email) {
+        <span style="color: #fbbf24">return</span> userRepository.findByEmail(email)
+            .orElseThrow(() -> <span style="color: #fbbf24">new</span> BusinessException(
+                ErrorCode.<span style="color: #fbbf24">USER_NOT_FOUND</span>,
+                <span style="color: #86efac">"이메일로 사용자를 찾을 수 없습니다: "</span> + email
+            ));
+    }
+
+    <span style="color: #6b7280">// 3. 사용자 생성 - 이메일 중복 체크</span>
+    <span style="color: #7dd3fc">@Transactional</span>
+    <span style="color: #fbbf24">public</span> User <span style="color: #ffffff">createUser</span>(CreateUserRequest request) {
+        <span style="color: #6b7280">// 이메일 중복 체크</span>
+        <span style="color: #fbbf24">if</span> (userRepository.existsByEmail(request.getEmail())) {
+            <span style="color: #fbbf24">throw new</span> DuplicateEmailException(request.getEmail());
+        }
+
+        User user = User.builder()
+            .username(request.getUsername())
+            .email(request.getEmail())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .build();
+
+        <span style="color: #fbbf24">return</span> userRepository.save(user);
+    }
+
+    <span style="color: #6b7280">// 4. 사용자 삭제</span>
+    <span style="color: #7dd3fc">@Transactional</span>
+    <span style="color: #fbbf24">public void</span> <span style="color: #ffffff">deleteUser</span>(Long userId) {
+        User user = getUser(userId); <span style="color: #6b7280">// 없으면 예외 발생</span>
+        userRepository.delete(user);
+    }
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Usage in Controller -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-server text-green-600 mr-2"></i>
+                Controller에서의 사용 (간결해짐!)
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <p class="text-gray-700 mb-4">
+                    예외 처리를 전역으로 위임하면 <strong>Controller가 매우 깔끔해집니다!</strong>
+                </p>
+
+                <div class="code-block"><pre><span style="color: #7dd3fc">@RestController</span>
+<span style="color: #7dd3fc">@RequestMapping</span>(<span style="color: #86efac">"/api/users"</span>)
+<span style="color: #7dd3fc">@RequiredArgsConstructor</span>
+<span style="color: #fbbf24">public class</span> <span style="color: #ffffff">UserController</span> {
+
+    <span style="color: #fbbf24">private final</span> UserService userService;
+
+    <span style="color: #6b7280">// try-catch 불필요! Service에서 발생한 예외는 GlobalExceptionHandler가 처리</span>
+    <span style="color: #7dd3fc">@GetMapping</span>(<span style="color: #86efac">"/{id}"</span>)
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;User&gt; <span style="color: #ffffff">getUser</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+        User user = userService.getUser(id); <span style="color: #6b7280">// 없으면 UserNotFoundException → 404</span>
+        <span style="color: #fbbf24">return</span> ResponseEntity.ok(user);
+    }
+
+    <span style="color: #7dd3fc">@PostMapping</span>
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;User&gt; <span style="color: #ffffff">createUser</span>(<span style="color: #7dd3fc">@Valid</span> <span style="color: #7dd3fc">@RequestBody</span> CreateUserRequest request) {
+        User user = userService.createUser(request); <span style="color: #6b7280">// 중복 이메일 → 409</span>
+        <span style="color: #fbbf24">return</span> ResponseEntity.status(HttpStatus.<span style="color: #fbbf24">CREATED</span>).body(user);
+    }
+
+    <span style="color: #7dd3fc">@DeleteMapping</span>(<span style="color: #86efac">"/{id}"</span>)
+    <span style="color: #fbbf24">public</span> ResponseEntity&lt;Void&gt; <span style="color: #ffffff">deleteUser</span>(<span style="color: #7dd3fc">@PathVariable</span> Long id) {
+        userService.deleteUser(id); <span style="color: #6b7280">// 없으면 UserNotFoundException → 404</span>
+        <span style="color: #fbbf24">return</span> ResponseEntity.noContent().build();
+    }
+}</pre>
+                </div>
+
+                <div class="mt-4 bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                    <h4 class="font-semibold text-green-800 mb-2">✅ 장점</h4>
+                    <ul class="text-green-700 text-sm space-y-1">
+                        <li>• try-catch 코드 제거 → 깔끔한 Controller</li>
+                        <li>• 비즈니스 로직에 집중</li>
+                        <li>• 일관된 에러 응답 자동 생성</li>
+                        <li>• 코드 중복 제거</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Response Examples -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-eye text-purple-600 mr-2"></i>
+                실제 에러 응답 예시
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- 404 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-yellow-500">
+                    <h3 class="text-lg font-bold text-yellow-800 mb-3">404 Not Found</h3>
+                    <p class="text-sm text-gray-600 mb-3">GET /api/users/999 (존재하지 않는 사용자)</p>
+                    <div class="code-block text-xs"><pre>{
+  <span style="color: #86efac">"errorCode"</span>: <span style="color: #86efac">"USER_001"</span>,
+  <span style="color: #86efac">"message"</span>: <span style="color: #86efac">"사용자를 찾을 수 없습니다. ID: 999"</span>,
+  <span style="color: #86efac">"timestamp"</span>: <span style="color: #86efac">"2025-01-07T10:30:00"</span>
+}</pre>
+                    </div>
+                </div>
+
+                <!-- 409 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-orange-500">
+                    <h3 class="text-lg font-bold text-orange-800 mb-3">409 Conflict</h3>
+                    <p class="text-sm text-gray-600 mb-3">POST /api/users (이메일 중복)</p>
+                    <div class="code-block text-xs"><pre>{
+  <span style="color: #86efac">"errorCode"</span>: <span style="color: #86efac">"USER_002"</span>,
+  <span style="color: #86efac">"message"</span>: <span style="color: #86efac">"이미 존재하는 이메일입니다: test@example.com"</span>,
+  <span style="color: #86efac">"timestamp"</span>: <span style="color: #86efac">"2025-01-07T10:31:00"</span>
+}</pre>
+                    </div>
+                </div>
+
+                <!-- 400 Validation -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-red-500">
+                    <h3 class="text-lg font-bold text-red-800 mb-3">400 Bad Request (Validation)</h3>
+                    <p class="text-sm text-gray-600 mb-3">POST /api/users (빈 이메일)</p>
+                    <div class="code-block text-xs"><pre>{
+  <span style="color: #86efac">"errorCode"</span>: <span style="color: #86efac">"VALIDATION_ERROR"</span>,
+  <span style="color: #86efac">"message"</span>: <span style="color: #86efac">"이메일은 필수입니다"</span>,
+  <span style="color: #86efac">"timestamp"</span>: <span style="color: #86efac">"2025-01-07T10:32:00"</span>
+}</pre>
+                    </div>
+                </div>
+
+                <!-- 500 -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-gray-500">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">500 Internal Server Error</h3>
+                    <p class="text-sm text-gray-600 mb-3">예상치 못한 서버 오류</p>
+                    <div class="code-block text-xs"><pre>{
+  <span style="color: #86efac">"errorCode"</span>: <span style="color: #86efac">"INTERNAL_SERVER_ERROR"</span>,
+  <span style="color: #86efac">"message"</span>: <span style="color: #86efac">"서버 내부 오류가 발생했습니다"</span>,
+  <span style="color: #86efac">"timestamp"</span>: <span style="color: #86efac">"2025-01-07T10:33:00"</span>
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-thumbs-up text-green-600 mr-2"></i>
+                실무 권장사항
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- DO -->
+                <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+                    <h3 class="font-bold text-green-800 mb-3">
+                        <i class="fas fa-check-circle mr-2"></i>✅ 이렇게 하세요
+                    </h3>
+                    <ul class="text-sm text-green-700 space-y-2">
+                        <li><strong>명확한 예외 이름</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded">UserNotFoundException</code>
+                        </li>
+                        <li><strong>ErrorCode Enum 사용</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded">중앙 집중식 에러 관리</code>
+                        </li>
+                        <li><strong>일관된 ErrorResponse 형식</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded">errorCode, message, timestamp</code>
+                        </li>
+                        <li><strong>적절한 HTTP 상태 코드</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded">404, 409, 400, 500</code>
+                        </li>
+                        <li><strong>로깅 활용</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded">log.error() 사용</code>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- DON'T -->
+                <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded">
+                    <h3 class="font-bold text-red-800 mb-3">
+                        <i class="fas fa-times-circle mr-2"></i>❌ 피해야 할 것
+                    </h3>
+                    <ul class="text-sm text-red-700 space-y-2">
+                        <li><strong>스택 트레이스 노출</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded line-through">e.printStackTrace() 사용</code>
+                        </li>
+                        <li><strong>모든 예외를 Exception으로</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded line-through">구체적인 예외 만들기</code>
+                        </li>
+                        <li><strong>에러 메시지에 민감 정보</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded line-through">비밀번호, 토큰 등</code>
+                        </li>
+                        <li><strong>Controller에 try-catch 남발</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded line-through">전역 핸들러 활용</code>
+                        </li>
+                        <li><strong>일관되지 않은 응답 형식</strong><br>
+                            <code class="text-xs bg-white px-2 py-1 rounded line-through">API마다 다른 형식</code>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-red-500 to-orange-600 text-white rounded-lg shadow-lg p-8">
+                <h2 class="text-3xl font-bold mb-6">
+                    <i class="fas fa-graduation-cap mr-2"></i>핵심 요약
+                </h2>
+                <div class="grid md:grid-cols-2 gap-6 text-sm">
+                    <div>
+                        <p class="font-bold mb-2">구성 요소</p>
+                        <ul class="space-y-1 opacity-90">
+                            <li>• ErrorResponse DTO</li>
+                            <li>• ErrorCode Enum</li>
+                            <li>• 사용자 정의 예외</li>
+                            <li>• @ControllerAdvice</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="font-bold mb-2">주요 어노테이션</p>
+                        <ul class="space-y-1 opacity-90">
+                            <li>• @RestControllerAdvice</li>
+                            <li>• @ExceptionHandler</li>
+                            <li>• @ResponseStatus (선택)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="font-bold mb-2">처리할 예외들</p>
+                        <ul class="space-y-1 opacity-90">
+                            <li>• BusinessException (사용자 정의)</li>
+                            <li>• MethodArgumentNotValidException</li>
+                            <li>• Exception (fallback)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="font-bold mb-2">장점</p>
+                        <ul class="space-y-1 opacity-90">
+                            <li>• 일관된 에러 응답</li>
+                            <li>• Controller 코드 간결화</li>
+                            <li>• 중앙 집중식 관리</li>
+                            <li>• 유지보수 용이</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Step -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500 p-6 rounded-lg">
+                <h2 class="text-2xl font-bold text-green-800 mb-4">
+                    <i class="fas fa-forward mr-2"></i>
+                    다음 단계
+                </h2>
+                <a href="/springboot/repository" class="block bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
+                    <h3 class="font-bold text-gray-800 mb-2">
+                        <i class="fas fa-database text-purple-600 mr-2"></i>
+                        Repository 어노테이션 학습하기
+                    </h3>
+                    <p class="text-sm text-gray-600">JpaRepository, @Query 등 데이터 접근 계층 어노테이션</p>
+                </a>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
